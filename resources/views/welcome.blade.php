@@ -7,6 +7,18 @@
     <title>SPARTA — Sistem Informasi Pengajuan dan Pemantauan PKL</title>
     <meta name="description" content="Platform terintegrasi untuk pengajuan, pemantauan, validasi jurnal, hingga sertifikasi industri secara profesional.">
 
+    <!-- Dark Mode Script -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,6 +192,9 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <button type="button" onclick="toggleDarkMode()" class="p-2.5 text-surface-300 hover:text-white rounded-xl hover:bg-white/5 transition-all" aria-label="Toggle theme">
+                        <i id="theme-icon-welcome" data-lucide="moon" class="w-5 h-5 text-cyan-400"></i>
+                    </button>
                     @auth
                         <a href="{{ url('/dashboard') }}" class="relative group overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <span class="absolute inset-0 bg-gradient-to-r from-brand-600 to-cyan-500 rounded-xl transition-all duration-300 group-hover:opacity-100"></span>
@@ -1161,15 +1176,51 @@
             });
         }
 
-        // 6. Navigation bar backdrop blur effect on scroll
+        // 6. Theme toggle helper
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeUI(isDark);
+        }
+
+        function updateThemeUI(isDark) {
+            const welcomeIcon = document.getElementById('theme-icon-welcome');
+            if (welcomeIcon) {
+                welcomeIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+                welcomeIcon.className = `w-5 h-5 ${isDark ? 'text-cyan-400' : 'text-amber-500'}`;
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            updateThemeUI(isDark);
+        });
+
+        // 7. Navigation bar backdrop blur effect on scroll
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
+            const isDark = document.documentElement.classList.contains('dark');
             if (window.scrollY > 50) {
-                nav.classList.add('shadow-xl', 'bg-surface-950/90', 'border-white/10');
-                nav.classList.remove('bg-surface-950/70', 'border-surface-800/40');
+                nav.classList.add('shadow-xl', 'border-white/10');
+                if (isDark) {
+                    nav.classList.add('bg-surface-950/90');
+                    nav.classList.remove('bg-surface-950/70', 'bg-white/90', 'bg-white/70');
+                } else {
+                    nav.classList.add('bg-white/90');
+                    nav.classList.remove('bg-surface-950/70', 'bg-surface-950/90', 'bg-white/70');
+                }
             } else {
-                nav.classList.remove('shadow-xl', 'bg-surface-950/90', 'border-white/10');
-                nav.classList.add('bg-surface-950/70', 'border-surface-800/40');
+                nav.classList.remove('shadow-xl', 'border-white/10');
+                if (isDark) {
+                    nav.classList.add('bg-surface-950/70');
+                    nav.classList.remove('bg-surface-950/90', 'bg-white/90', 'bg-white/70');
+                } else {
+                    nav.classList.add('bg-white/70');
+                    nav.classList.remove('bg-surface-950/70', 'bg-surface-950/90', 'bg-white/90');
+                }
             }
         });
     </script>

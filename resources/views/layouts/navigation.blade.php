@@ -71,6 +71,9 @@
             </div>
         </a>
         <div class="flex items-center gap-1.5">
+            <button type="button" onclick="toggleDarkMode()" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all active:scale-95" aria-label="Toggle theme">
+                <i id="theme-icon-mobile" data-lucide="moon" class="w-5 h-5"></i>
+            </button>
             <a href="{{ route('notifications.index') }}" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all relative">
                 <i data-lucide="bell" class="w-5 h-5"></i>
                 @if(auth()->user()->unreadNotifications->count() > 0)
@@ -148,6 +151,17 @@
 
         {{-- User footer --}}
         <div class="shrink-0 border-t border-white/[0.06] p-4 safe-bottom">
+            {{-- Dark Mode Switcher --}}
+            <div class="px-2 mb-3">
+                <button type="button" onclick="toggleDarkMode()" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-surface-400 hover:text-white hover:bg-white/[0.08] transition-all text-xs font-semibold">
+                    <div class="flex items-center gap-2">
+                        <i id="theme-icon-sidebar" data-lucide="moon" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Mode Tampilan</span>
+                    </div>
+                    <span id="theme-label-sidebar" class="text-[10px] font-bold text-surface-500 uppercase tracking-wider">Gelap</span>
+                </button>
+            </div>
+
             <div class="flex items-center gap-3 px-2 mb-3">
                 @if(Auth::user()->avatar)
                     <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white/20 shrink-0">

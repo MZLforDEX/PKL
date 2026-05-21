@@ -7,6 +7,18 @@
 
         <title>{{ config('app.name', 'SPARTA') }} — Sistem PKL</title>
 
+        <!-- Dark Mode Script -->
+        <script>
+            (function() {
+                const theme = localStorage.getItem('theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +56,40 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            // Theme toggle helper
+            function toggleDarkMode() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeUI(isDark);
+            }
+
+            function updateThemeUI(isDark) {
+                const sidebarIcon = document.getElementById('theme-icon-sidebar');
+                const sidebarLabel = document.getElementById('theme-label-sidebar');
+                const mobileIcon = document.getElementById('theme-icon-mobile');
+                
+                if (sidebarIcon) {
+                    sidebarIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+                    sidebarIcon.className = `w-4 h-4 ${isDark ? 'text-cyan-400' : 'text-amber-500'}`;
+                }
+                if (sidebarLabel) {
+                    sidebarLabel.textContent = isDark ? 'Gelap' : 'Terang';
+                }
+                if (mobileIcon) {
+                    mobileIcon.setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+                }
+                
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+
+            // Init UI on load
+            document.addEventListener('DOMContentLoaded', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                updateThemeUI(isDark);
+            });
+
             lucide.createIcons();
 
             function confirmAction(title, text, icon, confirmText, callback) {
