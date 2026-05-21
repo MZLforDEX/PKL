@@ -29,8 +29,8 @@
             {{-- Logo --}}
             <div class="relative z-10 mb-8">
                 <a href="/" class="flex flex-col items-center group">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-2xl shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
-                        <x-application-logo class="w-10 h-10" />
+                    <div class="w-16 h-16 rounded-2xl bg-surface-900 border border-white/[0.08] flex items-center justify-center shadow-2xl shadow-brand-500/10 group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                        <x-application-logo class="w-16 h-16 object-contain" />
                     </div>
                     <span class="mt-4 text-2xl font-extrabold tracking-tight text-white">SPARTA</span>
                     <span class="text-xs text-surface-500 font-medium mt-0.5">Sistem Informasi PKL</span>

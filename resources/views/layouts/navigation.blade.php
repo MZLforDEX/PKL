@@ -66,7 +66,9 @@
     {{-- Mobile header --}}
     <div class="fixed top-0 left-0 right-0 z-20 h-14 bg-white/90 backdrop-blur-xl border-b border-surface-200/60 flex items-center justify-between px-4 shadow-sm lg:hidden safe-top">
         <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-2 group">
-            <x-application-logo class="h-9 w-auto transition-all group-hover:scale-105 duration-300" />
+            <div class="w-8 h-8 rounded-lg bg-surface-950 flex items-center justify-center overflow-hidden">
+                <x-application-logo class="h-8 w-8 object-contain transition-all group-hover:scale-105 duration-300" />
+            </div>
         </a>
         <div class="flex items-center gap-1.5">
             <a href="{{ route('notifications.index') }}" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all relative">

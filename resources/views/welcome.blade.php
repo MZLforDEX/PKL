@@ -159,9 +159,8 @@
         <nav class="sticky top-0 z-50 bg-surface-950/70 backdrop-blur-xl border-b border-surface-800/40 px-6 py-4 transition-all duration-300" id="navbar">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 via-brand-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-brand-500/25 relative group overflow-hidden">
-                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <img src="{{ asset('logo.png') }}" alt="Logo SPARTA" class="h-6 w-auto brightness-0 invert relative z-10 transition-transform duration-300 group-hover:scale-110">
+                    <div class="w-10 h-10 rounded-xl bg-surface-900 flex items-center justify-center shadow-lg shadow-brand-500/10 border border-white/[0.08] relative group overflow-hidden">
+                        <img src="{{ asset('logo.png') }}" alt="Logo SPARTA" class="h-10 w-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-110">
                     </div>
                     <div>
                         <span class="text-lg font-extrabold text-white tracking-tight font-display">SPARTA</span>
