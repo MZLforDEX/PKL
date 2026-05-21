@@ -49,4 +49,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Guru::class);
     }
+
+    public function pembimbingIndustri(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(PembimbingIndustri::class);
+    }
 }

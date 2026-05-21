@@ -20,54 +20,78 @@
             </div>
 
             @if($pengajuan)
-                {{-- Status & Progress --}}
+                {{-- Statistik Kehadiran & Progres PKL --}}
                 <div class="card-premium p-5 sm:p-6 md:p-8 mb-6 md:mb-8 animate-slide-up">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                         <div>
                             <div class="flex items-center gap-2.5">
                                 <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
-                                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                                    <i data-lucide="bar-chart-3" class="w-4.5 h-4.5"></i>
                                 </div>
-                                <h2 class="text-base md:text-lg font-bold text-surface-900">Progres PKL Anda</h2>
+                                <h2 class="text-base md:text-lg font-bold text-surface-900">Statistik & Progres PKL</h2>
                             </div>
-                            <p class="text-surface-500 text-sm mt-2 ml-[42px]">Status:
+                            <div class="flex flex-wrap items-center gap-2 mt-2.5 ml-[42px] text-xs md:text-sm text-surface-500">
+                                <span>Periode: <span class="font-semibold text-surface-700">{{ $periode }}</span></span>
+                                <span class="text-surface-300">•</span>
+                                <span>Status:</span>
                                 @php
                                     $statusColor = match($pengajuan->status) {
-                                        'draft' => 'text-surface-500 bg-surface-100',
-                                        'menunggu_persetujuan', 'menunggu_penilaian' => 'text-amber-700 bg-amber-50',
-                                        'disetujui', 'sedang_pkl' => 'text-blue-700 bg-blue-50',
-                                        'selesai' => 'text-emerald-700 bg-emerald-50',
-                                        'ditolak', 'revisi' => 'text-rose-700 bg-rose-50',
-                                        default => 'text-surface-500 bg-surface-100',
+                                        'draft' => 'text-surface-500 bg-surface-100 border-surface-200',
+                                        'menunggu_persetujuan', 'menunggu_penilaian' => 'text-amber-700 bg-amber-50 border-amber-200',
+                                        'disetujui', 'sedang_pkl' => 'text-blue-700 bg-blue-50 border-blue-200',
+                                        'selesai' => 'text-emerald-700 bg-emerald-50 border-emerald-200',
+                                        'ditolak', 'revisi' => 'text-rose-700 bg-rose-50 border-rose-200',
+                                        default => 'text-surface-500 bg-surface-100 border-surface-200',
                                     };
                                 @endphp
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold {{ $statusColor }}">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border {{ $statusColor }}">
                                     {{ str_replace('_', ' ', ucwords($pengajuan->status)) }}
                                 </span>
-                            </p>
+                            </div>
                         </div>
-                        <span class="text-[10px] font-semibold text-surface-400 uppercase tracking-widest hidden sm:block">Tahapan Program</span>
+                        <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 shadow-[0_2px_8px_rgba(99,102,241,0.15)] self-end sm:self-center">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
                     </div>
 
-                    {{-- Progress Bar --}}
                     @php
-                        $progress = match($pengajuan->status) {
+                        $displayProgress = match($pengajuan->status) {
                             'draft' => 10,
                             'menunggu_persetujuan' => 20,
                             'revisi' => 15,
                             'disetujui' => 35,
-                            'sedang_pkl' => 60,
-                            'menunggu_penilaian' => 80,
+                            'sedang_pkl', 'menunggu_penilaian' => $progressPersen,
                             'selesai' => 100,
                             default => 5,
                         };
                     @endphp
-                    <div class="relative">
-                        <div class="flex justify-between mb-2">
-                            <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-lg">{{ $progress }}%</span>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-surface-500">Total Progres</span>
+                            <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">{{ $displayProgress }}% Selesai</span>
                         </div>
                         <div class="overflow-hidden h-2.5 rounded-full bg-surface-100">
-                            <div style="width: {{ $progress }}%" class="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-400 transition-all duration-700 ease-out shadow-[0_0_8px_rgba(99,102,241,0.4)]"></div>
+                            <div style="width: {{ $displayProgress }}%" class="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-400 transition-all duration-700 ease-out shadow-[0_0_8px_rgba(99,102,241,0.4)]"></div>
+                        </div>
+                    </div>
+
+                    <hr class="border-surface-200/60 my-5" />
+
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <p class="text-xs font-bold text-surface-400 uppercase tracking-wider">Kehadiran</p>
+                            <div class="flex items-baseline gap-1 mt-1.5">
+                                <span class="text-2xl md:text-3xl font-extrabold text-surface-900 tracking-tight">{{ $jmlValidJurnal }}</span>
+                                <span class="text-xs md:text-sm font-medium text-surface-400">/ {{ $totalHari }} Hari</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-surface-400 uppercase tracking-wider">Jurnal Terisi</p>
+                            <div class="flex items-baseline gap-1 mt-1.5">
+                                <span class="text-2xl md:text-3xl font-extrabold text-surface-900 tracking-tight">{{ $jmlJurnal }}</span>
+                                <span class="text-xs md:text-sm font-medium text-surface-400">Entri</span>
+                            </div>
                         </div>
                     </div>
                 </div>

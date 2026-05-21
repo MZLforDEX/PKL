@@ -39,14 +39,23 @@ class LaporanPklController extends Controller
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl'])
             ->whereDoesntHave('laporanPkl')
-            ->firstOrFail();
+            ->first();
+
+        if (!$pengajuan) {
+            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Tidak ada pengajuan aktif atau laporan sudah diunggah.']);
+        }
 
         $data = $request->validated();
         $data['pengajuan_pkl_id'] = $pengajuan->id;
         $data['status'] = 'menunggu_review';
         $data['file_laporan'] = $request->file('file_laporan')->store('laporan', 'public');
 
-        LaporanPkl::create($data);
+        $laporan = LaporanPkl::create($data);
+
+        if ($pengajuan->guru && $pengajuan->guru->user) {
+            $pengajuan->guru->user->notify(new \App\Notifications\SiswaUploadLaporan($laporan));
+        }
+
         return redirect()->route('siswa.laporan.index')->with('success', 'Laporan berhasil diunggah.');
     }
 }

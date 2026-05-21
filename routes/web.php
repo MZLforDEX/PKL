@@ -36,6 +36,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/security', [ProfileController::class, 'security'])->name('profile.security');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
 });
 
 // Admin
@@ -47,6 +52,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('siswa', SiswaController::class);
         Route::resource('guru', GuruController::class);
         Route::resource('tempat-pkl', TempatPklController::class);
+        Route::resource('pembimbing-industri', \App\Http\Controllers\Admin\PembimbingIndustriController::class);
         Route::get('pengajuan', [AdminPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [AdminPengajuanPklController::class, 'show'])->name('pengajuan.show');
         Route::put('pengajuan/{pengajuanPkl}/guru', [AdminPengajuanPklController::class, 'assignGuru'])->name('pengajuan.assign-guru');
@@ -79,6 +85,7 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('penilaian', [PenilaianPklController::class, 'index'])->name('penilaian.index');
         Route::get('penilaian/{pengajuanPkl}/create', [PenilaianPklController::class, 'create'])->name('penilaian.create');
         Route::post('penilaian/{pengajuanPkl}', [PenilaianPklController::class, 'store'])->name('penilaian.store');
+        Route::get('absensi', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'index'])->name('absensi.index');
     });
 
 // Siswa
@@ -98,6 +105,23 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('laporan/create', [SiswaLaporanPklController::class, 'create'])->name('laporan.create');
         Route::post('laporan', [SiswaLaporanPklController::class, 'store'])->name('laporan.store');
         Route::get('pengajuan/{pengajuan}/sertifikat', [SiswaPengajuanPklController::class, 'cetakSertifikat'])->name('pengajuan.sertifikat');
+        Route::get('absensi', [\App\Http\Controllers\Siswa\AbsensiPklController::class, 'index'])->name('absensi.index');
+        Route::post('absensi', [\App\Http\Controllers\Siswa\AbsensiPklController::class, 'store'])->name('absensi.store');
+    });
+
+// Pembimbing Industri
+Route::middleware(['auth', 'role:pembimbing_industri'])
+    ->prefix('pembimbing')
+    ->name('pembimbing.')
+    ->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\PembimbingIndustri\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('siswa', [\App\Http\Controllers\PembimbingIndustri\SiswaBimbinganController::class, 'index'])->name('siswa.index');
+        Route::get('siswa/{pengajuanPkl}', [\App\Http\Controllers\PembimbingIndustri\SiswaBimbinganController::class, 'show'])->name('siswa.show');
+        Route::get('jurnal', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'index'])->name('jurnal.index');
+        Route::get('jurnal/{jurnalPkl}', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'show'])->name('jurnal.show');
+        Route::put('jurnal/{jurnalPkl}/valid', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'valid'])->name('jurnal.valid');
+        Route::put('jurnal/{jurnalPkl}/revisi', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'mintaRevisi'])->name('jurnal.revisi');
+        Route::get('absensi', [\App\Http\Controllers\PembimbingIndustri\AbsensiPklController::class, 'index'])->name('absensi.index');
     });
 
 require __DIR__.'/auth.php';

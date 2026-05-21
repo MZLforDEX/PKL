@@ -2,7 +2,7 @@
 
 ## Status
 
-Full Laravel 12 PKL system — **all features built out**. Breeze auth installed, role middleware registered, all migrations/models/controllers/views/routes created, seeder ready. `.env` uses MySQL (`project_pkl_v5.2`). `DESIGN.md` and `README.md` are leftover templates — ignore.
+Full Laravel 12 PKL system — **all features built out**. Breeze auth installed, role middleware registered, all migrations/models/controllers/views/routes created, seeder ready. `.env` uses MySQL (`project_pkl_v5.2`). `README.md` is the default Laravel skeleton template — unrelated.
 
 ---
 
@@ -37,7 +37,7 @@ Sistem Informasi Pengajuan PKL SMK — 3 roles (`admin`, `guru`, `siswa` in `use
 ### Controller Map
 
 ```
-Admin/  -> Dashboard, Siswa, Guru, TempatPkl, PengajuanPkl
+Admin/  -> Dashboard, Siswa, Guru, TempatPkl, PengajuanPkl, User
 Guru/   -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl, PenilaianPkl
 Siswa/  -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl
 ```
@@ -60,10 +60,11 @@ Siswa/  -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl
 
 ### Business Rules
 
-- Siswa: only 1 active pengajuan at a time. Edit only if status `draft` or `revisi`. Uses `authorizeOwner()` helper.
-- Guru: only sees siswa bimbingan (where `guru_id` matches). Uses `authorizeBimbingan()` helper.
+- Siswa: only 1 active pengajuan at a time. Edit only if status `draft` or `revisi`. Uses `authorizeOwner()` private method.
+- Guru: only sees siswa bimbingan (where `guru_id` matches). Uses `authorizeBimbingan()` private method.
 - Admin: sets `guru_id` on pengajuan. CRUD all master data. Not the primary validator.
 - Penilaian: `nilai_akhir = (nilai_sikap + nilai_keterampilan + nilai_laporan) / 3`. Sets pengajuan status to `selesai`.
+- New users must be approved by admin (`is_approved` column) before login — enforced in `AuthenticatedSessionController`.
 - Language: UI in Bahasa Indonesia.
 
 ### Login Defaults
@@ -78,10 +79,13 @@ Siswa/  -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl
 
 ## Gotchas
 
-- `DESIGN.md` and `README.md` are **leftover templates** — unrelated to this project.
+- `README.md` is the **default Laravel skeleton** — unrelated to this project.
 - Tailwind **v3** via PostCSS (`tailwind.config.js` + `postcss.config.js`), NOT v4. `@tailwindcss/vite` v4 package is installed but **unused**.
 - Use `$fillable` on all models + Eloquent relationships + eager loading mandatory.
 - No React/Vue/Inertia — Blade + Tailwind only. Babel/TypeScript not configured.
+- Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
+- Tailwind theme includes custom color scales (`brand-50`–`950`, `surface-50`–`950`) and custom shadows (`glass`, `neon`, `card`). Check `tailwind.config.js` before picking colors.
 - Lucide icons loaded via CDN (`unpkg.com/lucide@latest`). Run `lucide.createIcons()` after dynamic DOM updates.
+- SweetAlert2 loaded via CDN (`cdn.jsdelivr.net/npm/sweetalert2@11`). Global `confirmAction()` helper available in `resources/views/layouts/app.blade.php` for confirmation dialogs.
 - Auth routes (login, register, password reset, email verification) are default Breeze — do not change.
 - No `opencode.json` — config lives solely in `AGENTS.md`.

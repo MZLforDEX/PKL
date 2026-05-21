@@ -28,7 +28,7 @@ class PenilaianPklController extends Controller
     public function store(StorePenilaianPklRequest $request, PengajuanPkl $pengajuanPkl)
     {
         $this->authorizeBimbingan($pengajuanPkl);
-        $nilaiAkhir = (int) round(($request->nilai_sikap + $request->nilai_keterampilan + $request->nilai_laporan) / 3);
+        $nilaiAkhir = round(($request->nilai_sikap + $request->nilai_keterampilan + $request->nilai_laporan) / 3, 2);
 
         PenilaianPkl::updateOrCreate(
             ['pengajuan_pkl_id' => $pengajuanPkl->id],

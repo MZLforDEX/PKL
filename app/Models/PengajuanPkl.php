@@ -46,4 +46,9 @@ class PengajuanPkl extends Model
     {
         return $this->hasOne(PenilaianPkl::class);
     }
+
+    public function absensiPkl(): HasMany
+    {
+        return $this->hasMany(AbsensiPkl::class, 'pengajuan_pkl_id');
+    }
 }

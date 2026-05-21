@@ -4,6 +4,7 @@
         'admin' => 'admin.dashboard',
         'guru' => 'guru.dashboard',
         'siswa' => 'siswa.dashboard',
+        'pembimbing_industri' => 'pembimbing.dashboard',
         default => 'dashboard',
     };
 
@@ -12,19 +13,31 @@
             ['route' => 'admin.siswa.index', 'label' => 'Siswa', 'icon' => 'users', 'pattern' => 'admin/siswa*'],
             ['route' => 'admin.guru.index', 'label' => 'Guru', 'icon' => 'user-check', 'pattern' => 'admin/guru*'],
             ['route' => 'admin.tempat-pkl.index', 'label' => 'Tempat PKL', 'icon' => 'building-2', 'pattern' => 'admin/tempat-pkl*'],
+            ['route' => 'admin.pembimbing-industri.index', 'label' => 'Pembimbing Industri', 'icon' => 'briefcase', 'pattern' => 'admin/pembimbing-industri*'],
             ['route' => 'admin.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-text', 'pattern' => 'admin/pengajuan*'],
             ['route' => 'admin.users.unapproved', 'label' => 'Pendaftar', 'icon' => 'user-plus', 'pattern' => 'admin/users*'],
+            ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         'guru' => [
             ['route' => 'guru.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-check', 'pattern' => 'guru/pengajuan*'],
             ['route' => 'guru.jurnal.index', 'label' => 'Jurnal', 'icon' => 'book-open', 'pattern' => 'guru/jurnal*'],
             ['route' => 'guru.laporan.index', 'label' => 'Laporan', 'icon' => 'file-spreadsheet', 'pattern' => 'guru/laporan*'],
+            ['route' => 'guru.absensi.index', 'label' => 'Absensi', 'icon' => 'calendar', 'pattern' => 'guru/absensi*'],
             ['route' => 'guru.penilaian.index', 'label' => 'Penilaian', 'icon' => 'award', 'pattern' => 'guru/penilaian*'],
+            ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         'siswa' => [
             ['route' => 'siswa.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-plus', 'pattern' => 'siswa/pengajuan*'],
             ['route' => 'siswa.jurnal.index', 'label' => 'Jurnal', 'icon' => 'book-open', 'pattern' => 'siswa/jurnal*'],
             ['route' => 'siswa.laporan.index', 'label' => 'Laporan', 'icon' => 'file-check', 'pattern' => 'siswa/laporan*'],
+            ['route' => 'siswa.absensi.index', 'label' => 'Absensi', 'icon' => 'calendar', 'pattern' => 'siswa/absensi*'],
+            ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
+        ],
+        'pembimbing_industri' => [
+            ['route' => 'pembimbing.siswa.index', 'label' => 'Siswa PKL', 'icon' => 'users', 'pattern' => 'pembimbing/siswa*'],
+            ['route' => 'pembimbing.jurnal.index', 'label' => 'Jurnal PKL', 'icon' => 'book-open', 'pattern' => 'pembimbing/jurnal*'],
+            ['route' => 'pembimbing.absensi.index', 'label' => 'Absensi PKL', 'icon' => 'calendar', 'pattern' => 'pembimbing/absensi*'],
+            ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         default => [],
     };
@@ -33,6 +46,7 @@
         'admin' => 'Administrator',
         'guru' => 'Guru Pembimbing',
         'siswa' => 'Siswa',
+        'pembimbing_industri' => 'Pembimbing Industri',
         default => 'User',
     };
 
@@ -40,6 +54,7 @@
         'admin' => 'from-rose-500 to-orange-500',
         'guru' => 'from-emerald-500 to-teal-500',
         'siswa' => 'from-brand-500 to-cyan-500',
+        'pembimbing_industri' => 'from-purple-500 to-indigo-500',
         default => 'from-brand-500 to-brand-600',
     };
 @endphp
@@ -53,9 +68,19 @@
         <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-2 group">
             <x-application-logo class="h-9 w-auto transition-all group-hover:scale-105 duration-300" />
         </a>
-        <button @click="sidebarOpen = !sidebarOpen" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all active:scale-95" aria-label="Toggle menu">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
+        <div class="flex items-center gap-1.5">
+            <a href="{{ route('notifications.index') }}" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all relative">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold bg-rose-500 text-white rounded-full flex items-center justify-center">
+                        {{ auth()->user()->unreadNotifications->count() }}
+                    </span>
+                @endif
+            </a>
+            <button @click="sidebarOpen = !sidebarOpen" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all active:scale-95" aria-label="Toggle menu">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
     </div>
 
     {{-- Sidebar --}}
@@ -108,7 +133,11 @@
                 ])>
                     <i data-lucide="{{ $item['icon'] }}" class="w-[18px] h-[18px] shrink-0"></i>
                     <span>{{ $item['label'] }}</span>
-                    @if($isActive)
+                    @if($item['route'] === 'notifications.index' && auth()->user()->unreadNotifications->count() > 0)
+                        <span class="ml-auto px-2 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full">
+                            {{ auth()->user()->unreadNotifications->count() }}
+                        </span>
+                    @elseif($isActive)
                         <span class="ml-auto w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-soft"></span>
                     @endif
                 </a>

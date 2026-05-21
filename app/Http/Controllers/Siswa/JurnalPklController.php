@@ -36,7 +36,11 @@ class JurnalPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])->firstOrFail();
+            ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
+
+        if (!$pengajuan) {
+            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Belum ada pengajuan disetujui.']);
+        }
 
         $data = $request->validated();
         $data['pengajuan_pkl_id'] = $pengajuan->id;
@@ -50,14 +54,19 @@ class JurnalPklController extends Controller
             $pengajuan->update(['status' => 'sedang_pkl']);
         }
 
-        JurnalPkl::create($data);
+        $jurnal = JurnalPkl::create($data);
+
+        if ($pengajuan->guru && $pengajuan->guru->user) {
+            $pengajuan->guru->user->notify(new \App\Notifications\SiswaUploadJurnal($jurnal));
+        }
+
         return redirect()->route('siswa.jurnal.index')->with('success', 'Jurnal berhasil ditambahkan.');
     }
 
     public function edit(JurnalPkl $jurnalPkl)
     {
         $this->authorizeOwner($jurnalPkl);
-        if ($jurnalPkl->status !== 'menunggu_validasi') {
+        if ($jurnalPkl->status === 'valid') {
             return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
         }
         return view('siswa.jurnal.edit', compact('jurnalPkl'));
@@ -66,11 +75,12 @@ class JurnalPklController extends Controller
     public function update(UpdateJurnalPklRequest $request, JurnalPkl $jurnalPkl)
     {
         $this->authorizeOwner($jurnalPkl);
-        if ($jurnalPkl->status !== 'menunggu_validasi') {
+        if ($jurnalPkl->status === 'valid') {
             return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
         }
 
         $data = $request->validated();
+        $data['status'] = 'menunggu_validasi';
         if ($request->hasFile('dokumentasi')) {
             if ($jurnalPkl->dokumentasi) {
                 Storage::disk('public')->delete($jurnalPkl->dokumentasi);

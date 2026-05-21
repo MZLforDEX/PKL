@@ -10,12 +10,36 @@ class TempatPkl extends Model
     protected $table = 'tempat_pkl';
 
     protected $fillable = [
-        'nama_tempat', 'alamat', 'bidang_usaha', 'kontak_person',
-        'no_hp', 'email', 'kuota', 'keterangan',
+        'nama_tempat',
+        'alamat',
+        'bidang_usaha',
+        'kontak_person',
+        'no_hp',
+        'email',
+        'kuota',
+        'keterangan',
     ];
 
     public function pengajuanPkl(): HasMany
     {
         return $this->hasMany(PengajuanPkl::class);
+    }
+
+    public function pembimbingIndustri(): HasMany
+    {
+        return $this->hasMany(PembimbingIndustri::class);
+    }
+
+    public function getSisaKuotaAttribute(): int
+    {
+        $occupied = $this->pengajuanPkl()
+            ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian'])
+            ->count();
+        return max(0, $this->kuota - $occupied);
+    }
+
+    public function getIsPenuhAttribute(): bool
+    {
+        return $this->sisa_kuota <= 0;
     }
 }

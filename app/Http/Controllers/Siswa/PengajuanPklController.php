@@ -37,6 +37,11 @@ class PengajuanPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Anda masih memiliki pengajuan aktif.']);
         }
 
+        $tempatPkl = TempatPkl::findOrFail($request->tempat_pkl_id);
+        if ($tempatPkl->is_penuh) {
+            return redirect()->back()->withErrors(['msg' => 'Tempat PKL ini sudah penuh (kuota habis).']);
+        }
+
         $data = $request->validated();
         $data['siswa_id'] = $siswa->id;
         $data['status'] = 'draft';
@@ -64,6 +69,11 @@ class PengajuanPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diubah.']);
         }
 
+        $tempatPkl = TempatPkl::findOrFail($request->tempat_pkl_id);
+        if ($request->tempat_pkl_id != $pengajuan->tempat_pkl_id && $tempatPkl->is_penuh) {
+            return redirect()->back()->withErrors(['msg' => 'Tempat PKL tujuan sudah penuh (kuota habis).']);
+        }
+
         $data = $request->validated();
 
         if ($request->hasFile('file_dokumen')) {
@@ -83,6 +93,11 @@ class PengajuanPklController extends Controller
         if (!in_array($pengajuan->status, ['draft', 'revisi'])) {
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diajukan.']);
         }
+
+        if ($pengajuan->tempatPkl->is_penuh) {
+            return redirect()->back()->withErrors(['msg' => 'Tidak dapat diajukan karena kuota Tempat PKL ini sudah penuh.']);
+        }
+
         $pengajuan->update(['status' => 'menunggu_persetujuan']);
         return redirect()->route('siswa.pengajuan.index')->with('success', 'Pengajuan berhasil diajukan.');
     }

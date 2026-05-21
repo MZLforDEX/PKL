@@ -28,6 +28,7 @@ class GuruController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'role' => 'guru',
+            'is_approved' => true, // Akun dibuat langsung oleh admin, langsung disetujui
         ]);
 
         Guru::create([

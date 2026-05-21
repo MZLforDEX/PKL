@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@pkl.test',
             'password' => bcrypt('password'),
             'role' => 'admin',
+            'is_approved' => true,
         ]);
 
         // Guru
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'guru1@pkl.test',
             'password' => bcrypt('password'),
             'role' => 'guru',
+            'is_approved' => true,
         ]);
         Guru::create(['user_id' => $guru1->id, 'nip' => '198001012010011001', 'alamat' => 'Jl. Contoh No. 1', 'no_hp' => '081111111111']);
 
@@ -34,6 +36,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'guru2@pkl.test',
             'password' => bcrypt('password'),
             'role' => 'guru',
+            'is_approved' => true,
         ]);
         Guru::create(['user_id' => $guru2->id, 'nip' => '198001012010011002', 'alamat' => 'Jl. Contoh No. 2', 'no_hp' => '082222222222']);
 
@@ -44,6 +47,7 @@ class DatabaseSeeder extends Seeder
                 'email' => "siswa$i@pkl.test",
                 'password' => bcrypt('password'),
                 'role' => 'siswa',
+                'is_approved' => true,
             ]);
             Siswa::create([
                 'user_id' => $user->id,
@@ -64,8 +68,23 @@ class DatabaseSeeder extends Seeder
             ['nama_tempat' => 'Dinas Pendidikan Kolaka', 'alamat' => 'Jl. Pendidikan No. 7', 'bidang_usaha' => 'Pendidikan', 'kuota' => 3],
         ];
 
+        $tempatModels = [];
         foreach ($tempat as $t) {
-            TempatPkl::create($t);
+            $tempatModels[] = TempatPkl::create($t);
         }
+
+        // Pembimbing Industri
+        $pembimbingUser = User::factory()->create([
+            'name' => 'Budi Industri',
+            'email' => 'pembimbing@pkl.test',
+            'password' => bcrypt('password'),
+            'role' => 'pembimbing_industri',
+        ]);
+        \App\Models\PembimbingIndustri::create([
+            'user_id' => $pembimbingUser->id,
+            'tempat_pkl_id' => $tempatModels[0]->id, // PT Teknologi Maju
+            'no_hp' => '087777777777',
+            'jabatan' => 'HRD Manager',
+        ]);
     }
 }

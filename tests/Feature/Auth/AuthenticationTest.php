@@ -19,7 +19,19 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::factory()->create(['role' => 'siswa']);
+        $user = User::factory()->create([
+            'role' => 'siswa',
+            'is_approved' => true,
+        ]);
+
+        \App\Models\Siswa::create([
+            'user_id' => $user->id,
+            'nis' => '12345678',
+            'kelas' => 'XII',
+            'jurusan' => 'RPL',
+            'alamat' => 'Test Alamat',
+            'no_hp' => '081234567890',
+        ]);
 
         $response = $this->post('/login', [
             'email' => $user->email,
@@ -32,7 +44,9 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'is_approved' => true,
+        ]);
 
         $this->post('/login', [
             'email' => $user->email,
@@ -44,7 +58,9 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'is_approved' => true,
+        ]);
 
         $response = $this->actingAs($user)->post('/logout');
 

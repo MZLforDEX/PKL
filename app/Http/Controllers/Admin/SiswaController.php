@@ -28,6 +28,7 @@ class SiswaController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'role' => 'siswa',
+            'is_approved' => true, // Akun dibuat langsung oleh admin, langsung disetujui
         ]);
 
         Siswa::create([
