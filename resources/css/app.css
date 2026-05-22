@@ -137,7 +137,7 @@
     }
     .table-premium thead th {
         @apply px-4 py-3.5 md:px-6 md:py-4 text-left text-[11px] font-semibold
-               text-surface-400 uppercase tracking-wider bg-surface-50/50;
+               text-surface-600 uppercase tracking-wider bg-surface-50/50;
     }
     .table-premium tbody tr {
         @apply border-b border-surface-100/80 hover:bg-brand-50/30 transition-colors duration-150;
@@ -380,4 +380,207 @@ html, body { overflow-x: hidden; }
 }
 .dark ::-webkit-scrollbar-thumb:hover {
     background-color: #334155 !important;
+}
+
+/* ===== WELCOME & GUEST LIGHT MODE OVERRIDES ===== */
+
+/* Guest Layout (Login, Signup, etc) Light Mode Override */
+html:not(.dark) .min-h-screen.bg-surface-50 {
+    background-color: #f8fafc !important; /* bg-surface-50 */
+}
+
+/* Card in light mode guest layout */
+html:not(.dark) .min-h-screen .bg-white\/\[0\.04\] {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Inputs in light mode guest layout */
+html:not(.dark) .min-h-screen input:not([type="checkbox"]) {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+html:not(.dark) .min-h-screen input::placeholder {
+    color: #94a3b8 !important;
+}
+html:not(.dark) .min-h-screen input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Labels in light mode guest layout */
+html:not(.dark) .min-h-screen label {
+    color: #475569 !important;
+}
+
+/* Titles and subtext in light mode guest layout */
+html:not(.dark) .min-h-screen h2 {
+    color: #0f172a !important;
+}
+html:not(.dark) .min-h-screen p {
+    color: #64748b !important;
+}
+
+/* Links in light mode guest layout */
+html:not(.dark) .min-h-screen a.text-brand-400 {
+    color: #4f46e5 !important;
+}
+html:not(.dark) .min-h-screen a.text-brand-400:hover {
+    color: #4338ca !important;
+}
+
+/* Logo brand text in light mode guest layout */
+html:not(.dark) .min-h-screen span.text-white {
+    color: #0f172a !important;
+}
+
+/* Logo container in guest layout */
+html:not(.dark) .min-h-screen .bg-surface-900 {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Welcome / Landing Page Light Mode Override */
+html:not(.dark) .welcome-body {
+    background-color: #f8fafc !important; /* bg-surface-50 */
+    color: #334155 !important; /* text-surface-700 */
+}
+
+/* Header/Navbar */
+html:not(.dark) #navbar {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(0, 0, 0, 0.05) !important;
+}
+html:not(.dark) #navbar a {
+    color: #475569 !important;
+}
+html:not(.dark) #navbar a:hover {
+    color: #0f172a !important;
+}
+html:not(.dark) #navbar span.text-white {
+    color: #0f172a !important;
+}
+
+/* Hero Section & Text Colors */
+html:not(.dark) .welcome-body .text-white {
+    color: #0f172a !important;
+}
+html:not(.dark) .welcome-body .text-surface-100 {
+    color: #1e293b !important;
+}
+html:not(.dark) .welcome-body .text-surface-200 {
+    color: #334155 !important;
+}
+html:not(.dark) .welcome-body .text-surface-300,
+html:not(.dark) .welcome-body .text-surface-400 {
+    color: #475569 !important;
+}
+html:not(.dark) .welcome-body .text-surface-500 {
+    color: #64748b !important;
+}
+
+/* Cards & Grid Items */
+html:not(.dark) .welcome-body .card-premium {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05) !important;
+}
+
+/* Ambient mesh background in light mode */
+html:not(.dark) .welcome-body .ambient-mesh {
+    background-color: #f8fafc !important; /* bg-surface-50 */
+    background-image: 
+        radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
+        radial-gradient(at 90% 20%, rgba(168, 85, 247, 0.05) 0px, transparent 50%),
+        radial-gradient(at 50% 80%, rgba(6, 182, 212, 0.04) 0px, transparent 50%),
+        radial-gradient(at 80% 90%, rgba(236, 72, 153, 0.04) 0px, transparent 50%) !important;
+}
+
+/* Glass panels in light mode */
+html:not(.dark) .welcome-body .glass-panel {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+html:not(.dark) .welcome-body .glass-panel-hover:hover {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 25px rgba(99, 102, 241, 0.04) !important;
+}
+
+/* Timeline connector line glow in light mode */
+html:not(.dark) .welcome-body .timeline-connector {
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Preserve white text on dark background elements in light mode welcome page */
+html:not(.dark) .welcome-body .bg-brand-600,
+html:not(.dark) .welcome-body .bg-brand-600 *,
+html:not(.dark) .welcome-body .bg-gradient-to-r,
+html:not(.dark) .welcome-body .bg-gradient-to-r * {
+    color: #ffffff !important;
+}
+
+/* Maintain light text inside the dark portal mockups */
+html:not(.dark) .welcome-body [class*="bg-surface-950"],
+html:not(.dark) .welcome-body [class*="bg-surface-950"] * {
+    color: #cbd5e1 !important;
+}
+html:not(.dark) .welcome-body [class*="bg-surface-950"] .text-white {
+    color: #ffffff !important;
+}
+html:not(.dark) .welcome-body [class*="bg-surface-950"] .text-amber-400 {
+    color: #fbbf24 !important;
+}
+html:not(.dark) .welcome-body [class*="bg-surface-950"] .text-emerald-400 {
+    color: #34d399 !important;
+}
+html:not(.dark) .welcome-body [class*="bg-surface-950"] .text-rose-400 {
+    color: #f87171 !important;
+}
+html:not(.dark) .welcome-body [class*="bg-surface-950"] .text-brand-300 {
+    color: #a5b4fc !important;
+}
+
+/* Keep Dashboard/Daftar Akun buttons in navbar readable */
+html:not(.dark) .welcome-body a[class*="bg-surface-950"] span,
+html:not(.dark) .welcome-body a[class*="bg-surface-950"] span * {
+    color: #ffffff !important;
+}
+
+/* Glow effects opacity in light mode */
+html:not(.dark) .welcome-body .glow-orb,
+html:not(.dark) .welcome-body .absolute.bg-brand-500\/10,
+html:not(.dark) .welcome-body .absolute.bg-cyan-500\/10,
+html:not(.dark) .welcome-body .absolute.bg-purple-500\/10 {
+    opacity: 0.15 !important;
+}
+
+/* Buttons in landing page */
+html:not(.dark) .welcome-body a.bg-white\/10 {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: #334155 !important;
+}
+html:not(.dark) .welcome-body a.bg-white\/10:hover {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    color: #0f172a !important;
+}
+
+/* Accordions (FAQ) border */
+html:not(.dark) .welcome-body .border-white\/\[0\.06\],
+html:not(.dark) .welcome-body .border-surface-800\/40,
+html:not(.dark) .welcome-body .border-white\/10 {
+    border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Footer welcome page */
+html:not(.dark) .welcome-body footer {
+    border-color: rgba(0, 0, 0, 0.05) !important;
+}
+html:not(.dark) .welcome-body footer .text-surface-400 {
+    color: #64748b !important;
 }

@@ -159,7 +159,7 @@
     </style>
 </head>
 
-<body class="antialiased bg-surface-950 text-surface-100 selection:bg-brand-500/30 selection:text-white overflow-x-hidden">
+<body class="antialiased bg-surface-950 dark:bg-surface-950 text-surface-900 dark:text-surface-100 selection:bg-brand-500/30 selection:text-white overflow-x-hidden welcome-body">
     <div class="relative min-h-screen ambient-mesh">
         {{-- Animated background nodes --}}
         <div class="glow-orb glow-orb-indigo"></div>
