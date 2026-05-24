@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
     <meta charset="utf-8">
@@ -33,22 +33,159 @@
             font-family: 'Outfit', sans-serif;
         }
 
-        /* Ambient Glowing Mesh Backgrounds */
+        /* Ambient Glowing Mesh Backgrounds (Light Mode) */
         .ambient-mesh {
-            background-color: #020617;
+            background-color: #f8fafc;
             background-image:
-                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 90% 20%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
-                radial-gradient(at 50% 80%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
-                radial-gradient(at 80% 90%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 90% 20%, rgba(168, 85, 247, 0.06) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(6, 182, 212, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 90%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
+        }
+
+        /* Light Mode custom overrides */
+        .welcome-body {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+        }
+
+        .welcome-body h1,
+        .welcome-body h2,
+        .welcome-body h3,
+        .welcome-body h4,
+        .welcome-body h5,
+        .welcome-body h6,
+        .welcome-body .font-display,
+        .welcome-body .text-white:not(.btn-text-white) {
+            color: #0f172a !important;
+        }
+
+        .welcome-body .text-surface-400 {
+            color: #475569 !important;
+        }
+
+        .welcome-body .text-surface-300 {
+            color: #334155 !important;
+        }
+
+        .welcome-body .text-surface-200 {
+            color: #1e293b !important;
+        }
+
+        .welcome-body .glass-panel {
+            background: rgba(255, 255, 255, 0.75) !important;
+            border: 1px solid rgba(15, 23, 42, 0.08) !important;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .welcome-body .glass-panel-hover:hover {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: rgba(99, 102, 241, 0.25) !important;
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.08), 0 0 25px rgba(99, 102, 241, 0.04) !important;
+        }
+
+        .welcome-body .bg-white\/\[0\.02\] {
+            background-color: rgba(15, 23, 42, 0.02) !important;
+        }
+
+        .welcome-body .border-white\/5,
+        .welcome-body .border-white\/10 {
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        .welcome-body .bg-surface-950\/80 {
+            background-color: #f1f5f9 !important;
+        }
+
+        .welcome-body .border-white\/\[0\.08\] {
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        /* Keep gradient texts beautiful */
+        .welcome-body .text-neon-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #0891b2 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        /* Adjust navigation bar for light mode */
+        #navbar {
+            background: rgba(255, 255, 255, 0.8) !important;
+            border-color: rgba(15, 23, 42, 0.06) !important;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        #navbar a {
+            color: #475569 !important;
+        }
+
+        #navbar a:hover {
+            color: #0f172a !important;
+        }
+
+        #navbar span.text-white:not(.bg-surface-950) {
+            color: #0f172a !important;
+        }
+
+        /* Primary button and other dark-themed content */
+        .welcome-body .bg-gradient-to-r,
+        .welcome-body .bg-gradient-to-r * {
+            color: #ffffff !important;
+        }
+
+        .welcome-body .bg-surface-950,
+        .welcome-body .bg-surface-950 *,
+        #navbar a .bg-surface-950,
+        #navbar a .bg-surface-950 *,
+        .btn-text-white,
+        .btn-text-white * {
+            color: #ffffff !important;
+        }
+
+        /* Role Tabs styling overrides */
+        .welcome-body .role-tab-btn:not(.active) {
+            background: rgba(255, 255, 255, 0.5) !important;
+            color: #475569 !important;
+            border-color: rgba(15, 23, 42, 0.06) !important;
+        }
+
+        .welcome-body .role-tab-btn.active {
+            background: #ffffff !important;
+            color: #4f46e5 !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+        }
+
+        /* Timeline adjustments */
+        .welcome-body .workflow-step-num {
+            background: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #4f46e5 !important;
+        }
+
+        /* FAQ Accordion */
+        .welcome-body .faq-item {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border-color: rgba(15, 23, 42, 0.06) !important;
+        }
+
+        .welcome-body .faq-item.active {
+            background: #ffffff !important;
+            border-color: rgba(99, 102, 241, 0.25) !important;
+        }
+
+        /* Footer styling */
+        .welcome-body footer {
+            border-top-color: rgba(15, 23, 42, 0.06) !important;
+            color: #94a3b8 !important;
         }
 
         .glow-orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(100px);
-            opacity: 0.6;
-            mix-blend-mode: screen;
+            opacity: 0.3;
+            mix-blend-mode: multiply;
             pointer-events: none;
             animation: orb-bounce 25s ease-in-out infinite alternate;
         }
@@ -214,7 +351,7 @@
 </head>
 
 <body
-    class="antialiased bg-surface-950 dark:bg-surface-950 text-surface-900 dark:text-surface-100 selection:bg-brand-500/30 selection:text-white overflow-x-hidden welcome-body">
+    class="antialiased bg-surface-50 text-surface-900 selection:bg-brand-500/30 selection:text-white overflow-x-hidden welcome-body">
     <div class="relative min-h-screen ambient-mesh">
         {{-- Animated background nodes --}}
         <div class="glow-orb glow-orb-indigo"></div>
@@ -266,7 +403,7 @@
                             <span
                                 class="absolute inset-0 bg-gradient-to-r from-brand-600 to-cyan-500 rounded-xl transition-all duration-300 group-hover:opacity-100"></span>
                             <span
-                                class="relative block px-6 py-2.5 rounded-[11px] bg-surface-950 text-sm font-bold text-white transition-colors duration-300 group-hover:bg-transparent">
+                                class="relative block px-6 py-2.5 rounded-[11px] bg-surface-950 text-sm font-bold transition-colors duration-300 group-hover:bg-transparent btn-text-white">
                                 Dashboard
                             </span>
                         </a>
@@ -278,7 +415,7 @@
                             <span
                                 class="absolute inset-0 bg-gradient-to-r from-brand-500 via-purple-500 to-cyan-400 rounded-xl"></span>
                             <span
-                                class="relative block px-6 py-2.5 rounded-[11px] bg-surface-950 text-sm font-bold text-white transition-all duration-300 group-hover:bg-transparent shadow-lg shadow-brand-500/10">
+                                class="relative block px-6 py-2.5 rounded-[11px] bg-surface-950 text-sm font-bold transition-all duration-300 group-hover:bg-transparent shadow-lg shadow-brand-500/10 btn-text-white">
                                 Daftar Akun
                             </span>
                         </a>
@@ -319,7 +456,7 @@
                     <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-14 animate-slide-up"
                         style="animation-delay: 200ms">
                         <button onclick="showCoolAlert()"
-                            class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-brand-600 via-brand-500 to-cyan-500 text-white rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-neon-glow active:scale-[0.98] group">
+                            class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-brand-600 via-brand-500 to-cyan-500 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-neon-glow active:scale-[0.98] group btn-text-white">
                             Mulai Sekarang
                             <i data-lucide="arrow-right"
                                 class="w-5 h-5 ml-2 group-hover:translate-x-1.5 transition-transform duration-300"></i>
