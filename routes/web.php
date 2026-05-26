@@ -104,6 +104,8 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('laporan', [SiswaLaporanPklController::class, 'index'])->name('laporan.index');
         Route::get('laporan/create', [SiswaLaporanPklController::class, 'create'])->name('laporan.create');
         Route::post('laporan', [SiswaLaporanPklController::class, 'store'])->name('laporan.store');
+        Route::get('laporan/{laporanPkl}/edit', [SiswaLaporanPklController::class, 'edit'])->name('laporan.edit');
+        Route::put('laporan/{laporanPkl}', [SiswaLaporanPklController::class, 'update'])->name('laporan.update');
         Route::get('pengajuan/{pengajuan}/sertifikat', [SiswaPengajuanPklController::class, 'cetakSertifikat'])->name('pengajuan.sertifikat');
         Route::get('absensi', [\App\Http\Controllers\Siswa\AbsensiPklController::class, 'index'])->name('absensi.index');
         Route::post('absensi', [\App\Http\Controllers\Siswa\AbsensiPklController::class, 'store'])->name('absensi.store');

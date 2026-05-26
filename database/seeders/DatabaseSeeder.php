@@ -79,6 +79,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'pembimbing@pkl.test',
             'password' => bcrypt('password'),
             'role' => 'pembimbing_industri',
+            'is_approved' => true,
         ]);
         \App\Models\PembimbingIndustri::create([
             'user_id' => $pembimbingUser->id,

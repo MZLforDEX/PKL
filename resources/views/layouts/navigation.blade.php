@@ -12,7 +12,7 @@
         'admin' => [
             ['route' => 'admin.siswa.index', 'label' => 'Siswa', 'icon' => 'users', 'pattern' => 'admin/siswa*'],
             ['route' => 'admin.guru.index', 'label' => 'Guru', 'icon' => 'user-check', 'pattern' => 'admin/guru*'],
-            ['route' => 'admin.tempat-pkl.index', 'label' => 'Tempat PKL', 'icon' => 'building-2', 'pattern' => 'admin/tempat-pkl*'],
+            ['route' => 'admin.tempat-pkl.index', 'label' => 'Tempat PKL', 'icon' => 'building', 'pattern' => 'admin/tempat-pkl*'],
             ['route' => 'admin.pembimbing-industri.index', 'label' => 'Pembimbing Industri', 'icon' => 'briefcase', 'pattern' => 'admin/pembimbing-industri*'],
             ['route' => 'admin.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-text', 'pattern' => 'admin/pengajuan*'],
             ['route' => 'admin.users.unapproved', 'label' => 'Pendaftar', 'icon' => 'user-plus', 'pattern' => 'admin/users*'],
@@ -49,131 +49,96 @@
         'pembimbing_industri' => 'Pembimbing Industri',
         default => 'User',
     };
-
-    $roleColor = match($role) {
-        'admin' => 'from-rose-500 to-orange-500',
-        'guru' => 'from-emerald-500 to-teal-500',
-        'siswa' => 'from-brand-500 to-cyan-500',
-        'pembimbing_industri' => 'from-purple-500 to-indigo-500',
-        default => 'from-brand-500 to-brand-600',
-    };
 @endphp
 
-<div x-data="{ sidebarOpen: false }" x-init="$watch('sidebarOpen', val => { document.body.style.overflow = val ? 'hidden' : ''; })" @keydown.window.escape="sidebarOpen = false">
-    {{-- Overlay backdrop (mobile only) --}}
-    <div x-show="sidebarOpen" @click="sidebarOpen = false" x-cloak x-transition.opacity class="fixed inset-0 z-30 bg-surface-950/40 backdrop-blur-sm lg:hidden"></div>
+<!-- Mobile Sidebar Backdrop -->
+<div x-show="mobileSidebarOpen" 
+     x-transition:enter="transition-opacity ease-linear duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity ease-linear duration-300"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="mobileSidebarOpen = false"
+     class="fixed inset-0 z-40 bg-zinc-950/40 dark:bg-zinc-950/60 backdrop-blur-sm lg:hidden"
+     x-cloak></div>
 
-    {{-- Mobile header --}}
-    <div class="fixed top-0 left-0 right-0 z-20 h-14 bg-white/90 backdrop-blur-xl border-b border-surface-200/60 flex items-center justify-between px-4 shadow-sm lg:hidden safe-top">
-        <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-2 group">
-            <div class="w-8 h-8 rounded-lg bg-surface-950 flex items-center justify-center overflow-hidden">
-                <x-application-logo class="h-8 w-8 object-contain transition-all group-hover:scale-105 duration-300" />
+<!-- Sidebar Container -->
+<aside :class="mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+       class="fixed top-0 bottom-0 left-0 z-40 w-64 bg-white dark:bg-zinc-900 border-r border-gray-200/80 dark:border-zinc-800 flex flex-col transition-transform duration-300 ease-in-out">
+    
+    <!-- Branding Header -->
+    <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-zinc-800 shrink-0">
+        <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm ring-4 ring-indigo-500/10">
+                <i data-lucide="graduation-cap" class="w-4.5 h-4.5"></i>
+            </div>
+            <div>
+                <span class="text-sm font-extrabold tracking-tight text-gray-900 dark:text-white">SPARTA</span>
+                <span class="inline-flex items-center rounded-md bg-indigo-50 dark:bg-indigo-950/30 px-1.5 py-0.5 text-[9px] font-semibold text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-400/20 ml-1.5">PKL</span>
             </div>
         </a>
-        <div class="flex items-center gap-1.5">
-            <a href="{{ route('notifications.index') }}" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all relative">
-                <i data-lucide="bell" class="w-5 h-5"></i>
-                @if(auth()->user()->unreadNotifications->count() > 0)
-                    <span class="absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold bg-rose-500 text-white rounded-full flex items-center justify-center">
-                        {{ auth()->user()->unreadNotifications->count() }}
-                    </span>
-                @endif
-            </a>
-            <button @click="sidebarOpen = !sidebarOpen" class="p-2.5 text-surface-500 hover:text-surface-700 rounded-xl hover:bg-brand-50 transition-all active:scale-95" aria-label="Toggle menu">
-                <i data-lucide="menu" class="w-5 h-5"></i>
-            </button>
+    </div>
+
+    <!-- Active Access Badge -->
+    <div class="px-6 py-4 shrink-0">
+        <div class="rounded-xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/30 p-3">
+            <span class="text-[9px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">Akses Sebagai</span>
+            <p class="text-xs font-bold text-gray-800 dark:text-zinc-200 mt-0.5">{{ $roleLabel }}</p>
         </div>
     </div>
 
-    {{-- Sidebar --}}
-    <nav class="sidebar max-w-[85vw] -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-
-        {{-- Logo Area --}}
-        <div class="flex items-center justify-between h-16 px-5 border-b border-white/[0.06] shrink-0">
-            <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br {{ $roleColor }} flex items-center justify-center shadow-lg">
-                    <i data-lucide="hexagon" class="w-5 h-5 text-white"></i>
-                </div>
-                <div>
-                    <span class="text-base font-bold text-white tracking-tight">SPARTA</span>
-                    <span class="block text-[10px] text-surface-500 font-medium -mt-0.5">PKL System</span>
-                </div>
-            </a>
-            <button @click="sidebarOpen = false" class="lg:hidden p-2 text-surface-500 hover:text-white rounded-xl hover:bg-white/10 transition-all" aria-label="Close sidebar">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-        </div>
-
-        {{-- Role Badge --}}
-        <div class="px-5 pt-5 pb-2">
-            <div class="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-                <span class="text-[10px] font-semibold text-surface-500 uppercase tracking-widest">Role Aktif</span>
-                <p class="text-sm font-bold text-white mt-0.5">{{ $roleLabel }}</p>
-            </div>
-        </div>
-
-        {{-- Nav links --}}
-        <div class="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-            <p class="px-4 pt-2 pb-2 text-[10px] font-semibold text-surface-600 uppercase tracking-widest">Menu Utama</p>
-
-            <a href="{{ route($dashboardRoute) }}" @class([
-                'sidebar-link',
-                'active' => request()->routeIs('*.dashboard'),
-            ])>
-                <i data-lucide="layout-dashboard" class="w-[18px] h-[18px] shrink-0"></i>
+    <!-- Sidebar Links Scrollable -->
+    <nav class="flex-1 overflow-y-auto px-4 py-2 space-y-6">
+        
+        <!-- Dashboard Link -->
+        <div>
+            <a href="{{ route($dashboardRoute) }}" 
+               class="flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
+                <i data-lucide="layout-dashboard" class="w-4.5 h-4.5 shrink-0"></i>
                 <span>Dashboard</span>
             </a>
+        </div>
 
-            <div class="my-2 mx-4 border-t border-white/[0.06]"></div>
-            <p class="px-4 pt-2 pb-2 text-[10px] font-semibold text-surface-600 uppercase tracking-widest">Kelola</p>
+        <!-- Menu Section Group -->
+        <div class="space-y-1">
+            <span class="px-3 text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider block mb-2">Layanan & Kelola</span>
 
             @foreach($navItems as $item)
-                @php $isActive = request()->routeIs($item['pattern']); @endphp
-                <a href="{{ route($item['route']) }}" @class([
-                    'sidebar-link',
-                    'active' => $isActive,
-                ])>
-                    <i data-lucide="{{ $item['icon'] }}" class="w-[18px] h-[18px] shrink-0"></i>
-                    <span>{{ $item['label'] }}</span>
-                    @if($item['route'] === 'notifications.index' && auth()->user()->unreadNotifications->count() > 0)
-                        <span class="ml-auto px-2 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full">
-                            {{ auth()->user()->unreadNotifications->count() }}
+                @php
+                    $isActive = request()->is($item['pattern']) || request()->routeIs($item['route']);
+                    $unreadCount = ($item['route'] === 'notifications.index') ? auth()->user()->unreadNotifications->count() : 0;
+                @endphp
+                <a href="{{ route($item['route']) }}" 
+                   class="flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg transition-colors {{ $isActive ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400 font-semibold' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
+                    <i data-lucide="{{ $item['icon'] }}" class="w-4.5 h-4.5 shrink-0"></i>
+                    <span class="truncate">{{ $item['label'] }}</span>
+                    @if($unreadCount > 0)
+                        <span class="ml-auto bg-rose-500 text-white rounded-full px-1.5 py-0.5 text-[9px] font-bold">
+                            {{ $unreadCount }}
                         </span>
-                    @elseif($isActive)
-                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-soft"></span>
                     @endif
                 </a>
             @endforeach
         </div>
 
-        {{-- User footer --}}
-        <div class="shrink-0 border-t border-white/[0.06] p-4 safe-bottom">
-            <div class="flex items-center gap-3 px-2 mb-3">
-                @if(Auth::user()->avatar)
-                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-9 h-9 rounded-full object-cover ring-2 ring-white/20 shrink-0">
-                @else
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br {{ $roleColor }} flex items-center justify-center text-white font-bold text-sm ring-2 ring-white/10 shrink-0">
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    </div>
-                @endif
-                <div class="min-w-0 flex-1">
-                    <p class="text-sm font-bold text-white truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-[10px] font-medium text-surface-500 truncate">{{ Auth::user()->email }}</p>
+    </nav>
+
+    <!-- Sidebar Bottom User Info -->
+    <div class="border-t border-gray-100 dark:border-zinc-800 p-4 bg-gray-50/30 dark:bg-zinc-900/50 shrink-0">
+        <div class="flex items-center gap-3 px-2">
+            @if(auth()->user()->avatar)
+                <img class="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/10" src="{{ asset('storage/' . auth()->user()->avatar) }}">
+            @else
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-indigo-500/10">
+                    {{ substr(auth()->user()->name, 0, 1) }}
                 </div>
-            </div>
-            <div class="flex gap-1.5">
-                <a href="{{ route('profile.edit') }}" class="flex-1 text-center px-3 py-2 text-xs font-semibold text-surface-400 rounded-lg hover:bg-white/[0.06] hover:text-white transition-all">
-                    <i data-lucide="settings" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>Profile
-                </a>
-                <form id="logout-form" method="POST" action="{{ route('logout') }}" class="flex-1">
-                    @csrf
-                    <button type="button"
-                        onclick="confirmAction('Konfirmasi Keluar', 'Apakah kamu yakin ingin mengakhiri sesi ini?', 'warning', 'Ya, Keluar Sekarang', () => document.getElementById('logout-form').submit())"
-                        class="w-full text-center px-3 py-2 text-xs font-semibold text-rose-400 rounded-lg hover:bg-rose-500/10 hover:text-rose-300 transition-all">
-                        <i data-lucide="log-out" class="w-3.5 h-3.5 inline -mt-0.5 mr-1"></i>Logout
-                    </button>
-                </form>
+            @endif
+            <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-gray-800 dark:text-zinc-200 truncate">{{ auth()->user()->name }}</p>
+                <p class="text-[9px] font-medium text-gray-400 dark:text-zinc-500 truncate mt-0.5">{{ auth()->user()->email }}</p>
             </div>
         </div>
-    </nav>
-</div>
+    </div>
+
+</aside>

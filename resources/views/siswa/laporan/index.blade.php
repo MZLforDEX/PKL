@@ -5,10 +5,12 @@
                 <h2 class="font-extrabold text-lg md:text-2xl text-surface-900 tracking-tight">Laporan Akhir PKL</h2>
                 <p class="text-sm text-surface-500 mt-0.5 hidden sm:block">Unggah dokumen laporan akhir Anda setelah menyelesaikan PKL.</p>
             </div>
+            @if($canUpload)
             <a href="{{ route('siswa.laporan.create') }}" class="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-1.5">
                 <i data-lucide="upload-cloud" class="w-4 h-4 shrink-0"></i>
                 Upload Laporan
             </a>
+            @endif
         </div>
     </x-slot>
 
@@ -69,10 +71,18 @@
                                     <p class="text-xs text-surface-500 font-medium">{{ $l->catatan_guru ?? 'Belum ada catatan' }}</p>
                                 </td>
                                 <td class="whitespace-nowrap text-right">
-                                    <a href="{{ asset('storage/' . $l->file_laporan) }}" target="_blank" class="btn-secondary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-xs">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 text-brand-500"></i>
-                                        Lihat File
-                                    </a>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ asset('storage/' . $l->file_laporan) }}" target="_blank" class="btn-secondary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-xs">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 text-brand-500"></i>
+                                            Lihat File
+                                        </a>
+                                        @if($l->status === 'revisi')
+                                        <a href="{{ route('siswa.laporan.edit', $l) }}" class="btn-primary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-xs">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5 shrink-0"></i>
+                                            Perbaiki
+                                        </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                             @empty
