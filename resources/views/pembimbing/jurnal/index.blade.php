@@ -32,10 +32,10 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($j->pengajuanPkl->siswa->user->name, 0, 1) }}
+                                            {{ substr($j->pengajuanPkl?->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $j->pengajuanPkl->siswa->user->name }}</div>
+                                            <div class="text-sm font-bold text-surface-900">{{ $j->pengajuanPkl?->siswa?->user?->name ?? '-' }}</div>
                                             <div class="text-[11px] text-surface-400 font-medium uppercase tracking-wider flex items-center mt-0.5">
                                                 <i data-lucide="calendar" class="w-3 h-3 mr-1 shrink-0"></i>
                                                 {{ \Carbon\Carbon::parse($j->tanggal)->format('d M Y') }}

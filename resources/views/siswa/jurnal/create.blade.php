@@ -13,7 +13,7 @@
             <div class="card-premium p-6 sm:p-8">
                 <div class="mb-6 p-4 bg-surface-50 rounded-2xl border border-surface-200/60 flex items-center gap-3">
                     <i data-lucide="building" class="w-5 h-5 text-brand-500 shrink-0"></i>
-                    <p class="text-sm font-semibold text-surface-700">Penempatan: {{ $pengajuan->tempatPkl->nama_tempat }}</p>
+                    <p class="text-sm font-semibold text-surface-700">Penempatan: {{ $pengajuan->tempatPkl?->nama_tempat ?? '-' }}</p>
                 </div>
 
                 <form action="{{ route('siswa.jurnal.store') }}" method="POST" enctype="multipart/form-data">

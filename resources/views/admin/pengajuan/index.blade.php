@@ -26,22 +26,22 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($p->siswa->user->name, 0, 1) }}
+                                            {{ substr($p->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
-                                        <span class="text-sm font-bold text-surface-800">{{ $p->siswa->user->name }}</span>
+                                        <span class="text-sm font-bold text-surface-800">{{ $p->siswa?->user?->name ?? '-' }}</span>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center text-sm text-surface-600 gap-2">
                                         <i data-lucide="building" class="w-4 h-4 text-surface-400 shrink-0"></i>
-                                        {{ $p->tempatPkl->nama_tempat }}
+                                        {{ $p->tempatPkl?->nama_tempat ?? '-' }}
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap">
                                     @if($p->guru)
                                         <span class="flex items-center gap-2 text-sm text-surface-600">
                                             <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                                            {{ $p->guru->user->name }}
+                                            {{ $p->guru?->user?->name ?? '-' }}
                                         </span>
                                     @else
                                         <span class="text-sm text-surface-400 italic">Belum ditentukan</span>

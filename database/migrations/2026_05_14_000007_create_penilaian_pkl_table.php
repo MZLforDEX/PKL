@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('penilaian_pkl', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengajuan_pkl_id')->constrained('pengajuan_pkl')->cascadeOnDelete();
+            $table->foreignId('pengajuan_pkl_id')->unique()->constrained('pengajuan_pkl')->cascadeOnDelete();
             $table->integer('nilai_sikap');
             $table->integer('nilai_keterampilan');
             $table->integer('nilai_laporan');

@@ -31,7 +31,7 @@ class LaporanPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Laporan tidak dalam status menunggu review.']);
         }
 
-        $laporanPkl->update(['status' => 'diterima', 'catatan_guru' => $request->catatan_guru]);
+        $laporanPkl->update(['status' => 'diterima', 'catatan_guru' => $request->filled('catatan_guru') ? $request->catatan_guru : $laporanPkl->catatan_guru]);
         $laporanPkl->pengajuanPkl->update(['status' => 'menunggu_penilaian']);
         return redirect()->back()->with('success', 'Laporan telah diterima.');
     }

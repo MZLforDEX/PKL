@@ -29,7 +29,7 @@ class PengajuanPklStatusChanged extends Notification
         $mail = (new MailMessage)
             ->subject('Status Pengajuan PKL: ' . $statusStr)
             ->greeting('Halo, ' . $notifiable->name . '!')
-            ->line('Status pengajuan PKL Anda di ' . $this->pengajuan->tempatPkl->nama_tempat . ' telah diperbarui menjadi: **' . $statusStr . '**.');
+            ->line('Status pengajuan PKL Anda di ' . ($this->pengajuan->tempatPkl?->nama_tempat ?? 'Tempat PKL') . ' telah diperbarui menjadi: **' . $statusStr . '**.');
             
         if ($this->pengajuan->catatan) {
             $mail->line('Catatan: "' . $this->pengajuan->catatan . '"');
@@ -43,10 +43,10 @@ class PengajuanPklStatusChanged extends Notification
     {
         return [
             'pengajuan_id' => $this->pengajuan->id,
-            'tempat_pkl_nama' => $this->pengajuan->tempatPkl->nama_tempat,
+            'tempat_pkl_nama' => $this->pengajuan->tempatPkl?->nama_tempat ?? 'Tempat PKL',
             'status' => $this->pengajuan->status,
             'catatan' => $this->pengajuan->catatan,
-            'message' => 'Status pengajuan PKL Anda di ' . $this->pengajuan->tempatPkl->nama_tempat . ' telah diperbarui menjadi ' . str_replace('_', ' ', ucwords($this->pengajuan->status)) . '.',
+            'message' => 'Status pengajuan PKL Anda di ' . ($this->pengajuan->tempatPkl?->nama_tempat ?? 'Tempat PKL') . ' telah diperbarui menjadi ' . str_replace('_', ' ', ucwords($this->pengajuan->status)) . '.',
             'title' => 'Pembaruan Pengajuan PKL',
         ];
     }

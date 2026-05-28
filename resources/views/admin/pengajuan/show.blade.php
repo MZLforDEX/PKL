@@ -24,11 +24,11 @@
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-surface-100">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-base md:text-xl shadow-sm shrink-0">
-                                    {{ substr($pengajuanPkl->siswa->user->name, 0, 1) }}
+                                    {{ substr($pengajuanPkl->siswa?->user?->name ?? '-', 0, 1) }}
                                 </div>
                                 <div>
-                                    <h3 class="text-base md:text-lg font-bold text-surface-900 leading-snug">{{ $pengajuanPkl->siswa->user->name }}</h3>
-                                    <p class="text-xs md:text-sm text-surface-400 font-medium">NIS: {{ $pengajuanPkl->siswa->nis }} • {{ $pengajuanPkl->siswa->kelas }}</p>
+                                    <h3 class="text-base md:text-lg font-bold text-surface-900 leading-snug">{{ $pengajuanPkl->siswa?->user?->name ?? '-' }}</h3>
+                                    <p class="text-xs md:text-sm text-surface-400 font-medium">NIS: {{ $pengajuanPkl->siswa?->nis ?? '-' }} • {{ $pengajuanPkl->siswa?->kelas ?? '-' }}</p>
                                 </div>
                             </div>
                             @php
@@ -53,7 +53,7 @@
                                 <label class="form-label">Target Tempat PKL</label>
                                 <div class="flex items-center text-surface-800 font-bold mt-1 text-sm md:text-base">
                                     <i data-lucide="map-pin" class="w-4 h-4 mr-2 text-brand-500"></i>
-                                    {{ $pengajuanPkl->tempatPkl->nama_tempat }}
+                                    {{ $pengajuanPkl->tempatPkl?->nama_tempat ?? '-' }}
                                 </div>
                             </div>
                             <div>
@@ -89,11 +89,11 @@
                         @if($pengajuanPkl->guru_id)
                         <div class="flex items-center p-4 bg-brand-50/50 rounded-2xl border border-brand-100/60 mb-4">
                             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-sm mr-3 shrink-0">
-                                {{ substr($pengajuanPkl->guru->user->name, 0, 1) }}
+                                {{ substr($pengajuanPkl->guru?->user?->name ?? '-', 0, 1) }}
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-surface-900">{{ $pengajuanPkl->guru->user->name }}</p>
-                                <p class="text-[11px] text-surface-400 font-medium">NIP: {{ $pengajuanPkl->guru->nip }}</p>
+                                <p class="text-sm font-bold text-surface-900">{{ $pengajuanPkl->guru?->user?->name ?? '-' }}</p>
+                                <p class="text-[11px] text-surface-400 font-medium">NIP: {{ $pengajuanPkl->guru?->nip ?? '-' }}</p>
                             </div>
                         </div>
                         <p class="text-[10px] text-surface-400 text-center italic font-medium">Guru sudah ditentukan oleh sistem</p>

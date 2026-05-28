@@ -79,11 +79,11 @@
                         </h4>
                         <div class="flex items-center p-3.5 bg-surface-50 rounded-2xl border border-surface-100">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold mr-3 shadow-sm shrink-0">
-                                {{ substr($jurnalPkl->pengajuanPkl->siswa->user->name, 0, 1) }}
+                                {{ substr($jurnalPkl->pengajuanPkl?->siswa?->user?->name ?? '-', 0, 1) }}
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-surface-900">{{ $jurnalPkl->pengajuanPkl->siswa->user->name }}</p>
-                                <p class="text-[11px] text-surface-400 font-medium font-mono">NIS: {{ $jurnalPkl->pengajuanPkl->siswa->nis }}</p>
+                                <p class="text-sm font-bold text-surface-900">{{ $jurnalPkl->pengajuanPkl?->siswa?->user?->name ?? '-' }}</p>
+                                <p class="text-[11px] text-surface-400 font-medium font-mono">NIS: {{ $jurnalPkl->pengajuanPkl?->siswa?->nis ?? '-' }}</p>
                             </div>
                         </div>
                     </div>

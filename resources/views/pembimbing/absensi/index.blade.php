@@ -25,16 +25,16 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($a->pengajuanPkl->siswa->user->name, 0, 1) }}
+                                            {{ substr($a->pengajuanPkl?->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $a->pengajuanPkl->siswa->user->name }}</div>
-                                            <div class="text-[10px] text-surface-400 font-medium font-mono uppercase tracking-wider">{{ $a->pengajuanPkl->siswa->nis }}</div>
+                                            <div class="text-sm font-bold text-surface-900">{{ $a->pengajuanPkl?->siswa?->user?->name ?? '-' }}</div>
+                                            <div class="text-[10px] text-surface-400 font-medium font-mono uppercase tracking-wider">{{ $a->pengajuanPkl?->siswa?->nis ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-700">
-                                    {{ $a->pengajuanPkl->siswa->kelas }} / {{ $a->pengajuanPkl->siswa->jurusan }}
+                                    {{ $a->pengajuanPkl?->siswa?->kelas ?? '-' }} / {{ $a->pengajuanPkl?->siswa?->jurusan ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-800">
                                     <span class="font-semibold">{{ \Carbon\Carbon::parse($a->tanggal)->format('d F Y') }}</span>

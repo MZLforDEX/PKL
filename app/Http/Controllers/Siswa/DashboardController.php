@@ -5,36 +5,56 @@ namespace App\Http\Controllers\Siswa;
 use App\Http\Controllers\Controller;
 use App\Models\JurnalPkl;
 use App\Models\PengajuanPkl;
+use App\Models\AbsensiPkl;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         $siswa = auth()->user()->siswa;
-        $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl'])
+        $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl', 'laporanPkl'])
             ->where('siswa_id', $siswa->id)->latest()->first();
-        $jmlJurnal = JurnalPkl::whereHas('pengajuanPkl', fn($q) => $q->where('siswa_id', $siswa->id))->count();
-
+        
+        $jmlJurnal = 0;
         $jmlValidJurnal = 0;
         $totalHari = 50; // default target
         $periode = '-';
         $progressPersen = 0;
+        $jurnalTerbaru = collect();
+        $absensiTerbaru = collect();
+        $absensiHariIni = null;
 
         if ($pengajuan) {
+            $jmlJurnal = JurnalPkl::where('pengajuan_pkl_id', $pengajuan->id)->count();
             $jmlValidJurnal = JurnalPkl::where('pengajuan_pkl_id', $pengajuan->id)
                 ->where('status', 'valid')
                 ->count();
             
+            $jurnalTerbaru = JurnalPkl::where('pengajuan_pkl_id', $pengajuan->id)
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $absensiTerbaru = AbsensiPkl::where('pengajuan_pkl_id', $pengajuan->id)
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $absensiHariIni = AbsensiPkl::where('pengajuan_pkl_id', $pengajuan->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+            
             if ($pengajuan->tanggal_mulai && $pengajuan->tanggal_selesai) {
                 try {
-                    $mulai = \Carbon\Carbon::parse($pengajuan->tanggal_mulai);
-                    $selesai = \Carbon\Carbon::parse($pengajuan->tanggal_selesai);
+                    $mulai = Carbon::parse($pengajuan->tanggal_mulai);
+                    $selesai = Carbon::parse($pengajuan->tanggal_selesai);
                     
                     // Format period (e.g. "Agt 2023 - Nov 2023")
                     $periode = $mulai->translatedFormat('M Y') . ' - ' . $selesai->translatedFormat('M Y');
                     
                     // Count total weekdays (Monday - Friday) as working days
-                    $diff = $mulai->diffInDaysFiltered(function (\Carbon\Carbon $date) {
+                    $diff = $mulai->diffInDaysFiltered(function (Carbon $date) {
                         return !$date->isWeekend();
                     }, $selesai);
                     
@@ -48,6 +68,18 @@ class DashboardController extends Controller
             $progressPersen = $totalHari > 0 ? min(100, round(($jmlValidJurnal / $totalHari) * 100)) : 0;
         }
 
-        return view('siswa.dashboard', compact('pengajuan', 'jmlJurnal', 'jmlValidJurnal', 'totalHari', 'periode', 'progressPersen'));
+        return view('siswa.dashboard', compact(
+            'siswa',
+            'pengajuan',
+            'jmlJurnal',
+            'jmlValidJurnal',
+            'totalHari',
+            'periode',
+            'progressPersen',
+            'jurnalTerbaru',
+            'absensiTerbaru',
+            'absensiHariIni'
+        ));
     }
 }
+

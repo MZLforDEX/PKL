@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pembimbing_industri', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->foreignId('tempat_pkl_id')->constrained('tempat_pkl')->cascadeOnDelete();
             $table->string('no_hp')->nullable();
             $table->string('jabatan')->nullable();

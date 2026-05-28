@@ -79,12 +79,12 @@ class AbsensiPklController extends Controller
             }
 
             preg_match('/^data:image\/(jpeg|png|jpg|webp);base64,/', $fotoData, $mimeMatch);
-            $ext = match ($mimeMatch[1]) {
+            $ext = isset($mimeMatch[1]) ? match ($mimeMatch[1]) {
                 'jpeg', 'jpg' => 'jpg',
                 'png' => 'png',
                 'webp' => 'webp',
                 default => 'jpg',
-            };
+            } : 'jpg';
 
             $fileName = 'selfie_' . uniqid() . '.' . $ext;
             $fotoPath = 'absensi/' . $fileName;

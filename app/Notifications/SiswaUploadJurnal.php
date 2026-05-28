@@ -23,9 +23,14 @@ class SiswaUploadJurnal extends Notification
         return ['database', 'mail'];
     }
 
+    private function getSiswaName(): string
+    {
+        return $this->jurnal->pengajuanPkl?->siswa?->user?->name ?? 'Siswa';
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $siswaName = $this->jurnal->pengajuanPkl->siswa->user->name;
+        $siswaName = $this->getSiswaName();
         return (new MailMessage)
             ->subject('Jurnal Baru Diunggah: ' . $siswaName)
             ->greeting('Halo, Bapak/Ibu ' . $notifiable->name . '!')
@@ -37,7 +42,7 @@ class SiswaUploadJurnal extends Notification
 
     public function toArray(object $notifiable): array
     {
-        $siswaName = $this->jurnal->pengajuanPkl->siswa->user->name;
+        $siswaName = $this->getSiswaName();
         return [
             'jurnal_id' => $this->jurnal->id,
             'siswa_name' => $siswaName,

@@ -59,7 +59,7 @@ Key transitions:
 - **Admin**: CRUD master data + assign `guru_id` on pengajuan + approve user registrations (`is_approved`). Admin-created accounts auto-approved.
 - **Pembimbing industri**: tied to `tempat_pkl_id`. Validates jurnal (parallel with guru). Views absensi.
 - **Quota** (`TempatPkl`): counts pengajuan with status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Exposed via `sisa_kuota` and `is_penuh` accessors.
-- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → sets pengajuan `selesai`. Does **not** explicitly validate `menunggu_penilaian` status before saving.
+- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → sets pengajuan `selesai`. Validates `menunggu_penilaian` status before saving (redirects back with error if wrong).
 
 ## Notifications (database + mail)
 
@@ -113,4 +113,6 @@ Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
 - Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
 - UI language: Indonesian.
 - `QUEUE_CONNECTION=database` — notifications + job tables used. Queue listener is part of `composer run dev`.
+- `SESSION_DRIVER=database`, `CACHE_STORE=database` — non-default (usually `file`). Tests override these to `array` and `sync` respectively.
+- Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `app.blade.php` loads Inter from Google Fonts with inline `font-family: 'Inter'`.
 - No `opencode.json` — config lives solely in `AGENTS.md`.

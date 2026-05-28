@@ -24,19 +24,19 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($s->siswa->user->name, 0, 1) }}
+                                            {{ substr($s->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $s->siswa->user->name }}</div>
-                                            <div class="text-[10px] text-surface-400 font-medium font-mono uppercase tracking-wider">{{ $s->siswa->nis }}</div>
+                                            <div class="text-sm font-bold text-surface-900">{{ $s->siswa?->user?->name ?? '-' }}</div>
+                                            <div class="text-[10px] text-surface-400 font-medium font-mono uppercase tracking-wider">{{ $s->siswa?->nis ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-700">
-                                    {{ $s->siswa->kelas }} / {{ $s->siswa->jurusan }}
+                                    {{ $s->siswa?->kelas ?? '-' }} / {{ $s->siswa?->jurusan ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-600">
-                                    {{ $s->guru ? $s->guru->user->name : 'Belum ditentukan' }}
+                                    {{ $s->guru ? ($s->guru?->user?->name ?? '-') : 'Belum ditentukan' }}
                                 </td>
                                 <td class="whitespace-nowrap">
                                     @php

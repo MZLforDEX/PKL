@@ -17,18 +17,22 @@
                         <div class="sm:col-span-2">
                             <label class="form-label">Nama Tempat</label>
                             <input type="text" name="nama_tempat" value="{{ old('nama_tempat', $tempatPkl->nama_tempat) }}" class="form-input-premium" required>
+                            @error('nama_tempat') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label class="form-label">Alamat</label>
                             <textarea name="alamat" rows="3" class="form-input-premium" required>{{ old('alamat', $tempatPkl->alamat) }}</textarea>
+                            @error('alamat') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="form-label">Bidang Usaha</label>
                             <input type="text" name="bidang_usaha" value="{{ old('bidang_usaha', $tempatPkl->bidang_usaha) }}" class="form-input-premium" required>
+                            @error('bidang_usaha') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="form-label">Kuota</label>
                             <input type="number" name="kuota" value="{{ old('kuota', $tempatPkl->kuota) }}" class="form-input-premium" required>
+                            @error('kuota') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="form-label">Kontak Person</label>

@@ -14,6 +14,9 @@ class UpdateGuruRequest extends FormRequest
     public function rules(): array
     {
         $guru = $this->route('guru');
+        if (!$guru) {
+            return [];
+        }
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $guru->user_id,

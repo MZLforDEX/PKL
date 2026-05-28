@@ -14,11 +14,11 @@
                 <div class="mb-8 p-4.5 bg-surface-50 rounded-2xl border border-surface-200/60">
                     <div class="flex items-center gap-3.5">
                         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0">
-                            {{ substr($pengajuanPkl->siswa->user->name, 0, 1) }}
+                            {{ substr($pengajuanPkl->siswa?->user?->name ?? '-', 0, 1) }}
                         </div>
                         <div>
-                            <p class="font-bold text-surface-900 leading-snug">{{ $pengajuanPkl->siswa->user->name }}</p>
-                            <p class="text-xs text-surface-400 font-medium mt-0.5">{{ $pengajuanPkl->tempatPkl->nama_tempat }}</p>
+                            <p class="font-bold text-surface-900 leading-snug">{{ $pengajuanPkl->siswa?->user?->name ?? '-' }}</p>
+                            <p class="text-xs text-surface-400 font-medium mt-0.5">{{ $pengajuanPkl->tempatPkl?->nama_tempat ?? '-' }}</p>
                         </div>
                     </div>
                 </div>

@@ -118,11 +118,12 @@ class AbsensiPklTest extends TestCase
         $base64Image = 'data:image/jpeg;base64,' . base64_encode('dummy image content');
 
         // First check-in
-        $this->actingAs($this->siswaUser)->post(route('siswa.absensi.store'), [
+        $response = $this->actingAs($this->siswaUser)->post(route('siswa.absensi.store'), [
             'latitude' => -4.0,
             'longitude' => 121.0,
             'foto_selfie' => $base64Image,
         ]);
+        $response->assertSessionHasNoErrors();
 
         // Second check-in
         $response = $this->actingAs($this->siswaUser)->post(route('siswa.absensi.store'), [

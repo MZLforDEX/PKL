@@ -45,7 +45,7 @@
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-700">
-                                    {{ $p->tempatPkl->nama_tempat }}
+                                    {{ $p->tempatPkl?->nama_tempat ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-600">
                                     {{ $p->jabatan ?? '-' }}

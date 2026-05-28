@@ -8,7 +8,7 @@
                     <div class="w-2 h-8 rounded-full bg-gradient-to-b from-purple-500 to-indigo-400"></div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-surface-900 tracking-tight">Panel Pembimbing Industri</h1>
                 </div>
-                <p class="text-surface-500 mt-1 ml-5 text-sm md:text-base">Selamat datang, <strong>{{ auth()->user()->name }}</strong> dari <strong>{{ $pembimbing->tempatPkl->nama_tempat }}</strong>.</p>
+                <p class="text-surface-500 mt-1 ml-5 text-sm md:text-base">Selamat datang, <strong>{{ auth()->user()->name }}</strong> dari <strong>{{ $pembimbing->tempatPkl?->nama_tempat ?? '-' }}</strong>.</p>
             </div>
 
             {{-- Stats Grid --}}

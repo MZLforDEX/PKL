@@ -16,7 +16,7 @@ class UpdatePengajuanPklRequest extends FormRequest
         return [
             'tempat_pkl_id' => 'required|exists:tempat_pkl,id',
             'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string',
             'file_dokumen' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ];

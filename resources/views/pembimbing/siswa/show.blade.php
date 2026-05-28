@@ -17,11 +17,11 @@
                         <div class="flex items-start justify-between mb-6 pb-6 border-b border-surface-100">
                             <div class="flex items-center">
                                 <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg md:text-2xl mr-4 shadow-md">
-                                    {{ substr($pengajuanPkl->siswa->user->name, 0, 1) }}
+                                    {{ substr($pengajuanPkl->siswa?->user?->name ?? '-', 0, 1) }}
                                 </div>
                                 <div>
-                                    <h3 class="text-lg md:text-xl font-bold text-surface-900">{{ $pengajuanPkl->siswa->user->name }}</h3>
-                                    <p class="text-sm text-surface-500">NIS: {{ $pengajuanPkl->siswa->nis }} • Kelas: {{ $pengajuanPkl->siswa->kelas }}</p>
+                                    <h3 class="text-lg md:text-xl font-bold text-surface-900">{{ $pengajuanPkl->siswa?->user?->name ?? '-' }}</h3>
+                                    <p class="text-sm text-surface-500">NIS: {{ $pengajuanPkl->siswa?->nis ?? '-' }} • Kelas: {{ $pengajuanPkl->siswa?->kelas ?? '-' }}</p>
                                 </div>
                             </div>
                             @php
@@ -41,15 +41,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="text-[10px] font-bold text-surface-400 uppercase tracking-widest block mb-1">Jurusan</label>
-                                <span class="text-sm font-semibold text-surface-800">{{ $pengajuanPkl->siswa->jurusan }}</span>
+                                <span class="text-sm font-semibold text-surface-800">{{ $pengajuanPkl->siswa?->jurusan ?? '-' }}</span>
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-surface-400 uppercase tracking-widest block mb-1">No. HP Siswa</label>
-                                <span class="text-sm font-semibold text-surface-800">{{ $pengajuanPkl->siswa->no_hp }}</span>
+                                <span class="text-sm font-semibold text-surface-800">{{ $pengajuanPkl->siswa?->no_hp ?? '-' }}</span>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="text-[10px] font-bold text-surface-400 uppercase tracking-widest block mb-1">Alamat Siswa</label>
-                                <span class="text-sm text-surface-700 block mt-0.5 leading-relaxed">{{ $pengajuanPkl->siswa->alamat }}</span>
+                                <span class="text-sm text-surface-700 block mt-0.5 leading-relaxed">{{ $pengajuanPkl->siswa?->alamat ?? '-' }}</span>
                             </div>
                             <div class="pt-4 border-t border-surface-100 md:col-span-2"></div>
                             <div>
@@ -63,7 +63,7 @@
                                 <label class="text-[10px] font-bold text-surface-400 uppercase tracking-widest block mb-1">Guru Pembimbing Sekolah</label>
                                 <div class="flex items-center text-sm text-surface-800 font-semibold mt-1">
                                     <i data-lucide="user-check" class="w-4 h-4 mr-2 text-indigo-500"></i>
-                                    {{ $pengajuanPkl->guru ? $pengajuanPkl->guru->user->name : 'Belum ditentukan' }}
+                                    {{ $pengajuanPkl->guru ? ($pengajuanPkl->guru?->user?->name ?? '-') : 'Belum ditentukan' }}
                                 </div>
                             </div>
                         </div>

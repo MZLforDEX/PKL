@@ -23,9 +23,14 @@ class SiswaUploadLaporan extends Notification
         return ['database', 'mail'];
     }
 
+    private function getSiswaName(): string
+    {
+        return $this->laporan->pengajuanPkl?->siswa?->user?->name ?? 'Siswa';
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
-        $siswaName = $this->laporan->pengajuanPkl->siswa->user->name;
+        $siswaName = $this->getSiswaName();
         return (new MailMessage)
             ->subject('Laporan Akhir Diunggah: ' . $siswaName)
             ->greeting('Halo, Bapak/Ibu ' . $notifiable->name . '!')
@@ -37,7 +42,7 @@ class SiswaUploadLaporan extends Notification
 
     public function toArray(object $notifiable): array
     {
-        $siswaName = $this->laporan->pengajuanPkl->siswa->user->name;
+        $siswaName = $this->getSiswaName();
         return [
             'laporan_id' => $this->laporan->id,
             'siswa_name' => $siswaName,

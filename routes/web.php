@@ -48,7 +48,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('siswa', SiswaController::class);
         Route::resource('guru', GuruController::class);
         Route::resource('tempat-pkl', TempatPklController::class);
@@ -68,7 +68,7 @@ Route::middleware(['auth', 'role:guru'])
     ->prefix('guru')
     ->name('guru.')
     ->group(function () {
-        Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
         Route::get('pengajuan', [GuruPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [GuruPengajuanPklController::class, 'show'])->name('pengajuan.show');
         Route::put('pengajuan/{pengajuanPkl}/setujui', [GuruPengajuanPklController::class, 'setujui'])->name('pengajuan.setujui');
@@ -93,17 +93,19 @@ Route::middleware(['auth', 'role:siswa'])
     ->prefix('siswa')
     ->name('siswa.')
     ->group(function () {
-        Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
         Route::resource('pengajuan', SiswaPengajuanPklController::class);
         Route::put('pengajuan/{pengajuan}/ajukan', [SiswaPengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
         Route::get('jurnal', [SiswaJurnalPklController::class, 'index'])->name('jurnal.index');
         Route::get('jurnal/create', [SiswaJurnalPklController::class, 'create'])->name('jurnal.create');
         Route::post('jurnal', [SiswaJurnalPklController::class, 'store'])->name('jurnal.store');
+        Route::get('jurnal/{jurnalPkl}', [SiswaJurnalPklController::class, 'show'])->name('jurnal.show');
         Route::get('jurnal/{jurnalPkl}/edit', [SiswaJurnalPklController::class, 'edit'])->name('jurnal.edit');
         Route::put('jurnal/{jurnalPkl}', [SiswaJurnalPklController::class, 'update'])->name('jurnal.update');
         Route::get('laporan', [SiswaLaporanPklController::class, 'index'])->name('laporan.index');
         Route::get('laporan/create', [SiswaLaporanPklController::class, 'create'])->name('laporan.create');
         Route::post('laporan', [SiswaLaporanPklController::class, 'store'])->name('laporan.store');
+        Route::get('laporan/{laporanPkl}', [SiswaLaporanPklController::class, 'show'])->name('laporan.show');
         Route::get('laporan/{laporanPkl}/edit', [SiswaLaporanPklController::class, 'edit'])->name('laporan.edit');
         Route::put('laporan/{laporanPkl}', [SiswaLaporanPklController::class, 'update'])->name('laporan.update');
         Route::get('pengajuan/{pengajuan}/sertifikat', [SiswaPengajuanPklController::class, 'cetakSertifikat'])->name('pengajuan.sertifikat');
@@ -116,7 +118,7 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
     ->prefix('pembimbing')
     ->name('pembimbing.')
     ->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\PembimbingIndustri\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('dashboard', [\App\Http\Controllers\PembimbingIndustri\DashboardController::class, 'index'])->name('dashboard');
         Route::get('siswa', [\App\Http\Controllers\PembimbingIndustri\SiswaBimbinganController::class, 'index'])->name('siswa.index');
         Route::get('siswa/{pengajuanPkl}', [\App\Http\Controllers\PembimbingIndustri\SiswaBimbinganController::class, 'show'])->name('siswa.show');
         Route::get('jurnal', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'index'])->name('jurnal.index');

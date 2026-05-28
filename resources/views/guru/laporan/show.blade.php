@@ -60,11 +60,11 @@
                         </h4>
                         <div class="flex items-center p-3.5 bg-surface-50 rounded-2xl border border-surface-100">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold mr-3 shadow-sm shrink-0">
-                                {{ substr($laporanPkl->pengajuanPkl->siswa->user->name, 0, 1) }}
+                                {{ substr($laporanPkl->pengajuanPkl?->siswa?->user?->name ?? '-', 0, 1) }}
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-surface-900">{{ $laporanPkl->pengajuanPkl->siswa->user->name }}</p>
-                                <p class="text-[11px] text-surface-400 font-medium">NIS: {{ $laporanPkl->pengajuanPkl->siswa->nis }}</p>
+                                <p class="text-sm font-bold text-surface-900">{{ $laporanPkl->pengajuanPkl?->siswa?->user?->name ?? '-' }}</p>
+                                <p class="text-[11px] text-surface-400 font-medium">NIS: {{ $laporanPkl->pengajuanPkl?->siswa?->nis ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                             "{{ $laporanPkl->catatan_guru ?? 'Tidak ada catatan khusus.' }}"
                         </div>
 
-                        @if($laporanPkl->pengajuanPkl->status === 'menunggu_penilaian')
+                        @if($laporanPkl->pengajuanPkl?->status === 'menunggu_penilaian')
                         <a href="{{ route('guru.penilaian.create', $laporanPkl->pengajuanPkl) }}" class="btn-primary w-full !py-3.5">
                             <i data-lucide="award" class="w-4 h-4 mr-2"></i>
                             Beri Nilai Sekarang

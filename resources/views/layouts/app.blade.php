@@ -130,7 +130,7 @@
                         </div>
                         <div class="max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-zinc-800">
                             @forelse($unreadNotifications->take(5) as $notification)
-                                <form action="{{ route('notifications.read', $notification->id) }}" method="POST" id="read-notif-{{ $notification->id }}" class="d-none">
+                                <form action="{{ route('notifications.read', $notification->id) }}" method="POST" id="read-notif-{{ $notification->id }}" class="hidden">
                                     @csrf
                                 </form>
                                 <a href="#" onclick="event.preventDefault(); document.getElementById('read-notif-{{ $notification->id }}').submit();" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">

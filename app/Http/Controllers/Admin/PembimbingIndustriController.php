@@ -72,6 +72,7 @@ class PembimbingIndustriController extends Controller
     public function destroy(PembimbingIndustri $pembimbingIndustri)
     {
         $pembimbingIndustri->user()->delete();
+        $pembimbingIndustri->delete();
 
         return redirect()->route('admin.pembimbing-industri.index')->with('success', 'Pembimbing Industri berhasil dihapus.');
     }

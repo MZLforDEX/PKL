@@ -13,7 +13,7 @@
             <div class="card-premium p-6 sm:p-8">
                 <div class="mb-6 p-4 bg-surface-50 rounded-2xl border border-surface-200/60 flex items-center gap-3">
                     <i data-lucide="info" class="w-5 h-5 text-brand-500 shrink-0"></i>
-                    <p class="text-sm text-surface-700">Upload laporan akhir PKL untuk pengajuan di <strong>{{ $pengajuanAktif->tempatPkl->nama_tempat }}</strong>.</p>
+                    <p class="text-sm text-surface-700">Upload laporan akhir PKL untuk pengajuan di <strong>{{ $pengajuanAktif->tempatPkl?->nama_tempat ?? '-' }}</strong>.</p>
                 </div>
 
                 <form action="{{ route('siswa.laporan.store') }}" method="POST" enctype="multipart/form-data">

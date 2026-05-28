@@ -14,6 +14,9 @@ class UpdatePembimbingIndustriRequest extends FormRequest
     public function rules(): array
     {
         $pembimbing = $this->route('pembimbing_industri');
+        if (!$pembimbing) {
+            return [];
+        }
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $pembimbing->user_id,

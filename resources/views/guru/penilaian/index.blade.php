@@ -33,16 +33,16 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($p->siswa->user->name, 0, 1) }}
+                                            {{ substr($p->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $p->siswa->user->name }}</div>
-                                            <div class="text-[11px] text-surface-400 font-medium">NIS: {{ $p->siswa->nis }}</div>
+                                            <div class="text-sm font-bold text-surface-900">{{ $p->siswa?->user?->name ?? '-' }}</div>
+                                            <div class="text-[11px] text-surface-400 font-medium">NIS: {{ $p->siswa?->nis ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="text-sm text-surface-700 font-medium">{{ $p->tempatPkl->nama_tempat }}</div>
+                                    <div class="text-sm text-surface-700 font-medium">{{ $p->tempatPkl?->nama_tempat ?? '-' }}</div>
                                 </td>
                                 <td class="whitespace-nowrap">
                                     @php

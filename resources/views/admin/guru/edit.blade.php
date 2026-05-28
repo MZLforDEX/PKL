@@ -17,10 +17,12 @@
                         <div class="sm:col-span-2">
                             <label class="form-label">Nama Lengkap</label>
                             <input type="text" name="name" value="{{ old('name', $guru->user->name) }}" class="form-input-premium" required>
+                            @error('name') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" value="{{ old('email', $guru->user->email) }}" class="form-input-premium" required>
+                            @error('email') <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p> @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label class="form-label">Password <span class="text-surface-400 font-normal">(kosongkan jika tidak diubah)</span></label>

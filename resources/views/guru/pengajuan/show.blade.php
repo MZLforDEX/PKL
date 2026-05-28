@@ -24,11 +24,11 @@
                         <div class="flex items-start justify-between mb-4 md:mb-8">
                             <div class="flex items-center">
                                 <div class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold mr-4 border-2 border-white shadow-sm text-base md:text-xl">
-                                    {{ substr($pengajuanPkl->siswa->user->name, 0, 1) }}
+                                    {{ substr($pengajuanPkl->siswa?->user?->name ?? '-', 0, 1) }}
                                 </div>
                                 <div>
-                                    <h3 class="text-base md:text-xl font-bold text-slate-800">{{ $pengajuanPkl->siswa->user->name }}</h3>
-                                    <p class="text-sm text-slate-500">NIS: {{ $pengajuanPkl->siswa->nis }} • {{ $pengajuanPkl->siswa->kelas }}</p>
+                                    <h3 class="text-base md:text-xl font-bold text-slate-800">{{ $pengajuanPkl->siswa?->user?->name ?? '-' }}</h3>
+                                    <p class="text-sm text-slate-500">NIS: {{ $pengajuanPkl->siswa?->nis ?? '-' }} • {{ $pengajuanPkl->siswa?->kelas ?? '-' }}</p>
                                 </div>
                             </div>
                             @php
@@ -53,9 +53,9 @@
                                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Tempat PKL Tujuan</label>
                                 <div class="flex items-center text-slate-700 font-bold">
                                     <i data-lucide="building-2" class="w-4 h-4 mr-2 text-indigo-500"></i>
-                                    {{ $pengajuanPkl->tempatPkl->nama_tempat }}
+                                    {{ $pengajuanPkl->tempatPkl?->nama_tempat ?? '-' }}
                                 </div>
-                                <p class="text-xs text-slate-500 mt-1 ml-6">{{ $pengajuanPkl->tempatPkl->bidang_usaha }}</p>
+                                <p class="text-xs text-slate-500 mt-1 ml-6">{{ $pengajuanPkl->tempatPkl?->bidang_usaha ?? '-' }}</p>
                             </div>
                             <div>
                                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Rencana Periode</label>
@@ -132,6 +132,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    @elseif($pengajuanPkl->status === 'draft')
+                    <div class="card-premium p-4 sm:p-5 md:p-6 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                            <i data-lucide="info" class="w-4 h-4 mr-2 text-slate-400"></i>
+                            Status Saat Ini
+                        </h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Pengajuan ini masih dalam status <strong>draft</strong>. Siswa belum mengirimkannya untuk diproses.
+                        </p>
                     </div>
                     @else
                     <div class="card-premium p-4 sm:p-5 md:p-6 bg-slate-50/50">

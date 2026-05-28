@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTempatPklRequest;
 use App\Http\Requests\UpdateTempatPklRequest;
+use App\Models\PembimbingIndustri;
+use App\Models\PengajuanPkl;
 use App\Models\TempatPkl;
 
 class TempatPklController extends Controller
@@ -39,6 +41,17 @@ class TempatPklController extends Controller
 
     public function destroy(TempatPkl $tempatPkl)
     {
+        $pengajuanCount = PengajuanPkl::where('tempat_pkl_id', $tempatPkl->id)->count();
+        $pembimbingCount = PembimbingIndustri::where('tempat_pkl_id', $tempatPkl->id)->count();
+
+        if ($pengajuanCount > 0 || $pembimbingCount > 0) {
+            return redirect()->route('admin.tempat-pkl.index')->with('error', 'Tempat PKL tidak dapat dihapus karena masih memiliki data terkait.');
+        }
+
+        $tempatPkl->delete();
+        return redirect()->route('admin.tempat-pkl.index')->with('success', 'Tempat PKL berhasil dihapus.');
+    }
+
         $tempatPkl->delete();
         return redirect()->route('admin.tempat-pkl.index')->with('success', 'Tempat PKL berhasil dihapus.');
     }
