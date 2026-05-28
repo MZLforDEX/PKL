@@ -77,7 +77,7 @@ class NotificationSystemTest extends TestCase
         Notification::assertSentTo(
             $siswaUser,
             PengajuanPklStatusChanged::class,
-            function ($notification, $channels) use ($pengajuan) {
+            function ($notification, $channels) {
                 return in_array('database', $channels) && in_array('mail', $channels);
             }
         );
@@ -135,7 +135,7 @@ class NotificationSystemTest extends TestCase
             'kegiatan' => 'Membuat fitur notifikasi',
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect(route('siswa.jurnal.index'));
 
         // Assert notification sent to Guru
         Notification::assertSentTo(
@@ -195,11 +195,10 @@ class NotificationSystemTest extends TestCase
 
         // 5. Siswa uploads a report
         $response = $this->actingAs($siswaUser)->post(route('siswa.laporan.store'), [
-            'judul' => 'Laporan Akhir PKL di PT Makmur',
             'file_laporan' => $file,
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect(route('siswa.laporan.index'));
 
         // Assert notification sent to Guru
         Notification::assertSentTo(

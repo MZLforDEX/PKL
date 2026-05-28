@@ -199,12 +199,14 @@
 
         <!-- Page Content -->
         <main class="flex-1 px-4 sm:px-6 py-8">
-            @isset($header)
-                <div class="mb-6">
-                    {{ $header }}
-                </div>
-            @endisset
-            {{ $slot }}
+            <div class="mx-auto max-w-[1600px] w-full">
+                @isset($header)
+                    <div class="mb-6">
+                        {{ $header }}
+                    </div>
+                @endisset
+                {{ $slot }}
+            </div>
         </main>
 
         <!-- Footer -->

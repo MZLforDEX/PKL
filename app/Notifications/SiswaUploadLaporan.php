@@ -30,7 +30,7 @@ class SiswaUploadLaporan extends Notification
             ->subject('Laporan Akhir Diunggah: ' . $siswaName)
             ->greeting('Halo, Bapak/Ibu ' . $notifiable->name . '!')
             ->line('Siswa bimbingan Anda, **' . $siswaName . '**, telah mengunggah laporan akhir PKL baru.')
-            ->line('Judul Laporan: "' . $this->laporan->judul . '"')
+            ->line('Silakan review laporan yang telah diunggah.')
             ->action('Review Laporan', route('guru.laporan.index'))
             ->line('Terima kasih telah membimbing siswa kami.');
     }
@@ -41,7 +41,7 @@ class SiswaUploadLaporan extends Notification
         return [
             'laporan_id' => $this->laporan->id,
             'siswa_name' => $siswaName,
-            'judul' => $this->laporan->judul,
+            'pengajuan_id' => $this->laporan->pengajuan_pkl_id,
             'message' => 'Siswa bimbingan Anda, ' . $siswaName . ', telah mengunggah laporan akhir PKL.',
             'title' => 'Laporan Akhir Diunggah',
         ];

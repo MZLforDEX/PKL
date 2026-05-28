@@ -93,7 +93,6 @@ class LaporanPklController extends Controller
         $laporanPkl->update([
             'file_laporan' => $request->file('file_laporan')->store('laporan', 'public'),
             'status' => 'menunggu_review',
-            'catatan_guru' => null,
         ]);
 
         $pengajuan = $laporanPkl->pengajuanPkl;
@@ -104,7 +103,6 @@ class LaporanPklController extends Controller
 
     private function authorizeOwner(LaporanPkl $laporanPkl): void
     {
-        $laporanPkl->loadMissing('pengajuanPkl');
         $siswa = auth()->user()->siswa;
         if ($laporanPkl->pengajuanPkl->siswa_id !== $siswa->id) {
             abort(403);

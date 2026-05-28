@@ -27,7 +27,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'avatar' => ['nullable', 'image', 'max:2048'],
-            'nis' => ['nullable', 'string', 'max:50'],
+            'nis' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('siswa', 'nis')->ignore($this->user()->siswa?->id)],
             'kelas' => ['nullable', 'string', 'max:50'],
             'jurusan' => ['nullable', 'string', 'max:255'],
             'alamat' => ['nullable', 'string'],

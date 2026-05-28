@@ -18,4 +18,12 @@ class PenilaianPkl extends Model
     {
         return $this->belongsTo(PengajuanPkl::class);
     }
+
+    public function getPredikatAttribute(): string
+    {
+        if ($this->nilai_akhir >= 90) return 'Sangat Baik';
+        if ($this->nilai_akhir >= 80) return 'Baik';
+        if ($this->nilai_akhir >= 70) return 'Cukup';
+        return 'Kurang';
+    }
 }

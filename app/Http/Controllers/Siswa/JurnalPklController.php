@@ -7,6 +7,7 @@ use App\Http\Requests\StoreJurnalPklRequest;
 use App\Http\Requests\UpdateJurnalPklRequest;
 use App\Models\JurnalPkl;
 use App\Models\PengajuanPkl;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class JurnalPklController extends Controller
@@ -50,11 +51,13 @@ class JurnalPklController extends Controller
             $data['dokumentasi'] = $request->file('dokumentasi')->store('jurnal', 'public');
         }
 
-        if ($pengajuan->status === 'disetujui') {
-            $pengajuan->update(['status' => 'sedang_pkl']);
-        }
+        $jurnal = DB::transaction(function () use ($pengajuan, $data) {
+            if ($pengajuan->status === 'disetujui') {
+                $pengajuan->update(['status' => 'sedang_pkl']);
+            }
 
-        $jurnal = JurnalPkl::create($data);
+            return JurnalPkl::create($data);
+        });
 
         if ($pengajuan->guru && $pengajuan->guru->user) {
             $pengajuan->guru->user->notify(new \App\Notifications\SiswaUploadJurnal($jurnal));

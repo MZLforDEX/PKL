@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\PembimbingIndustri;
 
 use App\Http\Controllers\Controller;
+use App\Models\PembimbingIndustri;
 use App\Models\PengajuanPkl;
 
 class SiswaBimbinganController extends Controller
 {
     public function index()
     {
-        $pembimbing = auth()->user()->pembimbingIndustri;
+        $pembimbing = $this->getPembimbing();
         $siswa = PengajuanPkl::with(['siswa.user', 'guru.user'])
             ->where('tempat_pkl_id', $pembimbing->tempat_pkl_id)
             ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian', 'selesai'])
@@ -26,9 +27,18 @@ class SiswaBimbinganController extends Controller
         return view('pembimbing.siswa.show', compact('pengajuanPkl'));
     }
 
-    private function authorizeBimbingan(PengajuanPkl $pengajuanPkl): void
+    private function getPembimbing(): PembimbingIndustri
     {
         $pembimbing = auth()->user()->pembimbingIndustri;
+        if (!$pembimbing) {
+            abort(403, 'Profil pembimbing industri belum diatur.');
+        }
+        return $pembimbing;
+    }
+
+    private function authorizeBimbingan(PengajuanPkl $pengajuanPkl): void
+    {
+        $pembimbing = $this->getPembimbing();
         if ($pengajuanPkl->tempat_pkl_id !== $pembimbing->tempat_pkl_id) {
             abort(403);
         }

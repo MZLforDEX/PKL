@@ -106,7 +106,7 @@ class LaporanPklRevisiTest extends TestCase
 
         $this->laporan->refresh();
         $this->assertEquals('menunggu_review', $this->laporan->status);
-        $this->assertNull($this->laporan->catatan_guru);
+        $this->assertEquals('Perbaiki bab kesimpulan.', $this->laporan->catatan_guru);
         Storage::disk('public')->assertExists($this->laporan->file_laporan);
 
         Notification::assertSentTo($guruUser, SiswaUploadLaporan::class);

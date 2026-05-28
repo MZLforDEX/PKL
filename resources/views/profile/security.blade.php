@@ -5,7 +5,7 @@
             <nav class="flex mb-4 md:mb-8 text-xs font-bold text-surface-400 uppercase tracking-widest" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="{{ route('dashboard') }}" class="hover:text-brand-600 transition-colors">Dashboard</a>
+                        <a href="{{ route(match(Auth::user()->role) {'admin' => 'admin.dashboard', 'guru' => 'guru.dashboard', 'siswa' => 'siswa.dashboard', 'pembimbing_industri' => 'pembimbing.dashboard', default => 'dashboard'}) }}" class="hover:text-brand-600 transition-colors">Dashboard</a>
                     </li>
                     <li>
                         <div class="flex items-center">

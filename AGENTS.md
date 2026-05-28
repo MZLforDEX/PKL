@@ -1,179 +1,116 @@
 # AGENTS.md
 
-## Status
+Laravel 12 PKL (Praktik Kerja Lapangan) system — **complete with all features built out**. Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`SPARTA`.
 
-Full Laravel 12 PKL system — **all features built out**. Breeze auth installed, role middleware registered, all migrations/models/controllers/views/routes created, seeder ready. `.env` uses MySQL (`project_pkl_v5.2`). `README.md` is the default Laravel skeleton template — unrelated.
-
-**47 feature tests passing** (run via `composer run test`).
+**46 feature tests passing** — run via `composer run test`.
 
 ---
 
 ## Commands
 
 ```bash
-# Full setup (after clone)
-composer run setup
-
-# Dev servers (PHP + queue + logs + Vite concurrently)
-composer run dev
-
-# Run tests (clears config first)
-composer run test
-
-# Vite only
-npm run dev
-npm run build
-
-# Manual steps
-php artisan storage:link          # symlink for file uploads
-php artisan migrate --seed        # if not via setup
-php artisan serve                 # standalone dev server
+composer run setup       # full install: composer install + .env + key:generate + migrate + npm install && build
+composer run dev         # concurrent: serve + queue:listen + pail (logs) + vite
+composer run test        # config:clear then php artisan test
+php artisan storage:link # symlink for file uploads (needed after clone)
+php artisan migrate --seed
 ```
 
----
+## Roles
 
-## Project Spec (PKL System)
-
-Sistem Informasi Pengajuan PKL SMK — **4 roles** in `users.role`:
-
-| Role | Value | Prefix route |
-|------|-------|--------------|
+| Role | DB value | Route prefix |
+|------|----------|-------------|
 | Admin | `admin` | `/admin` |
-| Guru (pendamping sekolah) | `guru` | `/guru` |
+| Guru | `guru` | `/guru` |
 | Siswa | `siswa` | `/siswa` |
 | Pembimbing industri | `pembimbing_industri` | `/pembimbing` |
 
-Halaman publik: `/` (welcome), `/guide` (panduan penggunaan).
+Public pages: `/` (welcome), `/guide`. Notifications (in-app, database channel): `/notifications` — all authenticated roles.
 
-Notifikasi in-app (Laravel notifications): `/notifications` — semua role yang login.
+## Architecture
 
-### Controller Map
+**Controllers** grouped by role under `app/Http/Controllers/{Admin,Guru,Siswa,PembimbingIndustri}/`. Shared: `ProfileController`, `NotificationController`. Middleware: `role` alias registered in `bootstrap/app.php` → `RoleMiddleware` (single-role string match, abort 403).
 
-```
-Admin/
-  -> Dashboard, Siswa, Guru, TempatPkl, PembimbingIndustri,
-     PengajuanPkl, User (approval registrasi)
+**Models** (10): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`. All use `$fillable`.
 
-Guru/
-  -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl,
-     PenilaianPkl, AbsensiPkl
+**Routes** defined in `routes/web.php` — role groupings via `->middleware(['auth', 'role:...'])`. Auth routes are default Breeze — do not modify.
 
-Siswa/
-  -> Dashboard, PengajuanPkl, JurnalPkl, LaporanPkl,
-     AbsensiPkl (+ cetak sertifikat)
+**Login redirection** (`AuthenticatedSessionController@store`): role-based → `{admin,guru,siswa,pembimbing}.dashboard`. Unapproved users (`is_approved = false`) are rejected at login.
 
-PembimbingIndustri/
-  -> Dashboard, SiswaBimbingan, JurnalPkl, AbsensiPkl
+## Status Workflows
 
-Shared (auth middleware)
-  -> ProfileController, NotificationController
-```
-
-### Status Workflow
-
-| Entity | Statuses |
-|--------|----------|
+| Entity | States |
+|--------|--------|
 | Pengajuan | `draft` → `menunggu_persetujuan` → `revisi` / `disetujui` / `ditolak` → `sedang_pkl` → `menunggu_penilaian` → `selesai` |
 | Jurnal | `menunggu_validasi` → `valid` / `revisi` |
-| Laporan | `menunggu_review` → `diterima` / `revisi` (siswa dapat upload ulang saat `revisi`) |
+| Laporan | `menunggu_review` → `diterima` / `revisi` |
 
-**Transisi penting pengajuan:**
+Key transitions:
+- Siswa submits: `draft`/`revisi` → `menunggu_persetujuan`
+- Guru approves/rejects/requests revision
+- First jurnal created: `disetujui` → `sedang_pkl`
+- Guru accepts laporan: `sedang_pkl` → `menunggu_penilaian`
+- Guru saves penilaian: `menunggu_penilaian` → `selesai`
 
-- Siswa ajukan: `draft`/`revisi` → `menunggu_persetujuan`
-- Guru setujui/tolak/revisi: dari `menunggu_persetujuan`
-- Jurnal pertama siswa dibuat: `disetujui` → `sedang_pkl`
-- Guru terima laporan: pengajuan → `menunggu_penilaian`
-- Guru simpan penilaian: pengajuan → `selesai`
+## Business Rules
 
-### File Uploads
+- **Siswa**: one active pengajuan (excludes `ditolak`, `selesai`). Edit/delete only `draft`/`revisi` (delete also `ditolak`). `authorizeOwner()` on PengajuanPkl & JurnalPkl controllers. Absensi: clock-in once/day during PKL. Sertifikat: print only when `selesai`.
+- **Guru**: only assigned students (`guru_id`). `authorizeBimbingan()` on guru controllers. Checks quota when approving.
+- **Admin**: CRUD master data + assign `guru_id` on pengajuan + approve user registrations (`is_approved`). Admin-created accounts auto-approved.
+- **Pembimbing industri**: tied to `tempat_pkl_id`. Validates jurnal (parallel with guru). Views absensi.
+- **Quota** (`TempatPkl`): counts pengajuan with status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Exposed via `sisa_kuota` and `is_penuh` accessors.
+- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → sets pengajuan `selesai`. Does **not** explicitly validate `menunggu_penilaian` status before saving.
 
-| Type | Folder | Rules |
-|------|--------|-------|
-| Dokumen pengajuan | `storage/app/public/pengajuan/` | pdf, doc, docx — max 2048 KB |
-| Dokumentasi jurnal | `storage/app/public/jurnal/` | jpg, jpeg, png, pdf — max 2048 KB |
-| Laporan akhir | `storage/app/public/laporan/` | pdf — max 5120 KB |
+## Notifications (database + mail)
 
-### Business Rules
+| Event | Recipient | Class |
+|-------|-----------|-------|
+| Teacher changes pengajuan status | Student | `PengajuanPklStatusChanged` |
+| Student uploads jurnal | Guru | `SiswaUploadJurnal` |
+| Student uploads/resubmits laporan | Guru | `SiswaUploadLaporan` |
 
-**Siswa**
+## File Uploads
 
-- Hanya **1 pengajuan aktif** (status selain `ditolak` dan `selesai`).
-- Edit/hapus pengajuan: hanya `draft` atau `revisi` (hapus juga `ditolak`).
-- `authorizeOwner()` di `PengajuanPklController` dan `JurnalPklController`.
-- Jurnal: edit jika belum `valid`; update mengembalikan status ke `menunggu_validasi`.
-- Laporan: upload pertama saat pengajuan `disetujui`/`sedang_pkl` dan belum punya laporan; **edit/upload ulang** hanya saat laporan berstatus `revisi` → kembali `menunggu_review`, notifikasi ke guru.
-- Absensi: clock-in sekali per hari saat PKL aktif.
-- Sertifikat: cetak hanya jika pengajuan `selesai`.
+| Type | Storage path | Rules |
+|------|-------------|-------|
+| Dokumen pengajuan | `storage/app/public/pengajuan/` | pdf,doc,docx — 2048 KB max |
+| Jurnal dokumentasi | `storage/app/public/jurnal/` | jpg,jpeg,png,pdf — 2048 KB max |
+| Laporan akhir | `storage/app/public/laporan/` | pdf — 5120 KB max |
 
-**Guru**
+## Login Defaults (seeder)
 
-- Hanya siswa bimbingan (`guru_id` cocok). `authorizeBimbingan()` di controller guru.
-- Validasi pengajuan, jurnal, laporan; input penilaian.
-- Kuota tempat PKL dicek saat menyetujui pengajuan (sama seperti siswa saat ajukan).
+All password: `password`
 
-**Admin**
-
-- CRUD master: siswa, guru, tempat PKL, pembimbing industri.
-- Assign `guru_id` pada pengajuan (bukan validator utama pengajuan).
-- Approve/hapus user registrasi (`is_approved`).
-- Akun dibuat admin (siswa/guru/pembimbing) langsung `is_approved = true`.
-
-**Pembimbing industri**
-
-- Terikat ke `tempat_pkl_id`; melihat siswa pengajuan di tempat tersebut (status aktif/selesai).
-- Dapat validasi/revisi jurnal (paralel dengan guru).
-- Melihat absensi siswa bimbingan.
-
-**Umum**
-
-- Penilaian: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → status pengajuan `selesai`.
-- Registrasi publik: login ditolak sampai admin set `is_approved` (`AuthenticatedSessionController`).
-- Kuota `TempatPkl`: dihitung dari pengajuan berstatus `disetujui`, `sedang_pkl`, `menunggu_penilaian` (`is_penuh` accessor).
-- UI: Bahasa Indonesia.
-
-### Notifications
-
-| Event | Penerima | Class |
-|-------|----------|-------|
-| Status pengajuan berubah (guru) | Siswa | `PengajuanPklStatusChanged` |
-| Siswa upload jurnal | Guru | `SiswaUploadJurnal` |
-| Siswa upload / kirim ulang laporan | Guru | `SiswaUploadLaporan` |
-
-### Login Defaults (seeder)
-
-| Role | Email | Password | Catatan |
-|------|-------|----------|---------|
-| admin | admin@pkl.test | password | |
-| guru | guru1@pkl.test, guru2@pkl.test | password | |
-| siswa | siswa1@pkl.test … siswa5@pkl.test | password | |
-| pembimbing industri | pembimbing@pkl.test | password | Terhubung ke PT Teknologi Maju |
-
----
+| Role | Email |
+|------|-------|
+| admin | admin@pkl.test |
+| guru | guru1@pkl.test, guru2@pkl.test |
+| siswa | siswa1@pkl.test … siswa5@pkl.test |
+| pembimbing | pembimbing@pkl.test |
 
 ## Tests
 
-| File | Cakupan |
-|------|---------|
-| `AbsensiPklTest` | Clock-in siswa, lihat absensi guru/pembimbing |
-| `LaporanPklRevisiTest` | Edit/upload ulang laporan revisi, otorisasi |
-| `NotificationSystemTest` | Notifikasi pengajuan, jurnal, laporan |
-| `PembimbingIndustriTest` | CRUD admin, validasi jurnal pembimbing |
-| `PengajuanPklQuotaTest` | Kuota tempat PKL |
-| `Auth/*`, `ProfileTest` | Breeze auth & profil |
+| File | Covers |
+|------|--------|
+| `AbsensiPklTest` | Clock-in, absensi views per role |
+| `LaporanPklRevisiTest` | Re-upload on revision, authorization |
+| `NotificationSystemTest` | Notifications on pengajuan/jurnal/laporan events |
+| `PembimbingIndustriTest` | Admin CRUD, jurnal validation |
+| `PengajuanPklQuotaTest` | Quota enforcement |
+| `Auth/*`, `ProfileTest` | Breeze auth + profile |
 
----
+Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
 
 ## Gotchas
 
-- `README.md` is the **default Laravel skeleton** — unrelated to this project.
-- Tailwind **v3** via PostCSS (`tailwind.config.js` + `postcss.config.js`), NOT v4. `@tailwindcss/vite` v4 package is installed but **unused**.
-- Use `$fillable` on all models + Eloquent relationships + eager loading mandatory.
-- No React/Vue/Inertia — Blade + Tailwind only. Babel/TypeScript not configured.
+- `README.md` is the **default Laravel skeleton** — unrelated.
+- Tailwind **v3** (PostCSS). `@tailwindcss/vite` v4 is installed but **unused**. Don't add v4 directives.
+- Custom theme in `tailwind.config.js`: `brand-50`–`950`, `surface-50`–`950`, shadows (`glass`, `neon`, `card`), animations (`fade-in`, `slide-up`, etc.). Check before picking colors.
+- No React/Vue/Inertia — **Blade + Tailwind + Alpine.js**. Alpine used for interactivity (`x-data`, `x-show`, `x-cloak`, `x-transition`).
+- Lucide icons via CDN (`unpkg.com/lucide@latest`). Must call `lucide.createIcons()` after DOM updates. Font Awesome 6.4 (`cdnjs.cloudflare.com`) also available.
+- SweetAlert2 via CDN — global `confirmAction(title, text, icon, confirmText, callback)` helper in `app.blade.php`.
+- Route model binding `laporan/{laporanPkl}` must be defined **after** `laporan/create` (already correct in current routes).
 - Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
-- Tailwind theme includes custom color scales (`brand-50`–`950`, `surface-50`–`950`) and custom shadows (`glass`, `neon`, `card`). Check `tailwind.config.js` before picking colors.
-- Lucide icons loaded via CDN (`unpkg.com/lucide@latest`). Run `lucide.createIcons()` after dynamic DOM updates.
-- SweetAlert2 loaded via CDN (`cdn.jsdelivr.net/npm/sweetalert2@11`). Global `confirmAction()` helper available in `resources/views/layouts/app.blade.php` for confirmation dialogs.
-- Auth routes (login, register, password reset, email verification) are default Breeze — do not change.
-- Route model binding laporan siswa: `laporan/{laporanPkl}` — harus didefinisikan setelah `laporan/create` agar tidak bentrok.
-- Penilaian guru belum memvalidasi status `menunggu_penilaian` secara eksplisit (bisa ditambah jika diperlukan).
+- UI language: Indonesian.
+- `QUEUE_CONNECTION=database` — notifications + job tables used. Queue listener is part of `composer run dev`.
 - No `opencode.json` — config lives solely in `AGENTS.md`.

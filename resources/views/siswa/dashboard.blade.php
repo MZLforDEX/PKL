@@ -153,7 +153,7 @@
                         @elseif($pengajuan->penilaianPkl)
                             <p class="text-xs text-emerald-600 mt-3 font-semibold flex items-center">
                                 <i data-lucide="star" class="w-3 h-3 mr-1"></i>
-                                {{ $pengajuan->penilaianPkl->nilai_akhir >= 85 ? 'Sangat Baik' : ($pengajuan->penilaianPkl->nilai_akhir >= 75 ? 'Baik' : 'Cukup') }}
+                                {{ $pengajuan->penilaianPkl->predikat }}
                             </p>
                         @endif
                     </div>

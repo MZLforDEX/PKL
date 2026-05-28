@@ -27,8 +27,8 @@ class LaporanPklController extends Controller
     public function terima(Request $request, LaporanPkl $laporanPkl)
     {
         $this->authorizeBimbingan($laporanPkl);
-        if ($laporanPkl->status === 'diterima') {
-            return redirect()->back()->withErrors(['msg' => 'Laporan sudah diterima.']);
+        if ($laporanPkl->status !== 'menunggu_review') {
+            return redirect()->back()->withErrors(['msg' => 'Laporan tidak dalam status menunggu review.']);
         }
 
         $laporanPkl->update(['status' => 'diterima', 'catatan_guru' => $request->catatan_guru]);
@@ -39,8 +39,8 @@ class LaporanPklController extends Controller
     public function mintaRevisi(Request $request, LaporanPkl $laporanPkl)
     {
         $this->authorizeBimbingan($laporanPkl);
-        if ($laporanPkl->status === 'diterima') {
-            return redirect()->back()->withErrors(['msg' => 'Laporan sudah diterima dan tidak dapat direvisi lagi.']);
+        if (!in_array($laporanPkl->status, ['menunggu_review', 'revisi'])) {
+            return redirect()->back()->withErrors(['msg' => 'Laporan tidak dapat direvisi.']);
         }
 
         $request->validate(['catatan_guru' => 'required|string']);

@@ -36,6 +36,7 @@ class PengajuanPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Tidak dapat menyetujui pengajuan karena kuota Tempat PKL ini sudah penuh.']);
         }
 
+        $request->validate(['catatan' => 'nullable|string']);
         $pengajuanPkl->update(['status' => 'disetujui', 'catatan' => $request->catatan]);
         
         $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));

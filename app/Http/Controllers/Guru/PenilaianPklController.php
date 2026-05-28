@@ -22,12 +22,22 @@ class PenilaianPklController extends Controller
     public function create(PengajuanPkl $pengajuanPkl)
     {
         $this->authorizeBimbingan($pengajuanPkl);
+
+        if ($pengajuanPkl->status !== 'menunggu_penilaian') {
+            return redirect()->route('guru.penilaian.index')->withErrors(['msg' => 'Pengajuan tidak dalam status menunggu penilaian.']);
+        }
+
         return view('guru.penilaian.create', compact('pengajuanPkl'));
     }
 
     public function store(StorePenilaianPklRequest $request, PengajuanPkl $pengajuanPkl)
     {
         $this->authorizeBimbingan($pengajuanPkl);
+
+        if ($pengajuanPkl->status !== 'menunggu_penilaian') {
+            return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dalam status menunggu penilaian.']);
+        }
+
         $nilaiAkhir = round(($request->nilai_sikap + $request->nilai_keterampilan + $request->nilai_laporan) / 3, 2);
 
         PenilaianPkl::updateOrCreate(

@@ -65,19 +65,28 @@ class AbsensiPklController extends Controller
         $tanggal = $now->toDateString();
 
         // 08:00 AM check-in limit
-        $status = $now->format('H:i:s') > '08:00:00' ? 'terlambat' : 'hadir';
+        $status = $now->gt($now->copy()->setTime(8, 0, 0)) ? 'terlambat' : 'hadir';
 
         $fotoPath = '';
         $fotoData = $request->input('foto_selfie');
 
-        if (str_starts_with($fotoData, 'data:image')) {
-            // Handle Base64 Webcam Image
+        if (preg_match('/^data:image\/(jpeg|png|jpg|webp);base64,/', $fotoData)) {
             $imageInfo = explode(";base64,", $fotoData);
-            $imageTypeInfo = explode("image/", $imageInfo[0]);
-            $imageType = $imageTypeInfo[1];
-            $imageDecoded = base64_decode($imageInfo[1]);
-            
-            $fileName = 'selfie_' . uniqid() . '.' . $imageType;
+            $imageDecoded = base64_decode($imageInfo[1], true);
+
+            if ($imageDecoded === false) {
+                return redirect()->back()->withErrors(['msg' => 'Format foto tidak valid.']);
+            }
+
+            preg_match('/^data:image\/(jpeg|png|jpg|webp);base64,/', $fotoData, $mimeMatch);
+            $ext = match ($mimeMatch[1]) {
+                'jpeg', 'jpg' => 'jpg',
+                'png' => 'png',
+                'webp' => 'webp',
+                default => 'jpg',
+            };
+
+            $fileName = 'selfie_' . uniqid() . '.' . $ext;
             $fotoPath = 'absensi/' . $fileName;
             Storage::disk('public')->put($fotoPath, $imageDecoded);
         } else {

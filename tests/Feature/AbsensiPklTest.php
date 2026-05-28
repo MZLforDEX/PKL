@@ -91,7 +91,6 @@ class AbsensiPklTest extends TestCase
 
     public function test_siswa_can_clock_in_successfully(): void
     {
-        // Mock base64 webcam image data
         $base64Image = 'data:image/jpeg;base64,' . base64_encode('dummy image content');
 
         $response = $this->actingAs($this->siswaUser)->post(route('siswa.absensi.store'), [
@@ -104,13 +103,13 @@ class AbsensiPklTest extends TestCase
         $response->assertSessionHasNoErrors();
 
         // Assert database entry
-        $this->assertDatabaseHas('absensi_pkl', [
-            'pengajuan_pkl_id' => $this->pengajuan->id,
-            'latitude' => -4.012345,
-            'longitude' => 121.654321,
-        ]);
-
         $absensi = AbsensiPkl::first();
+        $this->assertNotNull($absensi);
+        $this->assertEquals($this->pengajuan->id, $absensi->pengajuan_pkl_id);
+        $this->assertEquals(-4.012345, $absensi->latitude);
+        $this->assertEquals(121.654321, $absensi->longitude);
+        $this->assertNotNull($absensi->jam_masuk);
+        $this->assertContains($absensi->status, ['hadir', 'terlambat']);
         Storage::disk('public')->assertExists($absensi->foto_selfie);
     }
 
@@ -132,7 +131,7 @@ class AbsensiPklTest extends TestCase
             'foto_selfie' => $base64Image,
         ]);
 
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasErrors('msg');
         $this->assertEquals(1, AbsensiPkl::count());
     }
 
