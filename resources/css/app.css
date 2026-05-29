@@ -333,6 +333,11 @@ html, body { overflow-x: hidden; }
     color: #ffffff !important;
 }
 
+/* SweetAlert2 button fixes */
+.swal2-cancel {
+    color: #374151 !important;
+}
+
 /* SweetAlert2 dark mode fixes */
 .dark .swal2-popup {
     background-color: #0f172a !important;
@@ -369,59 +374,59 @@ html, body { overflow-x: hidden; }
 /* ===== WELCOME & GUEST LIGHT MODE OVERRIDES ===== */
 
 /* Guest Layout (Login, Signup, etc) Light Mode Override */
-html:not(.dark) .min-h-screen.bg-surface-50 {
+html:not(.dark) .guest-layout.bg-surface-50 {
     background-color: #f8fafc !important; /* bg-surface-50 */
 }
 
 /* Card in light mode guest layout */
-html:not(.dark) .min-h-screen .bg-white\/\[0\.04\] {
+html:not(.dark) .guest-layout .bg-white\/\[0\.04\] {
     background-color: #ffffff !important;
     border-color: #e2e8f0 !important;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Inputs in light mode guest layout */
-html:not(.dark) .min-h-screen input:not([type="checkbox"]) {
+html:not(.dark) .guest-layout input:not([type="checkbox"]) {
     background-color: #ffffff !important;
     border-color: #cbd5e1 !important;
     color: #0f172a !important;
 }
-html:not(.dark) .min-h-screen input::placeholder {
+html:not(.dark) .guest-layout input::placeholder {
     color: #94a3b8 !important;
 }
-html:not(.dark) .min-h-screen input:focus {
+html:not(.dark) .guest-layout input:focus {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
 }
 
 /* Labels in light mode guest layout */
-html:not(.dark) .min-h-screen label {
+html:not(.dark) .guest-layout label {
     color: #475569 !important;
 }
 
 /* Titles and subtext in light mode guest layout */
-html:not(.dark) .min-h-screen h2 {
+html:not(.dark) .guest-layout h2 {
     color: #0f172a !important;
 }
-html:not(.dark) .min-h-screen p {
+html:not(.dark) .guest-layout p {
     color: #64748b !important;
 }
 
 /* Links in light mode guest layout */
-html:not(.dark) .min-h-screen a.text-brand-400 {
+html:not(.dark) .guest-layout a.text-brand-400 {
     color: #4f46e5 !important;
 }
-html:not(.dark) .min-h-screen a.text-brand-400:hover {
+html:not(.dark) .guest-layout a.text-brand-400:hover {
     color: #4338ca !important;
 }
 
 /* Logo brand text in light mode guest layout */
-html:not(.dark) .min-h-screen span.text-white {
+html:not(.dark) .guest-layout span.text-white {
     color: #0f172a !important;
 }
 
 /* Logo container in guest layout */
-html:not(.dark) .min-h-screen .bg-surface-900 {
+html:not(.dark) .guest-layout .bg-surface-900 {
     background-color: #ffffff !important;
     border-color: #e2e8f0 !important;
 }

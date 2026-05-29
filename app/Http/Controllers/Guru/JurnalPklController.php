@@ -11,6 +11,7 @@ class JurnalPklController extends Controller
     public function index()
     {
         $guru = auth()->user()->guru;
+        if (!$guru) abort(403, 'Profil guru belum diatur.');
         $jurnal = JurnalPkl::with(['pengajuanPkl.siswa.user'])
             ->whereHas('pengajuanPkl', fn($q) => $q->where('guru_id', $guru->id))
             ->latest()->paginate(10);
@@ -48,6 +49,7 @@ class JurnalPklController extends Controller
     private function authorizeBimbingan(JurnalPkl $jurnalPkl): void
     {
         $guru = auth()->user()->guru;
+        if (!$guru) abort(403, 'Profil guru belum diatur.');
         if ($jurnalPkl->pengajuanPkl->guru_id !== $guru->id) {
             abort(403);
         }

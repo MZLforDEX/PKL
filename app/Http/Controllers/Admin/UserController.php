@@ -48,13 +48,4 @@ class UserController extends Controller
         $user->delete();
         return back()->with('success', 'Akun pendaftar berhasil ditolak dan dihapus.');
     }
-        if ($user->guru) {
-            $user->guru->delete();
-        }
-        if ($user->pembimbingIndustri) {
-            $user->pembimbingIndustri->delete();
-        }
-        $user->delete();
-        return back()->with('success', 'Akun pendaftar berhasil ditolak dan dihapus.');
-    }
 }

@@ -32,5 +32,11 @@ class RegistrationTest extends TestCase
 
         $response->assertRedirect(route('login'));
         $this->assertGuest();
+        $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+        $this->assertDatabaseHas('siswa', [
+            'nis' => '12345678',
+            'kelas' => 'XII',
+            'jurusan' => 'RPL',
+        ]);
     }
 }

@@ -121,9 +121,14 @@ class PembimbingIndustriTest extends TestCase
             'no_hp' => '081234567890',
         ]);
 
-        // 2. Create approved pengajuan for the siswa at the pembimbing's company
+        // 2. Create Guru
+        $guruUser = User::factory()->create(['role' => 'guru', 'is_approved' => true]);
+        $guru = Guru::create(['user_id' => $guruUser->id, 'nip' => '123456', 'alamat' => 'Alamat', 'no_hp' => '081234567890']);
+
+        // 3. Create approved pengajuan for the siswa at the pembimbing's company
         $pengajuan = PengajuanPkl::create([
             'siswa_id' => $siswa->id,
+            'guru_id' => $guru->id,
             'tempat_pkl_id' => $this->tempatPkl->id,
             'tanggal_mulai' => now()->toDateString(),
             'tanggal_selesai' => now()->addMonths(3)->toDateString(),
@@ -149,7 +154,7 @@ class PembimbingIndustriTest extends TestCase
         $this->assertEquals('Bagus sekali.', $jurnal->fresh()->catatan_guru);
     }
 
-    public function test_siswa_can_edit_journal_when_revisi_or_menunggu_validasi(): void
+    public function test_siswa_can_edit_journal_when_revisi(): void
     {
         // 1. Create Siswa
         $siswaUser = User::factory()->create(['role' => 'siswa', 'is_approved' => true]);
@@ -162,9 +167,14 @@ class PembimbingIndustriTest extends TestCase
             'no_hp' => '081234567890',
         ]);
 
-        // 2. Create approved pengajuan
+        // 2. Create Guru
+        $guruUser = User::factory()->create(['role' => 'guru', 'is_approved' => true]);
+        $guru = Guru::create(['user_id' => $guruUser->id, 'nip' => '123456', 'alamat' => 'Alamat', 'no_hp' => '081234567890']);
+
+        // 3. Create approved pengajuan
         $pengajuan = PengajuanPkl::create([
             'siswa_id' => $siswa->id,
+            'guru_id' => $guru->id,
             'tempat_pkl_id' => $this->tempatPkl->id,
             'tanggal_mulai' => now()->toDateString(),
             'tanggal_selesai' => now()->addMonths(3)->toDateString(),
@@ -172,7 +182,7 @@ class PembimbingIndustriTest extends TestCase
             'status' => 'disetujui',
         ]);
 
-        // 3. Create Jurnal in 'revisi' status
+        // 4. Create Jurnal in 'revisi' status
         $jurnal = JurnalPkl::create([
             'pengajuan_pkl_id' => $pengajuan->id,
             'tanggal' => now()->toDateString(),
@@ -180,7 +190,7 @@ class PembimbingIndustriTest extends TestCase
             'status' => 'revisi',
         ]);
 
-        // 4. Update Jurnal
+        // 5. Update Jurnal
         $response = $this->actingAs($siswaUser)->put(route('siswa.jurnal.update', $jurnal), [
             'tanggal' => now()->toDateString(),
             'kegiatan' => 'Kegiatan Diperbarui',
@@ -190,7 +200,7 @@ class PembimbingIndustriTest extends TestCase
         $this->assertEquals('Kegiatan Diperbarui', $jurnal->fresh()->kegiatan);
         $this->assertEquals('menunggu_validasi', $jurnal->fresh()->status); // resets status!
 
-        // 5. Try updating when valid
+        // 6. Try updating when valid
         $jurnal->update(['status' => 'valid']);
         $response2 = $this->actingAs($siswaUser)->put(route('siswa.jurnal.update', $jurnal), [
             'tanggal' => now()->toDateString(),

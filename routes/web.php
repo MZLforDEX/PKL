@@ -49,10 +49,10 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::resource('siswa', SiswaController::class);
-        Route::resource('guru', GuruController::class);
-        Route::resource('tempat-pkl', TempatPklController::class);
-        Route::resource('pembimbing-industri', \App\Http\Controllers\Admin\PembimbingIndustriController::class);
+        Route::resource('siswa', SiswaController::class)->except(['show']);
+        Route::resource('guru', GuruController::class)->except(['show']);
+        Route::resource('tempat-pkl', TempatPklController::class)->except(['show']);
+        Route::resource('pembimbing-industri', \App\Http\Controllers\Admin\PembimbingIndustriController::class)->except(['show']);
         Route::get('pengajuan', [AdminPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [AdminPengajuanPklController::class, 'show'])->name('pengajuan.show');
         Route::put('pengajuan/{pengajuanPkl}/guru', [AdminPengajuanPklController::class, 'assignGuru'])->name('pengajuan.assign-guru');
@@ -61,6 +61,16 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('users/unapproved', [\App\Http\Controllers\Admin\UserController::class, 'unapproved'])->name('users.unapproved');
         Route::put('users/{user}/approve', [\App\Http\Controllers\Admin\UserController::class, 'approve'])->name('users.approve');
         Route::delete('users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+
+        // Pesan Industri / Hubungi Sekolah
+        Route::get('pesan-industri', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'index'])->name('pesan.index');
+        Route::get('pesan-industri/{id}', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'show'])->name('pesan.show');
+        Route::post('pesan-industri/{id}/balas', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'reply'])->name('pesan.reply');
+
+        // Pesan Guru / Hubungi Admin
+        Route::get('pesan-guru', [\App\Http\Controllers\Admin\AduanGuruController::class, 'index'])->name('pesan-guru.index');
+        Route::get('pesan-guru/{id}', [\App\Http\Controllers\Admin\AduanGuruController::class, 'show'])->name('pesan-guru.show');
+        Route::post('pesan-guru/{id}/balas', [\App\Http\Controllers\Admin\AduanGuruController::class, 'reply'])->name('pesan-guru.reply');
     });
 
 // Guru
@@ -86,6 +96,14 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('penilaian/{pengajuanPkl}/create', [PenilaianPklController::class, 'create'])->name('penilaian.create');
         Route::post('penilaian/{pengajuanPkl}', [PenilaianPklController::class, 'store'])->name('penilaian.store');
         Route::get('absensi', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'index'])->name('absensi.index');
+
+        // Pesan Industri / Hubungi Sekolah
+        Route::get('pesan-industri', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'index'])->name('pesan.index');
+        Route::get('pesan-industri/{id}', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'show'])->name('pesan.show');
+        Route::post('pesan-industri/{id}/balas', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'reply'])->name('pesan.reply');
+
+        // Hubungi Admin
+        Route::resource('hubungi-admin', \App\Http\Controllers\Guru\PesanGuruController::class)->only(['index', 'create', 'store', 'show']);
     });
 
 // Siswa
@@ -99,13 +117,11 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('jurnal', [SiswaJurnalPklController::class, 'index'])->name('jurnal.index');
         Route::get('jurnal/create', [SiswaJurnalPklController::class, 'create'])->name('jurnal.create');
         Route::post('jurnal', [SiswaJurnalPklController::class, 'store'])->name('jurnal.store');
-        Route::get('jurnal/{jurnalPkl}', [SiswaJurnalPklController::class, 'show'])->name('jurnal.show');
         Route::get('jurnal/{jurnalPkl}/edit', [SiswaJurnalPklController::class, 'edit'])->name('jurnal.edit');
         Route::put('jurnal/{jurnalPkl}', [SiswaJurnalPklController::class, 'update'])->name('jurnal.update');
         Route::get('laporan', [SiswaLaporanPklController::class, 'index'])->name('laporan.index');
         Route::get('laporan/create', [SiswaLaporanPklController::class, 'create'])->name('laporan.create');
         Route::post('laporan', [SiswaLaporanPklController::class, 'store'])->name('laporan.store');
-        Route::get('laporan/{laporanPkl}', [SiswaLaporanPklController::class, 'show'])->name('laporan.show');
         Route::get('laporan/{laporanPkl}/edit', [SiswaLaporanPklController::class, 'edit'])->name('laporan.edit');
         Route::put('laporan/{laporanPkl}', [SiswaLaporanPklController::class, 'update'])->name('laporan.update');
         Route::get('pengajuan/{pengajuan}/sertifikat', [SiswaPengajuanPklController::class, 'cetakSertifikat'])->name('pengajuan.sertifikat');
@@ -126,6 +142,9 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
         Route::put('jurnal/{jurnalPkl}/valid', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'valid'])->name('jurnal.valid');
         Route::put('jurnal/{jurnalPkl}/revisi', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'mintaRevisi'])->name('jurnal.revisi');
         Route::get('absensi', [\App\Http\Controllers\PembimbingIndustri\AbsensiPklController::class, 'index'])->name('absensi.index');
+
+        // Hubungi Sekolah
+        Route::resource('hubungi-sekolah', \App\Http\Controllers\PembimbingIndustri\PesanPembimbingController::class)->only(['index', 'create', 'store', 'show']);
     });
 
 require __DIR__.'/auth.php';

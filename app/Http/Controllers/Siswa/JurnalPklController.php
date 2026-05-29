@@ -15,6 +15,7 @@ class JurnalPklController extends Controller
     public function index()
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $jurnal = JurnalPkl::whereHas('pengajuanPkl', fn($q) => $q->where('siswa_id', $siswa->id))
             ->latest()->paginate(10);
         return view('siswa.jurnal.index', compact('jurnal'));
@@ -23,6 +24,7 @@ class JurnalPklController extends Controller
     public function create()
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
 
@@ -36,6 +38,7 @@ class JurnalPklController extends Controller
     public function store(StoreJurnalPklRequest $request)
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
 
@@ -98,6 +101,7 @@ class JurnalPklController extends Controller
     private function authorizeOwner(JurnalPkl $jurnalPkl): void
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         if ($jurnalPkl->pengajuanPkl->siswa_id !== $siswa->id) {
             abort(403);
         }

@@ -12,6 +12,7 @@ class DashboardController extends Controller
     public function index()
     {
         $guru = auth()->user()->guru;
+        if (!$guru) abort(403, 'Profil guru belum diatur.');
         $totalBimbingan = PengajuanPkl::where('guru_id', $guru->id)->count();
         $menungguValidasi = PengajuanPkl::where('guru_id', $guru->id)->where('status', 'menunggu_persetujuan')->count();
         $jurnalMenunggu = JurnalPkl::whereHas('pengajuanPkl', fn($q) => $q->where('guru_id', $guru->id))

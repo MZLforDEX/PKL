@@ -133,8 +133,8 @@
                     <p class="text-brand-100 text-sm mb-6 leading-relaxed">
                         Jika Anda mengalami kendala dalam memberikan penilaian atau validasi jurnal, silakan hubungi Admin sistem.
                     </p>
-                    <a href="mailto:admin@smk.sch.id" class="flex items-center justify-center w-full py-3 bg-white text-brand-600 rounded-xl font-bold text-sm hover:bg-brand-50 transition-colors shadow-lg">
-                        <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+                    <a href="{{ route('guru.hubungi-admin.index') }}" class="flex items-center justify-center w-full py-3 bg-white text-brand-600 rounded-xl font-bold text-sm hover:bg-brand-50 transition-colors shadow-lg">
+                        <i data-lucide="message-square" class="w-4 h-4 mr-2"></i>
                         Hubungi Admin
                     </a>
                 </div>

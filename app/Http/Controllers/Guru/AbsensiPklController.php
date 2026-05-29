@@ -10,6 +10,7 @@ class AbsensiPklController extends Controller
     public function index()
     {
         $guru = auth()->user()->guru;
+        if (!$guru) abort(403, 'Profil guru belum diatur.');
         $absensi = AbsensiPkl::with(['pengajuanPkl.siswa.user', 'pengajuanPkl.tempatPkl'])
             ->whereHas('pengajuanPkl', fn($q) => $q->where('guru_id', $guru->id))
             ->latest()

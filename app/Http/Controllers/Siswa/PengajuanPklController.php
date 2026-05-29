@@ -14,6 +14,7 @@ class PengajuanPklController extends Controller
     public function index()
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user'])
             ->where('siswa_id', $siswa->id)->latest()->paginate(10);
         return view('siswa.pengajuan.index', compact('pengajuan'));
@@ -28,6 +29,7 @@ class PengajuanPklController extends Controller
     public function store(StorePengajuanPklRequest $request)
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
 
         $hasActive = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereNotIn('status', ['ditolak', 'selesai'])
@@ -135,6 +137,7 @@ class PengajuanPklController extends Controller
     private function authorizeOwner(PengajuanPkl $pengajuan): void
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         if ($pengajuan->siswa_id !== $siswa->id) {
             abort(403);
         }

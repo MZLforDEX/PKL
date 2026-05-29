@@ -16,7 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-surface-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-surface-50 text-surface-900 transition-colors duration-300">
+        <div class="guest-layout min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden bg-surface-50 text-surface-900 transition-colors duration-300">
 
             {{-- Background --}}
             <div class="absolute inset-0">

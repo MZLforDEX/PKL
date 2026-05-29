@@ -15,9 +15,9 @@ class PenilaianPkl extends Model
     ];
 
     protected $casts = [
-        'nilai_sikap' => 'float',
-        'nilai_keterampilan' => 'float',
-        'nilai_laporan' => 'float',
+        'nilai_sikap' => 'integer',
+        'nilai_keterampilan' => 'integer',
+        'nilai_laporan' => 'integer',
         'nilai_akhir' => 'float',
     ];
 

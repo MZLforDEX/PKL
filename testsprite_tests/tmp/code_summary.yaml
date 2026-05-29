@@ -1,0 +1,276 @@
+version: "2"
+type: frontend
+tech_stack:
+  - language: PHP 8.2
+  - framework: Laravel 12 (Breeze auth)
+  - ui_library: Blade + Tailwind CSS v3 + Alpine.js
+  - other:
+      - MySQL (runtime), SQLite in-memory (tests)
+      - Vite (assets)
+      - Laravel Notifications (database channel)
+      - Queue: database (runtime), sync (tests)
+
+routes:
+  - path: /
+    file: resources/views/welcome.blade.php
+    auth_required: false
+    description: Landing page
+  - path: /guide
+    file: resources/views/guide.blade.php
+    auth_required: false
+    description: Panduan penggunaan aplikasi
+  - path: /login
+    file: resources/views/auth/login.blade.php
+    auth_required: false
+    description: Halaman login (Laravel Breeze)
+  - path: /register
+    file: resources/views/auth/register.blade.php
+    auth_required: false
+    description: Registrasi user baru (perlu approval admin untuk login)
+  - path: /forgot-password
+    file: resources/views/auth/forgot-password.blade.php
+    auth_required: false
+    description: Request reset password
+  - path: /reset-password/{token}
+    file: resources/views/auth/reset-password.blade.php
+    auth_required: false
+    description: Form reset password
+  - path: /verify-email
+    file: resources/views/auth/verify-email.blade.php
+    auth_required: true
+    description: Verifikasi email (Breeze)
+  - path: /profile
+    file: resources/views/profile/edit.blade.php
+    auth_required: true
+    description: Update profil user
+  - path: /profile/security
+    file: resources/views/profile/security.blade.php
+    auth_required: true
+    description: Update password & keamanan akun
+  - path: /notifications
+    file: resources/views/notifications/index.blade.php
+    auth_required: true
+    description: Inbox notifikasi (semua role)
+
+  - path: /admin/dashboard
+    file: resources/views/admin/dashboard.blade.php
+    auth_required: true
+    description: Dashboard admin
+  - path: /admin/users/unapproved
+    file: resources/views/admin/users/unapproved.blade.php
+    auth_required: true
+    description: Approval registrasi user
+  - path: /admin/pengajuan
+    file: resources/views/admin/pengajuan/index.blade.php
+    auth_required: true
+    description: Monitoring pengajuan PKL + assign guru
+
+  - path: /guru/dashboard
+    file: resources/views/guru/dashboard.blade.php
+    auth_required: true
+    description: Dashboard guru pendamping
+  - path: /guru/pengajuan
+    file: resources/views/guru/pengajuan/index.blade.php
+    auth_required: true
+    description: Daftar pengajuan siswa bimbingan
+  - path: /guru/jurnal
+    file: resources/views/guru/jurnal/index.blade.php
+    auth_required: true
+    description: Validasi jurnal siswa
+  - path: /guru/laporan
+    file: resources/views/guru/laporan/index.blade.php
+    auth_required: true
+    description: Review laporan akhir siswa
+  - path: /guru/penilaian
+    file: resources/views/guru/penilaian/index.blade.php
+    auth_required: true
+    description: Penilaian akhir PKL
+  - path: /guru/absensi
+    file: resources/views/guru/absensi/index.blade.php
+    auth_required: true
+    description: Monitoring absensi siswa bimbingan
+
+  - path: /siswa/dashboard
+    file: resources/views/siswa/dashboard.blade.php
+    auth_required: true
+    description: Dashboard siswa
+  - path: /siswa/pengajuan
+    file: resources/views/siswa/pengajuan/index.blade.php
+    auth_required: true
+    description: Pengajuan PKL siswa (buat/edit/ajukan/lihat)
+  - path: /siswa/jurnal
+    file: resources/views/siswa/jurnal/index.blade.php
+    auth_required: true
+    description: Jurnal PKL siswa (buat/edit)
+  - path: /siswa/laporan
+    file: resources/views/siswa/laporan/index.blade.php
+    auth_required: true
+    description: Upload laporan akhir PKL (termasuk upload ulang saat revisi)
+  - path: /siswa/absensi
+    file: resources/views/siswa/absensi/index.blade.php
+    auth_required: true
+    description: Clock-in absensi siswa
+
+  - path: /pembimbing/dashboard
+    file: resources/views/pembimbing/dashboard.blade.php
+    auth_required: true
+    description: Dashboard pembimbing industri
+  - path: /pembimbing/siswa
+    file: resources/views/pembimbing/siswa/index.blade.php
+    auth_required: true
+    description: Daftar siswa bimbingan (berdasarkan tempat PKL)
+  - path: /pembimbing/jurnal
+    file: resources/views/pembimbing/jurnal/index.blade.php
+    auth_required: true
+    description: Validasi jurnal (pembimbing industri)
+  - path: /pembimbing/absensi
+    file: resources/views/pembimbing/absensi/index.blade.php
+    auth_required: true
+    description: Lihat absensi siswa bimbingan
+
+features:
+  - name: Authentication & approval
+    description: Login Breeze + registrasi user baru memerlukan approval admin sebelum bisa login.
+    files:
+      - app/Http/Controllers/Auth/AuthenticatedSessionController.php
+      - app/Http/Controllers/Admin/UserController.php
+      - database/migrations/2026_05_17_085532_add_is_approved_to_users_table.php
+    entry_route: /login
+    user_interactions:
+      - Buka halaman login
+      - Login dengan email + password
+      - Jika akun belum disetujui, tampil pesan menunggu persetujuan admin
+    api_calls:
+      - method: POST
+        endpoint: /login
+    auth_required: false
+
+  - name: Role-based dashboards & navigation
+    description: Redirect login berdasarkan role (admin/guru/siswa/pembimbing_industri) dan proteksi route via middleware role.
+    files:
+      - app/Http/Middleware/RoleMiddleware.php
+      - routes/web.php
+    entry_route: /login
+    user_interactions:
+      - Login sebagai role tertentu
+      - Dialihkan ke dashboard sesuai role
+      - Akses route role lain ditolak (403)
+    api_calls:
+      - method: GET
+        endpoint: /{role}/dashboard
+    auth_required: true
+
+  - name: Pengajuan PKL (Siswa) + kuota tempat PKL
+    description: Siswa membuat/ubah/ajukan pengajuan; kuota tempat PKL dicek saat buat/ubah/ajukan; hanya 1 pengajuan aktif.
+    files:
+      - app/Http/Controllers/Siswa/PengajuanPklController.php
+      - app/Models/TempatPkl.php
+    entry_route: /siswa/pengajuan
+    user_interactions:
+      - Buat pengajuan PKL baru (draft)
+      - Upload dokumen pengajuan
+      - Ajukan pengajuan (menunggu_persetujuan)
+      - Melihat status & catatan guru
+    api_calls:
+      - method: POST
+        endpoint: /siswa/pengajuan
+      - method: PUT
+        endpoint: /siswa/pengajuan/{id}/ajukan
+    auth_required: true
+
+  - name: Validasi Pengajuan (Guru) + notifikasi ke siswa
+    description: Guru menyetujui/menolak/minta revisi pengajuan; mengirim notifikasi status ke siswa.
+    files:
+      - app/Http/Controllers/Guru/PengajuanPklController.php
+      - app/Notifications/PengajuanPklStatusChanged.php
+    entry_route: /guru/pengajuan
+    user_interactions:
+      - Guru membuka detail pengajuan
+      - Setujui / Tolak / Minta revisi + catatan
+      - Siswa menerima notifikasi perubahan status
+    api_calls:
+      - method: PUT
+        endpoint: /guru/pengajuan/{id}/setujui
+      - method: PUT
+        endpoint: /guru/pengajuan/{id}/tolak
+      - method: PUT
+        endpoint: /guru/pengajuan/{id}/revisi
+    auth_required: true
+
+  - name: Jurnal PKL (Siswa) + validasi (Guru & Pembimbing)
+    description: Siswa upload jurnal; guru/pembimbing dapat validasi atau minta revisi; upload jurnal pertama mengubah pengajuan ke sedang_pkl.
+    files:
+      - app/Http/Controllers/Siswa/JurnalPklController.php
+      - app/Http/Controllers/Guru/JurnalPklController.php
+      - app/Http/Controllers/PembimbingIndustri/JurnalPklController.php
+      - app/Notifications/SiswaUploadJurnal.php
+    entry_route: /siswa/jurnal
+    user_interactions:
+      - Siswa membuat jurnal (upload dokumentasi optional)
+      - Guru/pembimbing memvalidasi atau minta revisi jurnal
+      - Siswa mengedit jurnal setelah revisi
+    api_calls:
+      - method: POST
+        endpoint: /siswa/jurnal
+      - method: PUT
+        endpoint: /guru/jurnal/{id}/valid
+      - method: PUT
+        endpoint: /pembimbing/jurnal/{id}/valid
+    auth_required: true
+
+  - name: Laporan akhir (Siswa) + review (Guru) + resubmission revisi
+    description: Siswa upload laporan akhir; guru menerima atau minta revisi; siswa dapat upload ulang saat revisi dan guru mendapat notifikasi.
+    files:
+      - app/Http/Controllers/Siswa/LaporanPklController.php
+      - app/Http/Controllers/Guru/LaporanPklController.php
+      - app/Notifications/SiswaUploadLaporan.php
+    entry_route: /siswa/laporan
+    user_interactions:
+      - Upload laporan PDF
+      - Guru terima / minta revisi dengan catatan
+      - Jika revisi: siswa klik Perbaiki lalu upload ulang
+    api_calls:
+      - method: POST
+        endpoint: /siswa/laporan
+      - method: PUT
+        endpoint: /guru/laporan/{id}/revisi
+      - method: PUT
+        endpoint: /siswa/laporan/{id}
+    auth_required: true
+
+  - name: Absensi PKL
+    description: Siswa clock-in sekali per hari; guru/pembimbing dapat melihat absensi siswa bimbingan.
+    files:
+      - app/Http/Controllers/Siswa/AbsensiPklController.php
+      - app/Http/Controllers/Guru/AbsensiPklController.php
+      - app/Http/Controllers/PembimbingIndustri/AbsensiPklController.php
+    entry_route: /siswa/absensi
+    user_interactions:
+      - Siswa clock-in harian
+      - Guru/pembimbing memantau absensi
+    api_calls:
+      - method: POST
+        endpoint: /siswa/absensi
+      - method: GET
+        endpoint: /guru/absensi
+    auth_required: true
+
+  - name: Penilaian akhir PKL (Guru)
+    description: Guru input penilaian (sikap, keterampilan, laporan) dan sistem menghitung nilai_akhir serta menandai pengajuan selesai.
+    files:
+      - app/Http/Controllers/Guru/PenilaianPklController.php
+      - app/Models/PenilaianPkl.php
+    entry_route: /guru/penilaian
+    user_interactions:
+      - Guru membuka form penilaian siswa bimbingan
+      - Input nilai dan simpan
+      - Status pengajuan menjadi selesai
+    api_calls:
+      - method: POST
+        endpoint: /guru/penilaian/{pengajuanId}
+    auth_required: true
+
+known_limitations:
+  - issue: composer run dev fails on Windows because Laravel Pail requires pcntl
+    location: composer.json (script dev calls php artisan pail)
+    impact: Use php artisan serve + npm run dev separately on Windows

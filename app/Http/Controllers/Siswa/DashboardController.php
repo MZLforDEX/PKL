@@ -13,6 +13,7 @@ class DashboardController extends Controller
     public function index()
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl', 'laporanPkl'])
             ->where('siswa_id', $siswa->id)->latest()->first();
         

@@ -24,8 +24,6 @@ class AbsensiPkl extends Model
 
     protected $casts = [
         'tanggal' => 'date',
-        'latitude' => 'float',
-        'longitude' => 'float',
     ];
 
     public function pengajuanPkl(): BelongsTo

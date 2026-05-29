@@ -14,6 +14,7 @@ class AbsensiPklController extends Controller
     public function index()
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian', 'selesai'])
             ->first();
@@ -37,6 +38,7 @@ class AbsensiPklController extends Controller
     public function store(Request $request)
     {
         $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl'])
             ->first();

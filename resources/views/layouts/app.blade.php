@@ -30,6 +30,13 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+        /* SweetAlert2 cancel button text color override */
+        .swal2-styled.swal2-cancel {
+            color: #374151 !important;
+        }
+        .dark .swal2-styled.swal2-cancel {
+            color: #e4e4e7 !important;
+        }
     </style>
 </head>
 
@@ -250,7 +257,7 @@
                 buttonsStyling: true,
                 customClass: {
                     confirmButton: 'px-4 py-2 font-semibold text-sm rounded-lg text-white transition-all',
-                    cancelButton: 'px-4 py-2 font-semibold text-sm rounded-lg transition-all ml-2'
+                    cancelButton: 'px-4 py-2 font-semibold text-sm rounded-lg transition-all ml-2 text-gray-700 dark:text-zinc-300'
                 }
             }).then((result) => {
                 if (result.isConfirmed && typeof callback === 'function') {

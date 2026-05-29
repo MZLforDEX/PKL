@@ -1,8 +1,8 @@
 # AGENTS.md
 
-Laravel 12 PKL (Praktik Kerja Lapangan) system — **complete with all features built out**. Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`SPARTA`.
+Laravel 12 PKL (Praktik Kerja Lapangan) system — Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`SPARTA`.
 
-**46 feature tests passing** — run via `composer run test`.
+**53 feature tests passing** — run via `composer run test`.
 
 ---
 
@@ -31,7 +31,7 @@ Public pages: `/` (welcome), `/guide`. Notifications (in-app, database channel):
 
 **Controllers** grouped by role under `app/Http/Controllers/{Admin,Guru,Siswa,PembimbingIndustri}/`. Shared: `ProfileController`, `NotificationController`. Middleware: `role` alias registered in `bootstrap/app.php` → `RoleMiddleware` (single-role string match, abort 403).
 
-**Models** (10): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`. All use `$fillable`.
+**Models** (12): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`, `PesanPembimbing`, `PesanGuru`. All use `$fillable`.
 
 **Routes** defined in `routes/web.php` — role groupings via `->middleware(['auth', 'role:...'])`. Auth routes are default Breeze — do not modify.
 
@@ -60,6 +60,7 @@ Key transitions:
 - **Pembimbing industri**: tied to `tempat_pkl_id`. Validates jurnal (parallel with guru). Views absensi.
 - **Quota** (`TempatPkl`): counts pengajuan with status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Exposed via `sisa_kuota` and `is_penuh` accessors.
 - **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → sets pengajuan `selesai`. Validates `menunggu_penilaian` status before saving (redirects back with error if wrong).
+- **Messaging**: `PesanPembimbing` (pembimbing → admin/guru) and `PesanGuru` (guru → admin). Both support replies.
 
 ## Notifications (database + mail)
 
@@ -68,6 +69,10 @@ Key transitions:
 | Teacher changes pengajuan status | Student | `PengajuanPklStatusChanged` |
 | Student uploads jurnal | Guru | `SiswaUploadJurnal` |
 | Student uploads/resubmits laporan | Guru | `SiswaUploadLaporan` |
+| Pembimbing sends message | Admin/guru | `PesanBaruDariIndustri` |
+| Guru sends message to admin | Admin | `PesanBaruDariGuru` |
+| Admin replies to pembimbing | Pembimbing | `PesanTelahDibalasSekolah` |
+| Admin replies to guru | Guru | `PesanGuruDibalas` |
 
 ## File Uploads
 
@@ -97,6 +102,7 @@ All password: `password`
 | `NotificationSystemTest` | Notifications on pengajuan/jurnal/laporan events |
 | `PembimbingIndustriTest` | Admin CRUD, jurnal validation |
 | `PengajuanPklQuotaTest` | Quota enforcement |
+| `HubungiSekolahTest` | Messaging: pembimbing→admin/guru, guru→admin |
 | `Auth/*`, `ProfileTest` | Breeze auth + profile |
 
 Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
@@ -108,11 +114,11 @@ Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
 - Custom theme in `tailwind.config.js`: `brand-50`–`950`, `surface-50`–`950`, shadows (`glass`, `neon`, `card`), animations (`fade-in`, `slide-up`, etc.). Check before picking colors.
 - No React/Vue/Inertia — **Blade + Tailwind + Alpine.js**. Alpine used for interactivity (`x-data`, `x-show`, `x-cloak`, `x-transition`).
 - Lucide icons via CDN (`unpkg.com/lucide@latest`). Must call `lucide.createIcons()` after DOM updates. Font Awesome 6.4 (`cdnjs.cloudflare.com`) also available.
-- SweetAlert2 via CDN — global `confirmAction(title, text, icon, confirmText, callback)` helper in `app.blade.php`.
+- SweetAlert2 via CDN — global `confirmAction(title, text, icon, confirmText, callback)` helper in `resources/views/layouts/app.blade.php`.
 - Route model binding `laporan/{laporanPkl}` must be defined **after** `laporan/create` (already correct in current routes).
 - Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
 - UI language: Indonesian.
 - `QUEUE_CONNECTION=database` — notifications + job tables used. Queue listener is part of `composer run dev`.
 - `SESSION_DRIVER=database`, `CACHE_STORE=database` — non-default (usually `file`). Tests override these to `array` and `sync` respectively.
-- Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `app.blade.php` loads Inter from Google Fonts with inline `font-family: 'Inter'`.
+- Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `resources/views/layouts/app.blade.php` loads Inter from Google Fonts with inline `font-family: 'Inter'`.
 - No `opencode.json` — config lives solely in `AGENTS.md`.

@@ -51,8 +51,4 @@ class TempatPklController extends Controller
         $tempatPkl->delete();
         return redirect()->route('admin.tempat-pkl.index')->with('success', 'Tempat PKL berhasil dihapus.');
     }
-
-        $tempatPkl->delete();
-        return redirect()->route('admin.tempat-pkl.index')->with('success', 'Tempat PKL berhasil dihapus.');
-    }
 }
