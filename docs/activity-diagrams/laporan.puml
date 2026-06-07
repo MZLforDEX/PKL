@@ -1,0 +1,87 @@
+@startuml
+' Laporan PKL Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Laporan Akhir PKL**
+
+|Siswa|
+start
+: Buka halaman laporan;
+: Klik "Upload Laporan Baru";
+
+|Sistem|
+: Cari pengajuan disetujui atau sedang_pkl \nyang belum punya laporan;
+if (Ada pengajuan eligible?) then (Ya)
+  : Tampilkan form upload;
+else (Tidak)
+  : Redirect dengan error;
+  : "Tidak ada pengajuan aktif \natau laporan sudah ada";
+  stop
+endif
+
+|Siswa|
+: Upload file laporan (pdf, max 5MB);
+: Klik "Simpan";
+
+|Sistem|
+: Simpan file ke storage/app/public/laporan/;
+: Buat LaporanPkl (status = menunggu_review);
+: Kirim notifikasi ke Guru (SiswaUploadLaporan);
+: Tampilkan sukses;
+stop
+
+newpage
+
+|Guru|
+start
+: Buka daftar laporan siswa bimbingan;
+: Pilih laporan (status = menunggu_review);
+: Download & review file laporan;
+
+|Sistem|
+: Tampilkan tombol Terima / Minta Revisi;
+
+|Guru|
+if (Keputusan?) then (Terima)
+  : Klik "Terima Laporan";
+  |Sistem|
+  : Update status laporan → diterima;
+  : Update status pengajuan → menunggu_penilaian;
+  : (Siswa siap dinilai oleh Guru);
+else (Revisi)
+  : Klik "Minta Revisi" + catatan revisi (wajib);
+  |Sistem|
+  : Update status laporan → revisi;
+endif
+: Tampilkan sukses;
+stop
+
+newpage
+
+|Siswa|
+start
+: Menerima notifikasi revisi laporan;
+: Buka halaman edit laporan;
+: Upload ulang file laporan (pdf, max 5MB);
+: Klik "Simpan";
+
+|Sistem|
+: Cek status (hanya revisi bisa diupdate);
+if (Status = revisi?) then (Ya)
+  : Hapus file laporan lama;
+  : Simpan file baru;
+  : Update status → menunggu_review;
+  : Kirim notifikasi ke Guru (SiswaUploadLaporan);
+  : Tampilkan sukses;
+  stop
+else (Tidak)
+  : Tampilkan error;
+  : "Laporan tidak dapat diperbarui";
+  stop
+endif
+
+@enduml

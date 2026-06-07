@@ -1,0 +1,68 @@
+@startuml
+' Absensi PKL Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Absensi Harian PKL**
+
+|Siswa|
+start
+: Buka halaman absensi;
+: Lihat status absensi hari ini;
+
+|Sistem|
+: Cari pengajuan dengan status \ndisetujui atau sedang_pkl;
+if (Ada pengajuan aktif?) then (Ya)
+  : Cek apakah sudah absen hari ini \n(whereDate = today);
+  if (Sudah absen?) then (Ya)
+    : Tampilkan pesan "Sudah absen hari ini";
+    stop
+  else (Belum)
+    : Tampilkan tombol "Clock-in";
+  endif
+else (Tidak aktif)
+  : Tampilkan pesan "Tidak ada PKL aktif";
+  stop
+endif
+
+|Siswa|
+: Klik "Clock-in";
+: Izinkan akses kamera (webcam);
+: Ambil foto selfie (base64);
+: (Opsional) Deteksi lokasi (lat/lng);
+: Konfirmasi clock-in;
+
+|Sistem|
+: Validasi input (latitude, longitude, foto_selfie);
+if (Valid?) then (Tidak)
+  : Tampilkan error validasi;
+  stop
+else (Ya)
+  : Cek waktu sekarang;
+  if (Jam <= 08:00) then (Ya)
+    : Status = hadir;
+  else (Terlambat)
+    : Status = terlambat;
+  endif
+  : Decode base64 foto selfie;
+  : Validasi mime type (jpeg/png/jpg/webp);
+  : Simpan foto ke storage/app/public/absensi/;
+  : Buat AbsensiPkl record \n(pengajuan_pkl_id, tanggal, jam_masuk, \n latitude, longitude, foto, status);
+  : Tampilkan sukses;
+  stop
+endif
+
+newpage
+
+|Guru / Pembimbing Industri|
+start
+: Buka halaman absensi siswa;
+|Sistem|
+: Tampilkan daftar absensi (paginated 15) \nuntuk semua siswa bimbingan;
+: Tampilkan data: nama siswa, tanggal, \njam_masuk, status (hadir/terlambat), foto;
+stop
+
+@enduml

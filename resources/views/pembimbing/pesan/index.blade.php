@@ -30,7 +30,6 @@
                             <tr>
                                 <th>Subjek & Tanggal</th>
                                 <th>Kategori</th>
-                                <th>Status</th>
                                 <th class="text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -56,25 +55,6 @@
                                         {{ ucfirst($p->kategori) }}
                                     </span>
                                 </td>
-                                <td class="whitespace-nowrap">
-                                    @php
-                                        $statusClasses = [
-                                            'menunggu_tanggapan' => 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30',
-                                            'proses' => 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30',
-                                            'selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30',
-                                        ];
-                                        $class = $statusClasses[$p->status] ?? 'bg-surface-100 text-surface-600';
-                                        $label = match($p->status) {
-                                            'menunggu_tanggapan' => 'Menunggu Tanggapan',
-                                            'proses' => 'Sedang Diproses',
-                                            'selesai' => 'Selesai',
-                                            default => $p->status,
-                                        };
-                                    @endphp
-                                    <span class="status-badge {{ $class }}">
-                                        {{ $label }}
-                                    </span>
-                                </td>
                                 <td class="whitespace-nowrap text-right">
                                     <a href="{{ route('pembimbing.hubungi-sekolah.show', $p->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-surface-200 hover:border-indigo-200 hover:text-indigo-600 rounded-xl text-xs font-bold text-surface-700 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:text-indigo-400 transition-all shadow-sm">
                                         <i data-lucide="eye" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></i>
@@ -84,7 +64,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4">
+                                <td colspan="3">
                                     <div class="empty-state">
                                         <div class="empty-state-icon mx-auto">
                                             <i data-lucide="message-square-off" class="w-8 h-8"></i>

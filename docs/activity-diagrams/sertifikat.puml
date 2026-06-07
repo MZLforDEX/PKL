@@ -1,0 +1,35 @@
+@startuml
+' Cetak Sertifikat PKL Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Cetak Sertifikat PKL**
+
+|Siswa|
+start
+: Buka halaman detail pengajuan;
+: Klik tombol "Cetak Sertifikat";
+
+|Sistem|
+: Cek authorizeOwner() (siswa pemilik pengajuan);
+if (Siswa pemilik?) then (Ya)
+  : Cek status pengajuan = selesai;
+  if (Status = selesai?) then (Ya)
+    : Load relasi: siswa.user, \ntempatPkl, guru.user, penilaianPkl;
+    : Render view siswa.sertifikat.print;
+    : Tampilkan sertifikat dalam format \nyang siap dicetak (CSS print);
+    stop
+  else (Belum selesai)
+    : Tampilkan error;
+    : "Sertifikat hanya tersedia \nsetelah PKL selesai";
+    stop
+  endif
+else (Bukan pemilik)
+  : Abort 403;
+  stop
+endif
+
+@enduml

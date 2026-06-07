@@ -68,7 +68,7 @@ class HubungiSekolahTest extends TestCase
     public function test_pembimbing_can_view_hubungi_sekolah_index_and_create(): void
     {
         $response = $this->actingAs($this->pembimbingUser)->get(route('pembimbing.hubungi-sekolah.index'));
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
         $response2 = $this->actingAs($this->pembimbingUser)->get(route('pembimbing.hubungi-sekolah.create'));
         $response2->assertStatus(200);
@@ -102,10 +102,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // Admin checks list
+        // Admin checks list (now redirects directly to chat thread)
         $response = $this->actingAs($this->adminUser)->get(route('admin.pesan.index'));
-        $response->assertStatus(200);
-        $response->assertSee('Kendala Administrasi');
+        $response->assertStatus(302);
 
         // Admin views detail
         $response2 = $this->actingAs($this->adminUser)->get(route('admin.pesan.show', $pesan->id));
@@ -156,10 +155,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // 4. Guru checks list
+        // 4. Guru checks list (now redirects directly to chat thread)
         $response = $this->actingAs($this->guruUser)->get(route('guru.pesan.index'));
-        $response->assertStatus(200);
-        $response->assertSee('Laporan Progres Mingguan');
+        $response->assertStatus(302);
 
         // 5. Guru replies
         $response2 = $this->actingAs($this->guruUser)->post(route('guru.pesan.reply', $pesan->id), [
@@ -175,7 +173,7 @@ class HubungiSekolahTest extends TestCase
     public function test_guru_can_view_hubungi_admin_index_and_create(): void
     {
         $response = $this->actingAs($this->guruUser)->get(route('guru.hubungi-admin.index'));
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
         $response2 = $this->actingAs($this->guruUser)->get(route('guru.hubungi-admin.create'));
         $response2->assertStatus(200);
@@ -209,10 +207,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // Admin checks list
+        // Admin checks list (now redirects directly to chat thread)
         $response = $this->actingAs($this->adminUser)->get(route('admin.pesan-guru.index'));
-        $response->assertStatus(200);
-        $response->assertSee('Error Teknis Jurnal');
+        $response->assertStatus(302);
 
         // Admin views detail
         $response2 = $this->actingAs($this->adminUser)->get(route('admin.pesan-guru.show', $pesan->id));

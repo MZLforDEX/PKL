@@ -28,7 +28,7 @@ class PesanGuruDibalas extends Notification
         $namaPenjawab = $this->pesan->dibalasOleh?->name ?? 'Admin Sekolah';
 
         return (new MailMessage)
-            ->subject('Tanggapan Bantuan SPARTA: ' . $this->pesan->subjek)
+            ->subject('Tanggapan Bantuan SiPKL: ' . $this->pesan->subjek)
             ->greeting('Halo, ' . $notifiable->name . '!')
             ->line('Admin sekolah melalui **' . $namaPenjawab . '** telah memberikan tanggapan atas pertanyaan/kendala Anda.')
             ->line('Subjek Pesan: **' . $this->pesan->subjek . '**')

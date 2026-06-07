@@ -1,0 +1,90 @@
+@startuml
+' Jurnal PKL Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Jurnal Harian PKL**
+
+|Siswa|
+start
+: Buka halaman jurnal;
+: Klik "Tambah Jurnal Baru";
+
+|Sistem|
+: Cari pengajuan disetujui atau sedang_pkl milik siswa;
+if (Ada pengajuan aktif?) then (Ya)
+  : Tampilkan form jurnal;
+else (Tidak)
+  : Redirect dengan error;
+  : "Belum ada pengajuan disetujui";
+  stop
+endif
+
+|Siswa|
+: Isi aktivitas harian;
+: Upload dokumentasi (jpg/jpeg/png/pdf, max 2MB);
+: Klik "Simpan";
+
+|Sistem|
+: Validasi input;
+: Simpan file ke storage/app/public/jurnal/;
+: Buat JurnalPkl (status = menunggu_validasi);
+if (Apakah ini jurnal pertama? \nstatus pengajuan = disetujui?) then (Ya)
+  : Update pengajuan → sedang_pkl;
+endif
+if (Guru pembimbing punya user?) then (Ya)
+  : Kirim notifikasi ke Guru \n(SiswaUploadJurnal);
+endif
+: Tampilkan sukses;
+stop
+
+newpage
+
+|Siswa|
+: Buka daftar jurnal;
+: Pilih jurnal (status = menunggu_validasi \natau revisi);
+if (Status = valid?) then (Ya)
+  : Tidak bisa edit atau update;
+  stop
+else (Tidak)
+  : Klik "Edit";
+  : Perbarui aktivitas / upload ulang dokumentasi;
+  : Klik "Simpan";
+  |Sistem|
+  : Hapus file lama jika ada upload baru;
+  : Update data jurnal;
+  : Reset status → menunggu_validasi;
+  : Tampilkan sukses;
+  stop
+endif
+
+newpage
+
+|Guru / Pembimbing Industri|
+start
+: Buka daftar jurnal siswa bimbingan;
+: Pilih jurnal (status = menunggu_validasi);
+: Review aktivitas + dokumentasi;
+
+|Sistem|
+: Tampilkan tombol Valid / Minta Revisi;
+
+|Guru / Pembimbing Industri|
+if (Keputusan?) then (Valid)
+  : Klik "Validasi";
+  |Sistem|
+  : Update status jurnal → valid;
+  : Simpan catatan (opsional);
+else (Revisi)
+  : Klik "Minta Revisi" + catatan revisi (wajib);
+  |Sistem|
+  : Update status jurnal → revisi;
+  : Simpan catatan revisi;
+endif
+: Tampilkan sukses;
+stop
+
+@enduml

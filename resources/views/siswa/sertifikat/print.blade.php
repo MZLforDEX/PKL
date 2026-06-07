@@ -525,7 +525,7 @@
 
         <div class="certificate-content">
             <div class="school-brand">
-                <h2>SEKOLAH MENENGAH KEJURUAN SPARTA</h2>
+                <h2>SEKOLAH MENENGAH KEJURUAN SiPKL</h2>
                 <p>NPSN: 10403020 &bull; Terakreditasi A &bull; Program Keahlian Teknologi</p>
             </div>
 
@@ -609,7 +609,7 @@
                 <div class="grade-summary-card">
                     <p class="score-title">Predikat Akhir</p>
                     <p class="score-val" style="font-size: 20pt; margin: 15px 0;">{{ $pengajuan->penilaianPkl?->predikat ?? '-' }}</p>
-                    <p class="score-predikat" style="font-size: 7.5pt; color: #64748b;">SMK SPARTA OFFICIAL GRADE</p>
+                    <p class="score-predikat" style="font-size: 7.5pt; color: #64748b;">SMK SiPKL OFFICIAL GRADE</p>
                 </div>
             </div>
 

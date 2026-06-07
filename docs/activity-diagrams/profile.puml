@@ -1,0 +1,73 @@
+@startuml
+' Profile Management Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Manajemen Profil**
+
+|User (Semua Role)|
+start
+: Buka halaman "Profil Saya";
+|Sistem|
+: Tampilkan form edit profil;
+: (Nama, Email, Avatar, \ndan field spesifik role);
+
+|User|
+: Ubah data profil;
+: (Opsional) Upload foto avatar baru;
+: Klik "Simpan";
+
+|Sistem|
+: Validasi input (ProfileUpdateRequest);
+if (Email berubah?) then (Ya)
+  : Set email_verified_at = null;
+endif
+if (Ada upload avatar?) then (Ya)
+  : Hapus avatar lama (jika ada);
+  : Simpan avatar ke storage/avatars/;
+endif
+if (Role = siswa && relasi siswa ada?) then (Ya)
+  : Update nis, kelas, jurusan, \nalamat, no_hp;
+endif
+: Simpan perubahan User;
+: Tampilkan sukses;
+stop
+
+newpage
+
+|User|
+start
+: Buka halaman "Keamanan";
+: Isi password_saat_ini, password_baru, \nkonfirmasi_password_baru;
+: Klik "Simpan";
+
+|Sistem|
+: Validasi current password;
+: Update password;
+: Tampilkan sukses;
+stop
+
+newpage
+
+|User|
+start
+: Buka halaman "Hapus Akun";
+: Isi password_saat_ini (untuk konfirmasi);
+: Klik "Hapus Akun";
+
+|Sistem|
+if (Password valid?) then (Ya)
+  : Logout user;
+  : Hapus user dari database;
+  : Invalidasi session;
+  : Redirect ke halaman utama;
+  stop
+else (Tidak)
+  : Tampilkan error "Password salah";
+  stop
+endif
+
+@enduml

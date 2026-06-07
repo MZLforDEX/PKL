@@ -1,0 +1,112 @@
+@startuml
+' Login & Registrasi Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Registrasi, Persetujuan Admin & Login**
+
+|Pengguna Umum (Calon Siswa)|
+start
+: Membuka halaman registrasi;
+: Mengisi form (nama, email, nis, \nkelas, jurusan, alamat, no_hp, password);
+: Klik "Daftar";
+
+|Sistem|
+: Validasi input;
+if (Data valid?) then (Tidak)
+  : Tampilkan error validasi;
+  stop
+else (Ya)
+  : Buat User (role=siswa, is_approved=false);
+  : Buat Siswa record;
+  : Kirim email verifikasi;
+  : Redirect ke halaman login \ndengan pesan "menunggu persetujuan admin";
+endif
+
+|Pengguna Umum|
+: Menerima notifikasi/email \n"menunggu persetujuan admin";
+: (Menunggu tanpa bisa login);
+
+newpage
+
+|Admin|
+start
+: Buka halaman "User Tidak Disetujui" \n(/admin/users/unapproved);
+|Sistem|
+: Tampilkan daftar pendaftar \ndengan is_approved = false;
+
+|Admin|
+: Review data pendaftar;
+if (Keputusan?) then (Setujui)
+  : Klik tombol "Setujui";
+  |Sistem|
+  : Update is_approved = true;
+  if (Role = siswa && belum punya \nrecord Siswa?) then (Ya)
+    : Auto-create Siswa record \ndengan placeholder defaults;
+  endif
+  : (Akun kini aktif);
+  note right: Pengguna kini bisa login
+  stop
+else (Tolak)
+  : Klik tombol "Tolak & Hapus";
+  |Sistem|
+  : Hapus profile terkait;
+  : Hapus User dari database;
+  : "Akun pendaftar berhasil ditolak";
+  stop
+endif
+
+newpage
+
+|Pengguna Terdaftar (Akun Disetujui)|
+start
+: Menerima email verifikasi (jika belum);
+: Verifikasi email (klik link);
+: Buka halaman login;
+: Masukkan email & password;
+: Klik "Masuk";
+
+|Sistem|
+: Authenticate via LoginRequest;
+if (Kredensial valid?) then (Tidak)
+  : Tampilkan error "Email/password salah";
+  stop
+else (Ya)
+  : Cek is_approved;
+  if (is_approved = false?) then (Ya)
+    : Logout otomatis;
+    : Invalidasi session;
+    : Tampilkan error \n"Akun Anda sedang \nmenunggu persetujuan admin";
+    stop
+  endif
+  : Regenerasi session;
+  : Deteksi role user;
+  if (Role?) then (admin)
+    : Redirect ke admin.dashboard;
+  elseif (guru)
+    : Redirect ke guru.dashboard;
+  elseif (siswa)
+    : Redirect ke siswa.dashboard;
+  elseif (pembimbing_industri)
+    : Redirect ke pembimbing.dashboard;
+  endif
+  stop
+endif
+
+newpage
+
+title **Catatan: Alur Registrasi Khusus**
+
+|Admin|
+start
+: (Admin dapat membuat akun \nlangsung dari panel master data);
+
+|Sistem|
+: Buat User (role sesuai, \nis_approved = true langsung);
+: Akun langsung aktif \ntanpa perlu persetujuan;
+stop
+
+@enduml

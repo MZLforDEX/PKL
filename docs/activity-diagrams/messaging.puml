@@ -1,0 +1,94 @@
+@startuml
+' Hubungi Sekolah & Hubungi Admin Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Sistem Pesan (Hubungi Sekolah & Admin)**
+
+|Pembimbing Industri|
+start
+: Buka halaman "Hubungi Sekolah";
+: Isi subjek, kategori \n(administrasi/kendala_siswa/teknis/lainnya);
+: Isi pesan;
+: (Opsional) Upload lampiran \n(jpg/jpeg/png/pdf, max 2MB);
+: Klik "Kirim";
+
+|Sistem|
+: Validasi input;
+if (Valid?) then (Tidak)
+  : Tampilkan error validasi;
+  stop
+else (Ya)
+  : Simpan lampiran jika ada \nke storage/app/public/pesan_lampiran/;
+  : Buat PesanPembimbing \n(status = menunggu_tanggapan);
+  : Kirim notifikasi ke SEMUA admin \n(PesanBaruDariIndustri);
+  : Tampilkan sukses;
+endif
+stop
+
+newpage
+
+|Admin / Guru|
+start
+: Buka halaman pesan dari industri;
+: Pilih pesan yang masuk;
+: Baca detail pesan + download lampiran;
+: Isi tanggapan (wajib);
+: Pilih status: Proses / Selesai;
+: Klik "Kirim Balasan";
+
+|Sistem|
+if (Akses valid?) then (Admin = selalu valid \nGuru = hanya pesan dari tempat \nPKL dimana guru membimbing)
+  : Update: tanggapan, status, \ndibalas_oleh_id, dibalas_pada;
+  : Kirim notifikasi ke Pembimbing \n(PesanTelahDibalasSekolah);
+  : Tampilkan sukses;
+  stop
+else (Tidak)
+  : Abort 403;
+  stop
+endif
+
+newpage
+
+|Guru|
+start
+: Buka halaman "Hubungi Admin";
+: Isi subjek, kategori \n(penilaian/jurnal/laporan/teknis/lainnya);
+: Isi pesan;
+: (Opsional) Upload lampiran \n(jpg/jpeg/png/pdf, max 2MB);
+: Klik "Kirim";
+
+|Sistem|
+: Validasi input;
+if (Valid?) then (Tidak)
+  : Tampilkan error validasi;
+  stop
+else (Ya)
+  : Simpan lampiran jika ada;
+  : Buat PesanGuru (status = menunggu_tanggapan);
+  : Kirim notifikasi ke SEMUA admin \n(PesanBaruDariGuru);
+  : Tampilkan sukses;
+endif
+stop
+
+newpage
+
+|Admin|
+start
+: Buka halaman pesan dari guru;
+: Pilih pesan yang masuk;
+: Baca detail + download lampiran;
+: Isi tanggapan (wajib);
+: Pilih status: Proses / Selesai;
+: Klik "Kirim Balasan";
+
+|Sistem|
+: Update: tanggapan, status, \ndibalas_oleh_id, dibalas_pada;
+: Kirim notifikasi ke Guru \n(PesanGuruDibalas);
+: Tampilkan sukses;
+stop
+
+@enduml

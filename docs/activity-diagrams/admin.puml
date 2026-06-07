@@ -1,0 +1,101 @@
+@startuml
+' Admin Panel — Master Data & User Approval Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Admin Panel**
+
+|Admin|
+start
+: Buka halaman master data \n(Siswa/Guru/Tempat PKL/Pembimbing Industri);
+
+|Sistem|
+: Tampilkan daftar (index) dengan pagination;
+stop
+
+|Admin|
+: Klik "Tambah Baru";
+
+|Sistem|
+: Tampilkan form create;
+
+|Admin|
+: Isi data (nama, email, password dll \ntergantung entitas);
+: Klik "Simpan";
+
+|Sistem|
+: Validasi input;
+: Buat User (role sesuai, is_approved=true);
+: Buat record spesifik (Siswa/Guru/dll);
+: Tampilkan sukses;
+stop
+
+newpage
+
+|Admin|
+start
+: Klik "Edit" pada data yang ada;
+: Ubah data;
+: Klik "Simpan";
+
+|Sistem|
+: Validasi input;
+: Update User + record spesifik;
+: Tampilkan sukses;
+stop
+
+newpage
+
+|Admin|
+start
+: Klik "Hapus" pada data;
+|Sistem|
+if (Tempat PKL?) then (Ya)
+  : Cek dependensi (PengajuanPkl \ndan PembimbingIndustri);
+  if (Ada dependensi?) then (Ya)
+    : Redirect dengan error \n"Tidak dapat dihapus karena \nmasih memiliki data terkait";
+    stop
+  else (Tidak ada)
+    : Hapus record;
+    stop
+  endif
+else (Bukan Tempat PKL)
+  : Hapus record (user terkait \njuga terhapus/cascade);
+  : Tampilkan sukses;
+  stop
+endif
+
+newpage
+
+title **Activity Diagram - Persetujuan Registrasi User**
+
+|Admin|
+start
+: Buka halaman "User Tidak Disetujui";
+|Sistem|
+: Tampilkan daftar user dengan is_approved = false;
+
+|Admin|
+: Pilih user;
+if (Keputusan?) then (Setujui)
+  : Klik "Setujui";
+  |Sistem|
+  : Set is_approved = true;
+  if (Role = siswa && belum punya \nrecord Siswa?) then (Ya)
+    : Auto-create Siswa record \ndengan placeholder defaults;
+  endif
+  : Tampilkan sukses;
+  stop
+else (Tolak / Hapus)
+  : Klik "Tolak & Hapus";
+  |Sistem|
+  : Hapus profile terkait (siswa/guru/dll);
+  : Hapus user;
+  : Tampilkan sukses \n"Akun pendaftar berhasil ditolak";
+  stop
+endif
+
+@enduml

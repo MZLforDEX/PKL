@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SPARTA — Sistem Informasi PKL SMK</title>
+    <title>SiPKL — Sistem Informasi PKL SMK</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
                     <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <span class="text-base font-extrabold tracking-tight text-gray-900 dark:text-white">SPARTA</span>
+                    <span class="text-base font-extrabold tracking-tight text-gray-900 dark:text-white">SiPKL</span>
                     <span class="inline-flex items-center rounded bg-indigo-50 dark:bg-indigo-950/30 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-400/20 ml-1.5">PKL</span>
                 </div>
             </div>
@@ -73,7 +73,7 @@
             <!-- Badges -->
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 text-xs font-semibold text-indigo-700 dark:text-indigo-400 mb-8 animate-fade-in shadow-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                SPARTA v5.3.1 PKL Management
+                SiPKL v5.3.1 PKL Management
             </div>
 
             <!-- Title -->
@@ -130,7 +130,7 @@
 
         <!-- Footer -->
         <footer class="w-full border-t border-gray-200/60 dark:border-zinc-800 py-6 text-center text-xs text-gray-400 dark:text-zinc-500 z-10">
-            &copy; {{ date('Y') }} SPARTA — Sistem PKL. All rights reserved.
+            &copy; {{ date('Y') }} SiPKL — Sistem PKL. All rights reserved.
         </footer>
 
     </div>

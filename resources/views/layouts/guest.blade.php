@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SPARTA') }} — Login</title>
+        <title>{{ config('app.name', 'SiPKL') }} — Login</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
                     <div class="w-16 h-16 rounded-2xl bg-white border border-surface-200 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300 overflow-hidden">
                         <x-application-logo class="w-16 h-16 object-contain" />
                     </div>
-                    <span class="mt-4 text-2xl font-extrabold tracking-tight text-surface-900">SPARTA</span>
+                    <span class="mt-4 text-2xl font-extrabold tracking-tight text-surface-900">SiPKL</span>
                     <span class="text-xs text-surface-500 font-medium mt-0.5">Sistem Informasi PKL</span>
                 </a>
             </div>
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="mt-8 text-center text-xs text-surface-400">
-                    &copy; {{ date('Y') }} SPARTA — Sistem Informasi PKL. All rights reserved.
+                    &copy; {{ date('Y') }} SiPKL — Sistem Informasi PKL. All rights reserved.
                 </div>
             </div>
         </div>

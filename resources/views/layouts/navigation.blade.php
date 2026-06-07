@@ -79,7 +79,7 @@
                 <i data-lucide="graduation-cap" class="w-4.5 h-4.5"></i>
             </div>
             <div>
-                <span class="text-sm font-extrabold tracking-tight text-gray-900 dark:text-white">SPARTA</span>
+                <span class="text-sm font-extrabold tracking-tight text-gray-900 dark:text-white">SiPKL</span>
                 <span class="inline-flex items-center rounded-md bg-indigo-50 dark:bg-indigo-950/30 px-1.5 py-0.5 text-[9px] font-semibold text-indigo-700 dark:text-indigo-400 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-400/20 ml-1.5">PKL</span>
             </div>
         </a>

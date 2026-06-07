@@ -36,7 +36,7 @@ class PengajuanPklStatusChanged extends Notification
         }
 
         return $mail->action('Lihat Detail Pengajuan', route('siswa.pengajuan.show', $this->pengajuan->id))
-            ->line('Terima kasih telah menggunakan sistem informasi SPARTA.');
+            ->line('Terima kasih telah menggunakan sistem informasi SiPKL.');
     }
 
     public function toArray(object $notifiable): array

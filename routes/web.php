@@ -66,11 +66,13 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('pesan-industri', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'index'])->name('pesan.index');
         Route::get('pesan-industri/{id}', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'show'])->name('pesan.show');
         Route::post('pesan-industri/{id}/balas', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'reply'])->name('pesan.reply');
+        Route::get('pesan-industri/{id}/messages', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'messages'])->name('pesan.messages');
 
         // Pesan Guru / Hubungi Admin
         Route::get('pesan-guru', [\App\Http\Controllers\Admin\AduanGuruController::class, 'index'])->name('pesan-guru.index');
         Route::get('pesan-guru/{id}', [\App\Http\Controllers\Admin\AduanGuruController::class, 'show'])->name('pesan-guru.show');
         Route::post('pesan-guru/{id}/balas', [\App\Http\Controllers\Admin\AduanGuruController::class, 'reply'])->name('pesan-guru.reply');
+        Route::get('pesan-guru/{id}/messages', [\App\Http\Controllers\Admin\AduanGuruController::class, 'messages'])->name('pesan-guru.messages');
     });
 
 // Guru
@@ -101,9 +103,12 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('pesan-industri', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'index'])->name('pesan.index');
         Route::get('pesan-industri/{id}', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'show'])->name('pesan.show');
         Route::post('pesan-industri/{id}/balas', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'reply'])->name('pesan.reply');
+        Route::get('pesan-industri/{id}/messages', [\App\Http\Controllers\Admin\AduanPembimbingController::class, 'messages'])->name('pesan.messages');
 
         // Hubungi Admin
         Route::resource('hubungi-admin', \App\Http\Controllers\Guru\PesanGuruController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('hubungi-admin/{id}/messages', [\App\Http\Controllers\Guru\PesanGuruController::class, 'messages'])->name('hubungi-admin.messages');
+        Route::post('hubungi-admin/{id}/reply', [\App\Http\Controllers\Guru\PesanGuruController::class, 'reply'])->name('hubungi-admin.reply');
     });
 
 // Siswa
@@ -145,6 +150,8 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
 
         // Hubungi Sekolah
         Route::resource('hubungi-sekolah', \App\Http\Controllers\PembimbingIndustri\PesanPembimbingController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('hubungi-sekolah/{id}/messages', [\App\Http\Controllers\PembimbingIndustri\PesanPembimbingController::class, 'messages'])->name('hubungi-sekolah.messages');
+        Route::post('hubungi-sekolah/{id}/reply', [\App\Http\Controllers\PembimbingIndustri\PesanPembimbingController::class, 'reply'])->name('hubungi-sekolah.reply');
     });
 
 require __DIR__.'/auth.php';

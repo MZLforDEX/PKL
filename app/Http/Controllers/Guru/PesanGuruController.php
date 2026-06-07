@@ -19,9 +19,19 @@ class PesanGuruController extends Controller
 
         $pesan = PesanGuru::where('guru_id', $guru->id)
             ->latest()
-            ->paginate(10);
+            ->first();
 
-        return view('guru.pesan.index', compact('pesan'));
+        if (!$pesan) {
+            $pesan = PesanGuru::create([
+                'guru_id' => $guru->id,
+                'subjek' => 'Chat Hubungi Admin',
+                'kategori' => 'lainnya',
+                'pesan' => 'Halo, ini adalah sesi chat Hubungi Admin Anda.',
+                'status' => 'menunggu_tanggapan',
+            ]);
+        }
+
+        return redirect()->route('guru.hubungi-admin.show', $pesan->id);
     }
 
     public function create()
@@ -79,8 +89,121 @@ class PesanGuruController extends Controller
             abort(403);
         }
 
+        // Get all conversations for the sidebar
+        $conversations = PesanGuru::where('guru_id', $guru->id)
+            ->latest()
+            ->get();
+
         return view('guru.pesan.show', [
-            'pesan' => $hubungi_admin
+            'pesan' => $hubungi_admin,
+            'conversations' => $conversations
+        ]);
+    }
+
+    public function messages($id)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $pesan = PesanGuru::with(['replies.sender', 'guru.user'])->findOrFail($id);
+        if ($pesan->guru_id !== $guru->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $messages = [];
+        
+        // Add initial message
+        $messages[] = [
+            'id' => 0,
+            'sender_id' => $pesan->guru->user_id,
+            'sender_name' => $pesan->guru->user->name,
+            'pesan' => $pesan->pesan,
+            'lampiran' => $pesan->lampiran ? asset('storage/' . $pesan->lampiran) : null,
+            'lampiran_name' => $pesan->lampiran ? basename($pesan->lampiran) : null,
+            'is_image' => $pesan->lampiran && in_array(strtolower(pathinfo($pesan->lampiran, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']),
+            'created_at' => $pesan->created_at->format('d M Y, H:i'),
+            'time' => $pesan->created_at->format('H:i'),
+            'is_me' => $pesan->guru->user_id === auth()->id(),
+        ];
+
+        // Add replies
+        foreach ($pesan->replies as $reply) {
+            $messages[] = [
+                'id' => $reply->id,
+                'sender_id' => $reply->sender_id,
+                'sender_name' => $reply->sender->name,
+                'pesan' => $reply->pesan,
+                'lampiran' => $reply->lampiran ? asset('storage/' . $reply->lampiran) : null,
+                'lampiran_name' => $reply->lampiran ? basename($reply->lampiran) : null,
+                'is_image' => $reply->lampiran && in_array(strtolower(pathinfo($reply->lampiran, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']),
+                'created_at' => $reply->created_at->format('d M Y, H:i'),
+                'time' => $reply->created_at->format('H:i'),
+                'is_me' => $reply->sender_id === auth()->id(),
+            ];
+        }
+
+        return response()->json([
+            'status' => $pesan->status,
+            'messages' => $messages
+        ]);
+    }
+
+    public function reply(Request $request, $id)
+    {
+        $guru = auth()->user()->guru;
+        if (!$guru) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $pesan = PesanGuru::findOrFail($id);
+        if ($pesan->guru_id !== $guru->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'pesan' => 'required|string',
+            'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        $replyData = [
+            'pesan_guru_id' => $pesan->id,
+            'sender_id' => auth()->id(),
+            'pesan' => $request->pesan,
+        ];
+
+        if ($request->hasFile('lampiran')) {
+            $replyData['lampiran'] = $request->file('lampiran')->store('pesan_lampiran', 'public');
+        }
+
+        $reply = \App\Models\PesanGuruReply::create($replyData);
+
+        // Update parent status to awaiting response
+        $pesan->update([
+            'status' => 'menunggu_tanggapan'
+        ]);
+
+        // Notify Admins
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new PesanBaruDariGuru($pesan));
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => [
+                'id' => $reply->id,
+                'sender_id' => $reply->sender_id,
+                'sender_name' => auth()->user()->name,
+                'pesan' => $reply->pesan,
+                'lampiran' => $reply->lampiran ? asset('storage/' . $reply->lampiran) : null,
+                'lampiran_name' => $reply->lampiran ? basename($reply->lampiran) : null,
+                'is_image' => $reply->lampiran && in_array(strtolower(pathinfo($reply->lampiran, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']),
+                'created_at' => $reply->created_at->format('d M Y, H:i'),
+                'time' => $reply->created_at->format('H:i'),
+                'is_me' => true,
+            ]
         ]);
     }
 }

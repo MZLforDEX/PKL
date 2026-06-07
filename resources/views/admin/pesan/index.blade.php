@@ -1,110 +1,67 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-            <h2 class="font-extrabold text-lg md:text-2xl text-surface-900 tracking-tight">Pesan & Aduan Industri</h2>
-            <p class="text-sm text-surface-500 mt-0.5 hidden sm:block">Kelola masukan, kendala bimbingan, dan pertanyaan dari Pembimbing Industri mitra.</p>
+        @php
+            $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'guru';
+        @endphp
+        <div class="flex items-center gap-3">
+            <h2 class="font-extrabold text-lg md:text-2xl text-surface-900 tracking-tight">Chat Pesan Industri</h2>
         </div>
     </x-slot>
 
-    <div class="py-6 md:py-10 animate-fade-in">
+    <div class="py-4 md:py-6 animate-fade-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="alert-success mb-6">
-                    <i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
+            
+            <div class="flex flex-col lg:flex-row h-[calc(100vh-14rem)] border border-surface-200 dark:border-zinc-800 rounded-2xl overflow-hidden bg-white dark:bg-zinc-950 shadow-glass animate-fade-in">
+                
+                {{-- Sidebar Kiri - Daftar Percakapan --}}
+                <div class="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-surface-200 dark:border-zinc-800 flex flex-col bg-surface-50/50 dark:bg-zinc-900/30 overflow-y-auto shrink-0">
+                    <div class="p-4 border-b border-surface-200 dark:border-zinc-800">
+                        <h3 class="text-xs font-bold text-surface-400 uppercase tracking-wider">Daftar Chat Industri</h3>
+                    </div>
+                    <div class="flex-1 divide-y divide-surface-100 dark:divide-zinc-800/50">
+                        @foreach($conversations as $c)
+                            <a href="{{ route($routePrefix . '.pesan.show', $c->id) }}" 
+                               class="flex items-center gap-3 p-4 hover:bg-surface-100/50 dark:hover:bg-zinc-900/50 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold shrink-0">
+                                    {{ strtoupper(substr($c->kategori, 0, 1)) }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="text-xs font-bold text-surface-900 dark:text-zinc-100 truncate pr-2">
+                                            {{ $c->pembimbingIndustri?->user?->name ?? 'Pembimbing' }}
+                                        </h4>
+                                        <span class="text-[9px] text-surface-400 font-medium shrink-0">{{ $c->created_at->format('d/m') }}</span>
+                                    </div>
+                                    <p class="text-xs text-surface-500 dark:text-zinc-400 truncate mt-0.5">{{ $c->pesan }}</p>
+                                    
+                                    <div class="flex items-center justify-between mt-1.5">
+                                        <span class="text-[9px] font-semibold px-2 py-0.5 rounded bg-surface-100 dark:bg-zinc-850 text-surface-600 dark:text-zinc-300">
+                                            {{ $c->pembimbingIndustri?->tempatPkl?->nama_tempat ?? 'PKL' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
 
-            <div class="card-premium overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="table-premium">
-                        <thead>
-                            <tr>
-                                <th>Pengirim & Perusahaan</th>
-                                <th>Subjek & Tanggal</th>
-                                <th>Kategori</th>
-                                <th>Status</th>
-                                <th class="text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'guru';
-                            @endphp
-                            @forelse($pesan as $p)
-                            <tr>
-                                <td class="whitespace-nowrap">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shrink-0 shadow-sm font-bold text-sm">
-                                            {{ substr($p->pembimbingIndustri?->user?->name ?? 'I', 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $p->pembimbingIndustri?->user?->name ?? 'Pembimbing' }}</div>
-                                            <div class="text-[11px] text-surface-400 font-medium uppercase tracking-wider mt-0.5">
-                                                {{ $p->pembimbingIndustri?->tempatPkl?->nama_tempat ?? '-' }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-sm font-bold text-surface-900 line-clamp-1">{{ $p->subjek }}</div>
-                                    <div class="text-[11px] text-surface-400 font-medium flex items-center mt-0.5">
-                                        <i data-lucide="calendar" class="w-3 h-3 mr-1 shrink-0"></i>
-                                        {{ $p->created_at->format('d M Y, H:i') }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-300">
-                                        {{ ucfirst($p->kategori) }}
-                                    </span>
-                                </td>
-                                <td class="whitespace-nowrap">
-                                    @php
-                                        $statusClasses = [
-                                            'menunggu_tanggapan' => 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30',
-                                            'proses' => 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30',
-                                            'selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30',
-                                        ];
-                                        $class = $statusClasses[$p->status] ?? 'bg-surface-100 text-surface-600';
-                                        $label = match($p->status) {
-                                            'menunggu_tanggapan' => 'Menunggu Tanggapan',
-                                            'proses' => 'Sedang Diproses',
-                                            'selesai' => 'Selesai',
-                                            default => $p->status,
-                                        };
-                                    @endphp
-                                    <span class="status-badge {{ $class }}">
-                                        {{ $label }}
-                                    </span>
-                                </td>
-                                <td class="whitespace-nowrap text-right">
-                                    <a href="{{ route($routePrefix . '.pesan.show', $p->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-surface-200 hover:border-indigo-200 hover:text-indigo-600 rounded-xl text-xs font-bold text-surface-700 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:text-indigo-400 transition-all shadow-sm">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-indigo-500 shrink-0"></i>
-                                        Tinjau
-                                    </a>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon mx-auto">
-                                            <i data-lucide="message-square-off" class="w-8 h-8"></i>
-                                        </div>
-                                        <p class="text-surface-400 font-medium mt-3">Belum ada aduan atau pesan masuk dari industri.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                        @if($conversations->isEmpty())
+                            <div class="p-6 text-center text-xs text-surface-400 dark:text-zinc-500">
+                                Belum ada aduan atau pesan masuk dari industri.
+                            </div>
+                        @endif
+                    </div>
                 </div>
-                @if($pesan->hasPages())
-                <div class="p-4 sm:p-5 md:p-6 border-t border-surface-100 bg-surface-50/30">
-                    {{ $pesan->links() }}
+
+                {{-- Area Utama - Placeholder Obrolan Kosong --}}
+                <div class="flex-1 flex flex-col items-center justify-center p-8 bg-surface-50 dark:bg-zinc-950 text-center">
+                    <div class="w-16 h-16 rounded-3xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-900/30">
+                        <i data-lucide="message-square" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-base font-extrabold text-surface-900 dark:text-zinc-100">SiPKL Chat Room</h3>
+                    <p class="text-xs text-surface-500 dark:text-zinc-400 mt-2 max-w-sm">Pilih salah satu percakapan di sebelah kiri untuk mulai membaca dan membalas pesan aduan industri secara real-time.</p>
                 </div>
-                @endif
+
             </div>
+
         </div>
     </div>
 </x-app-layout>

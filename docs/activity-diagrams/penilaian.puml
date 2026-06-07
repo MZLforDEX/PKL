@@ -1,0 +1,53 @@
+@startuml
+' Penilaian PKL Activity Diagram
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Penilaian PKL**
+
+|Guru|
+start
+: Buka halaman penilaian;
+: Lihat daftar siswa dengan status \nmenunggu_penilaian atau selesai;
+: Pilih siswa (status = menunggu_penilaian);
+
+|Sistem|
+: Cek authorizeBimbingan();
+if (Siswa bimbingan guru?) then (Ya)
+  : Cek status pengajuan = menunggu_penilaian;
+  if (Status valid?) then (Ya)
+    : Tampilkan form penilaian;
+  else (Tidak)
+    : Redirect dengan error;
+    stop
+  endif
+else (Bukan bimbingan)
+  : Abort 403;
+  stop
+endif
+
+|Guru|
+: Input Nilai Sikap (0-100);
+: Input Nilai Keterampilan (0-100);
+: Input Nilai Laporan (0-100);
+: (Opsional) Input catatan tambahan;
+: Klik "Simpan Penilaian";
+
+|Sistem|
+: Cek authorizeBimbingan() kembali;
+: Cek status = menunggu_penilaian (double-check);
+if (Validasi lolos?) then (Ya)
+  : Hitung nilai_akhir = round(\n  (nilai_sikap + nilai_keterampilan \n   + nilai_laporan) / 3, 2);
+  : Upsert PenilaianPkl \n(updateOrCreate via pengajuan_pkl_id);
+  : Update status pengajuan → selesai;
+  : Tampilkan sukses;
+  stop
+else (Tidak)
+  : Redirect dengan error;
+  stop
+endif
+
+@enduml

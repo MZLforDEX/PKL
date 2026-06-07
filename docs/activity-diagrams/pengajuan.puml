@@ -1,0 +1,143 @@
+@startuml
+' Pengajuan PKL Activity Diagram — Full Workflow
+skinparam backgroundcolor transparent
+skinparam activityBorderColor #6366f1
+skinparam activityBackgroundColor #eef2ff
+skinparam partitionBorderColor #6366f1
+skinparam partitionBackgroundColor #f8fafc
+
+title **Activity Diagram - Pengajuan PKL**
+
+|Siswa|
+start
+: Membuka halaman pengajuan baru;
+: Memilih Tempat PKL dari daftar;
+: Mengunggah dokumen pengajuan (pdf/doc/docx, max 2MB);
+:Mengisi data pengajuan;
+: Klik "Simpan Draft";
+
+|Sistem|
+: Cek apakah sudah memiliki pengajuan aktif \n(status != ditolak && status != selesai);
+if (Ada pengajuan aktif?) then (Ya)
+  : Redirect kembali dengan error;
+  : "Anda masih memiliki pengajuan aktif";
+  stop
+else (Tidak)
+  : Cek kuota Tempat PKL;
+  if (Kuota penuh?) then (Ya)
+    : Redirect kembali dengan error;
+    : "Tempat PKL ini sudah penuh";
+    stop
+  else (Tidak)
+    : Simpan file ke storage/app/public/pengajuan/;
+    : Buat PengajuanPkl (status = draft);
+    : Tampilkan daftar pengajuan;
+  endif
+endif
+
+|Siswa|
+: Melihat daftar pengajuan;
+: Klik "Ajukan" pada pengajuan draft;
+
+|Sistem|
+: Cek status (hanya draft/revisi bisa diajukan);
+if (Status valid?) then (Ya)
+  : Cek kuota Tempat PKL;
+  if (Kuota penuh?) then (Ya)
+    : Tampilkan error "Kuota penuh";
+    stop
+  else (Tidak)
+    : Update status menjadi menunggu_persetujuan;
+    : Tampilkan sukses;
+  endif
+else (Tidak)
+  : Tampilkan error;
+  stop
+endif
+
+newpage
+
+|Admin|
+start
+: Buka daftar semua pengajuan;
+: Pilih pengajuan yang butuh guru pembimbing;
+: Pilih Guru dari dropdown;
+: Klik "Assign Guru";
+
+|Sistem|
+if (Status pengajuan termasuk menunggu_persetujuan \n|| disetujui || revisi?) then (Ya)
+  : Update guru_id pada pengajuan;
+  : Tampilkan sukses;
+  stop
+else (Tidak)
+  : Tampilkan error;
+  stop
+endif
+
+newpage
+
+|Guru|
+start
+: Buka daftar pengajuan bimbingan;
+: Pilih pengajuan (status = menunggu_persetujuan);
+: Melihat detail pengajuan + dokumen;
+
+|Sistem|
+: Menampilkan 3 tombol aksi: Setujui / Tolak / Minta Revisi;
+
+|Guru|
+if (Keputusan?) then (Setujui)
+  : Klik "Setujui";
+  |Sistem|
+  : Cek kuota Tempat PKL;
+  if (Kuota penuh?) then (Ya)
+    : Tampilkan error;
+    stop
+  else (Tidak)
+    : Update status → disetujui;
+    : Kirim notifikasi ke Siswa \n(PengajuanPklStatusChanged);
+    : Tampilkan sukses;
+    stop
+  endif
+elseif (Tolak)
+  : Klik "Tolak" + isi alasan (catatan wajib);
+  |Sistem|
+  : Update status → ditolak;
+  : Simpan catatan;
+  : Kirim notifikasi ke Siswa;
+  : Tampilkan sukses;
+  stop
+elseif (Minta Revisi)
+  : Klik "Minta Revisi" + isi catatan revisi (wajib);
+  |Sistem|
+  : Update status → revisi;
+  : Simpan catatan revisi;
+  : Kirim notifikasi ke Siswa;
+  : Tampilkan sukses;
+  stop
+endif
+
+newpage
+
+|Siswa|
+start
+: Menerima notifikasi status pengajuan;
+: Buka detail pengajuan;
+if (Status = disetujui?) then (Ya)
+  : Dapat mulai mengisi jurnal harian;
+  stop
+elseif (Status = revisi?)
+  : Edit data pengajuan;
+  : Upload ulang dokumen (opsional);
+  : Klik "Ajukan" untuk mengirim ulang;
+  |Sistem|
+  : Update status → menunggu_persetujuan;
+  : Kirim notifikasi ke Guru;
+  stop
+elseif (Status = ditolak?)
+  : Dapat menghapus pengajuan (delete);
+  : Dapat membuat pengajuan baru;
+  stop
+endif
+
+@enduml

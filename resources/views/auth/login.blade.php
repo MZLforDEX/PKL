@@ -6,7 +6,7 @@
         @csrf
 
         <h2 class="text-xl font-extrabold text-surface-900 mb-1">Selamat Datang</h2>
-        <p class="text-sm text-surface-500 mb-8">Masuk ke akun SPARTA Anda untuk melanjutkan.</p>
+        <p class="text-sm text-surface-500 mb-8">Masuk ke akun SiPKL Anda untuk melanjutkan.</p>
 
         <!-- Email Address -->
         <div>

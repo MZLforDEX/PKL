@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Laravel 12 PKL (Praktik Kerja Lapangan) system — Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`SPARTA`.
+Laravel 12 SiPKL (Sistem Informasi Praktik Kerja Lapangan) — Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`"SiPKL"`.
 
 **53 feature tests passing** — run via `composer run test`.
 
@@ -15,6 +15,13 @@ composer run test        # config:clear then php artisan test
 php artisan storage:link # symlink for file uploads (needed after clone)
 php artisan migrate --seed
 ```
+
+## Non-default config
+
+- `timezone` → `Asia/Makassar`, `locale` → `id`, `faker_locale` → `id_ID`
+- `.env.example` defaults to SQLite; actual `.env` uses MySQL
+- `QUEUE_CONNECTION=database`, `SESSION_DRIVER=database`, `CACHE_STORE=database`
+- Tests override to `array` (cache/session) and `sync` (queue) — see `phpunit.xml`
 
 ## Roles
 
@@ -118,7 +125,7 @@ Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
 - Route model binding `laporan/{laporanPkl}` must be defined **after** `laporan/create` (already correct in current routes).
 - Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
 - UI language: Indonesian.
-- `QUEUE_CONNECTION=database` — notifications + job tables used. Queue listener is part of `composer run dev`.
-- `SESSION_DRIVER=database`, `CACHE_STORE=database` — non-default (usually `file`). Tests override these to `array` and `sync` respectively.
+- `QUEUE_CONNECTION=database` — queue listener (`composer run dev`) is needed for notifications.
+- Dark mode uses `class` + JS (`localStorage`) + `!important` CSS overrides in `resources/css/app.css`. Tailwind `dark:` variants may be overridden by these rules.
 - Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `resources/views/layouts/app.blade.php` loads Inter from Google Fonts with inline `font-family: 'Inter'`.
 - No `opencode.json` — config lives solely in `AGENTS.md`.

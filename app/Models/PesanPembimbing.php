@@ -34,4 +34,10 @@ class PesanPembimbing extends Model
     {
         return $this->belongsTo(User::class, 'dibalas_oleh_id');
     }
+
+    public function replies(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PesanPembimbingReply::class, 'pesan_pembimbing_id');
+    }
 }
+

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'SPARTA') }} — Sistem PKL</title>
+    <title>{{ config('app.name', 'SiPKL') }} — Sistem PKL</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,7 +218,7 @@
 
         <!-- Footer -->
         <footer class="h-14 border-t border-gray-200/60 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-center px-4">
-            <span class="text-xs text-gray-400 dark:text-zinc-500">&copy; {{ date('Y') }} SPARTA — Sistem Informasi PKL. All rights reserved.</span>
+            <span class="text-xs text-gray-400 dark:text-zinc-500">&copy; {{ date('Y') }} SiPKL — Sistem Informasi PKL. All rights reserved.</span>
         </footer>
 
     </div>
@@ -266,6 +266,7 @@
             });
         }
     </script>
+    @stack('scripts')
 </body>
 
 </html>

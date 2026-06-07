@@ -1,6 +1,6 @@
 <section class="space-y-6">
     <p class="text-sm text-surface-500 leading-relaxed">
-        Setelah akun Anda dihapus, semua data dan riwayat pengajuan, jurnal, serta laporan Anda di sistem SPARTA akan dihapus secara permanen.
+        Setelah akun Anda dihapus, semua data dan riwayat pengajuan, jurnal, serta laporan Anda di sistem SiPKL akan dihapus secara permanen.
     </p>
 
     <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" class="btn-danger">
