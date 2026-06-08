@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTempatPklRequest extends FormRequest
 {
@@ -13,8 +14,9 @@ class UpdateTempatPklRequest extends FormRequest
 
     public function rules(): array
     {
+        $tempatPkl = $this->route('tempat_pkl');
         return [
-            'nama_tempat' => 'required|string|max:255',
+            'nama_tempat' => ['required', 'string', 'max:255', Rule::unique('tempat_pkl', 'nama_tempat')->ignore($tempatPkl->id)],
             'alamat' => 'required|string',
             'bidang_usaha' => 'required|string|max:100',
             'kontak_person' => 'nullable|string|max:100',

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreGuruRequest;
 use App\Http\Requests\UpdateGuruRequest;
 use App\Models\Guru;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class GuruController extends Controller
 {
@@ -27,9 +28,8 @@ class GuruController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => 'guru',
-            'is_approved' => true, // Akun dibuat langsung oleh admin, langsung disetujui
         ]);
+        $user->forceFill(['role' => 'guru', 'is_approved' => true])->save();
 
         Guru::create([
             'user_id' => $user->id,
@@ -68,8 +68,11 @@ class GuruController extends Controller
 
     public function destroy(Guru $guru)
     {
-        optional($guru->user)->delete();
-        $guru->delete();
+        DB::transaction(function () use ($guru) {
+            $guru->pengajuanPkl->each(function ($p) { $p->delete(); });
+            optional($guru->user)->delete();
+            $guru->delete();
+        });
 
         return redirect()->route('admin.guru.index')->with('success', 'Guru berhasil dihapus.');
     }

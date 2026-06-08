@@ -6,6 +6,7 @@ use App\Models\PesanPembimbing;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class PesanBaruDariIndustri extends Notification
 {
@@ -28,6 +29,10 @@ class PesanBaruDariIndustri extends Notification
         $namaPengirim = $this->pesan->pembimbingIndustri?->user?->name ?? 'Pembimbing Industri';
         $namaPerusahaan = $this->pesan->pembimbingIndustri?->tempatPkl?->nama_tempat ?? 'Mitra Industri';
 
+        $url = $notifiable->role === 'guru'
+            ? route('guru.pesan.show', $this->pesan->id)
+            : route('admin.pesan.show', $this->pesan->id);
+
         return (new MailMessage)
             ->subject('Pesan Baru dari Mitra Industri: ' . $namaPerusahaan)
             ->greeting('Halo, Bapak/Ibu ' . $notifiable->name . '!')
@@ -35,7 +40,7 @@ class PesanBaruDariIndustri extends Notification
             ->line('Subjek: **' . $this->pesan->subjek . '**')
             ->line('Kategori: **' . ucfirst($this->pesan->kategori) . '**')
             ->line('Pesan: "' . $this->pesan->pesan . '"')
-            ->action('Lihat Pesan Masuk', route('admin.pesan.show', $this->pesan->id))
+            ->action('Lihat Pesan Masuk', $url)
             ->line('Mohon segera ditindaklanjuti.');
     }
 

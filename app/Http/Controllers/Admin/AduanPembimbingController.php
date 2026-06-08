@@ -43,25 +43,6 @@ class AduanPembimbingController extends Controller
         $user = auth()->user();
 
         if ($user->role === 'admin') {
-            // Auto-create chat threads for all pembimbing if not exist
-            $pembimbings = \App\Models\PembimbingIndustri::all();
-            foreach ($pembimbings as $p) {
-                $exists = PesanPembimbing::where('pembimbing_industri_id', $p->id)->exists();
-                if (!$exists) {
-                    PesanPembimbing::create([
-                        'pembimbing_industri_id' => $p->id,
-                        'subjek' => 'Chat Hubungi Sekolah',
-                        'kategori' => 'lainnya',
-                        'pesan' => 'Halo, ini adalah sesi chat Hubungi Sekolah Anda.',
-                        'status' => 'menunggu_tanggapan',
-                    ]);
-                }
-            }
-
-            $latest = PesanPembimbing::latest()->first();
-            if ($latest) {
-                return redirect()->route('admin.pesan.show', $latest->id);
-            }
             $conversations = PesanPembimbing::with(['pembimbingIndustri.tempatPkl', 'pembimbingIndustri.user'])
                 ->latest()
                 ->get();
@@ -74,28 +55,6 @@ class AduanPembimbingController extends Controller
             $tempatPklIds = \App\Models\PengajuanPkl::where('guru_id', $guru->id)
                 ->pluck('tempat_pkl_id')
                 ->unique();
-
-            // Auto-create chat threads for all pembimbings under this guru's supervision
-            $pembimbings = \App\Models\PembimbingIndustri::whereIn('tempat_pkl_id', $tempatPklIds)->get();
-            foreach ($pembimbings as $p) {
-                $exists = PesanPembimbing::where('pembimbing_industri_id', $p->id)->exists();
-                if (!$exists) {
-                    PesanPembimbing::create([
-                        'pembimbing_industri_id' => $p->id,
-                        'subjek' => 'Chat Hubungi Sekolah',
-                        'kategori' => 'lainnya',
-                        'pesan' => 'Halo, ini adalah sesi chat Hubungi Sekolah Anda.',
-                        'status' => 'menunggu_tanggapan',
-                    ]);
-                }
-            }
-
-            $latest = PesanPembimbing::whereHas('pembimbingIndustri', fn($q) => $q->whereIn('tempat_pkl_id', $tempatPklIds))
-                ->latest()
-                ->first();
-            if ($latest) {
-                return redirect()->route('guru.pesan.show', $latest->id);
-            }
 
             $conversations = PesanPembimbing::whereHas('pembimbingIndustri', fn($q) => $q->whereIn('tempat_pkl_id', $tempatPklIds))
                 ->with(['pembimbingIndustri.tempatPkl', 'pembimbingIndustri.user'])
@@ -211,8 +170,8 @@ class AduanPembimbingController extends Controller
         $reply = \App\Models\PesanPembimbingReply::create($replyData);
 
         $pesan->update([
-            'tanggapan' => $request->tanggapan,
             'status' => $request->status,
+            'tanggapan' => $request->tanggapan,
             'dibalas_oleh_id' => auth()->id(),
             'dibalas_pada' => now(),
         ]);

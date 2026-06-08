@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AbsensiPkl;
 use App\Models\PengajuanPkl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
@@ -47,19 +48,15 @@ class AbsensiPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Anda tidak memiliki status PKL aktif untuk melakukan absensi.']);
         }
 
-        // Prevent double attendance
-        $exists = AbsensiPkl::where('pengajuan_pkl_id', $pengajuan->id)
-            ->whereDate('tanggal', Carbon::today())
-            ->exists();
-
-        if ($exists) {
-            return redirect()->back()->withErrors(['msg' => 'Anda sudah melakukan absensi hari ini.']);
+        $today = Carbon::today();
+        if ($today->lt($pengajuan->tanggal_mulai) || $today->gt($pengajuan->tanggal_selesai)) {
+            return redirect()->back()->withErrors(['msg' => 'Di luar periode PKL.']);
         }
 
         $request->validate([
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'foto_selfie' => 'required|string', // could be base64 from webcam or uploaded file
+            'foto_selfie' => 'required|string|max:3145728',
         ]);
 
         $now = Carbon::now();
@@ -76,8 +73,13 @@ class AbsensiPklController extends Controller
             $imageInfo = explode(";base64,", $fotoData);
             $imageDecoded = base64_decode($imageInfo[1], true);
 
-            if ($imageDecoded === false) {
-                return redirect()->back()->withErrors(['msg' => 'Format foto tidak valid.']);
+            if ($imageDecoded === false || strlen($imageDecoded) === 0) {
+                return redirect()->back()->withErrors(['msg' => 'Data foto kosong.']);
+            }
+
+            $imgInfo = @getimagesizefromstring($imageDecoded);
+            if ($imgInfo === false) {
+                return redirect()->back()->withErrors(['msg' => 'Foto tidak valid.']);
             }
 
             preg_match('/^data:image\/(jpeg|png|jpg|webp);base64,/', $fotoData, $mimeMatch);
@@ -95,15 +97,31 @@ class AbsensiPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Format foto tidak valid.']);
         }
 
-        AbsensiPkl::create([
-            'pengajuan_pkl_id' => $pengajuan->id,
-            'tanggal' => $tanggal,
-            'jam_masuk' => $jamMasuk,
-            'latitude' => $request->input('latitude'),
-            'longitude' => $request->input('longitude'),
-            'foto_selfie' => $fotoPath,
-            'status' => $status,
-        ]);
+        DB::beginTransaction();
+        try {
+            $exists = AbsensiPkl::where('pengajuan_pkl_id', $pengajuan->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->exists();
+            if ($exists) {
+                DB::rollBack();
+                return redirect()->back()->withErrors(['msg' => 'Anda sudah melakukan absensi hari ini.']);
+            }
+
+            AbsensiPkl::create([
+                'pengajuan_pkl_id' => $pengajuan->id,
+                'tanggal' => $tanggal,
+                'jam_masuk' => $jamMasuk,
+                'latitude' => $request->input('latitude'),
+                'longitude' => $request->input('longitude'),
+                'foto_selfie' => $fotoPath,
+                'status' => $status,
+            ]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
         return redirect()->route('siswa.absensi.index')->with('success', 'Absensi berhasil disimpan!');
     }

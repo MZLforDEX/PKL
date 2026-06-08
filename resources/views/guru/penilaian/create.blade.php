@@ -25,6 +25,7 @@
 
                 <form action="{{ route('guru.penilaian.store', $pengajuanPkl) }}" method="POST">
                     @csrf
+                    <input type="hidden" name="pengajuan_pkl_id" value="{{ $pengajuanPkl->id }}">
                     <div class="space-y-6">
                         <div>
                             <label class="form-label">Nilai Sikap (0-100)</label>

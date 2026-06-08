@@ -45,8 +45,8 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'siswa',
         ]);
+        $user->forceFill(['role' => 'siswa'])->save();
 
         \App\Models\Siswa::create([
             'user_id' => $user->id,

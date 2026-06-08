@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePembimbingIndustriRequest;
 use App\Models\PembimbingIndustri;
 use App\Models\TempatPkl;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class PembimbingIndustriController extends Controller
 {
@@ -29,9 +30,8 @@ class PembimbingIndustriController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => 'pembimbing_industri',
-            'is_approved' => true, // Pembimbing created by admin are approved automatically
         ]);
+        $user->forceFill(['role' => 'pembimbing_industri', 'is_approved' => true])->save();
 
         PembimbingIndustri::create([
             'user_id' => $user->id,
@@ -71,8 +71,12 @@ class PembimbingIndustriController extends Controller
 
     public function destroy(PembimbingIndustri $pembimbingIndustri)
     {
-        optional($pembimbingIndustri->user)->delete();
-        $pembimbingIndustri->delete();
+        DB::transaction(function () use ($pembimbingIndustri) {
+            \App\Models\PesanPembimbing::where('pembimbing_industri_id', $pembimbingIndustri->id)
+                ->each(function ($p) { $p->delete(); });
+            optional($pembimbingIndustri->user)->delete();
+            $pembimbingIndustri->delete();
+        });
 
         return redirect()->route('admin.pembimbing-industri.index')->with('success', 'Pembimbing Industri berhasil dihapus.');
     }

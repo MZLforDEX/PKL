@@ -22,6 +22,8 @@ class PengajuanPklController extends Controller
 
     public function create()
     {
+        $siswa = auth()->user()->siswa;
+        if (!$siswa) abort(403, 'Profil siswa belum diatur.');
         $tempatPkl = TempatPkl::all();
         return view('siswa.pengajuan.create', compact('tempatPkl'));
     }
@@ -60,6 +62,9 @@ class PengajuanPklController extends Controller
     public function edit(PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (!in_array($pengajuan->status, ['draft', 'revisi'])) {
+            return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diubah.']);
+        }
         $tempatPkl = TempatPkl::all();
         return view('siswa.pengajuan.edit', compact('pengajuan', 'tempatPkl'));
     }
@@ -79,10 +84,11 @@ class PengajuanPklController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('file_dokumen')) {
+            $path = $request->file('file_dokumen')->store('pengajuan', 'public');
             if ($pengajuan->file_dokumen) {
                 Storage::disk('public')->delete($pengajuan->file_dokumen);
             }
-            $data['file_dokumen'] = $request->file('file_dokumen')->store('pengajuan', 'public');
+            $data['file_dokumen'] = $path;
         }
 
         $pengajuan->update($data);
@@ -92,6 +98,9 @@ class PengajuanPklController extends Controller
     public function ajukan(PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (empty($pengajuan->tempat_pkl_id) || empty($pengajuan->tanggal_mulai) || empty($pengajuan->tanggal_selesai) || empty($pengajuan->alasan)) {
+            return redirect()->back()->withErrors(['msg' => 'Lengkapi data pengajuan terlebih dahulu.']);
+        }
         if (!in_array($pengajuan->status, ['draft', 'revisi'])) {
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diajukan.']);
         }

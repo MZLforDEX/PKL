@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             'guru' => redirect()->intended(route('guru.dashboard')),
             'siswa' => redirect()->intended(route('siswa.dashboard')),
             'pembimbing_industri' => redirect()->intended(route('pembimbing.dashboard')),
-            default => redirect()->intended(route('dashboard', absolute: false)),
+            default => abort(403, 'Role tidak dikenal.'),
         };
     }
 

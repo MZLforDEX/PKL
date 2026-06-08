@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePenilaianPklRequest;
 use App\Models\PengajuanPkl;
 use App\Models\PenilaianPkl;
+use Illuminate\Support\Facades\DB;
 
 class PenilaianPklController extends Controller
 {
@@ -39,20 +40,19 @@ class PenilaianPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dalam status menunggu penilaian.']);
         }
 
-        $nilaiAkhir = round(($request->nilai_sikap + $request->nilai_keterampilan + $request->nilai_laporan) / 3, 2);
-
-        PenilaianPkl::updateOrCreate(
-            ['pengajuan_pkl_id' => $pengajuanPkl->id],
-            [
-                'nilai_sikap' => $request->nilai_sikap,
-                'nilai_keterampilan' => $request->nilai_keterampilan,
-                'nilai_laporan' => $request->nilai_laporan,
-                'nilai_akhir' => $nilaiAkhir,
-                'catatan_evaluasi' => $request->catatan_evaluasi,
-            ]
-        );
-
-        $pengajuanPkl->update(['status' => 'selesai']);
+        DB::transaction(function () use ($request, $pengajuanPkl) {
+            PenilaianPkl::updateOrCreate(
+                ['pengajuan_pkl_id' => $pengajuanPkl->id],
+                [
+                    'nilai_sikap' => $request->nilai_sikap,
+                    'nilai_keterampilan' => $request->nilai_keterampilan,
+                    'nilai_laporan' => $request->nilai_laporan,
+                    'nilai_akhir' => round(($request->nilai_sikap + $request->nilai_keterampilan + $request->nilai_laporan) / 3, 2),
+                    'catatan_evaluasi' => $request->catatan_evaluasi,
+                ]
+            );
+            $pengajuanPkl->update(['status' => 'selesai']);
+        });
 
         return redirect()->route('guru.penilaian.index')->with('success', 'Penilaian berhasil disimpan.');
     }

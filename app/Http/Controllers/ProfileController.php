@@ -68,7 +68,23 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
         Auth::logout();
+
+        if ($user->siswa) {
+            $user->siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
+            $user->siswa->delete();
+        }
+        if ($user->guru) {
+            $user->guru->pengajuanPkl->each(function ($p) { $p->delete(); });
+            $user->guru->delete();
+        }
+        if ($user->pembimbingIndustri) {
+            $user->pembimbingIndustri->delete();
+        }
 
         $user->delete();
 

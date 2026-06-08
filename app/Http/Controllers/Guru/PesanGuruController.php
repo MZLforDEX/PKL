@@ -22,13 +22,7 @@ class PesanGuruController extends Controller
             ->first();
 
         if (!$pesan) {
-            $pesan = PesanGuru::create([
-                'guru_id' => $guru->id,
-                'subjek' => 'Chat Hubungi Admin',
-                'kategori' => 'lainnya',
-                'pesan' => 'Halo, ini adalah sesi chat Hubungi Admin Anda.',
-                'status' => 'menunggu_tanggapan',
-            ]);
+            return redirect()->route('guru.hubungi-admin.create');
         }
 
         return redirect()->route('guru.hubungi-admin.show', $pesan->id);

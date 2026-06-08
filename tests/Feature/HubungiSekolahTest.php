@@ -102,9 +102,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // Admin checks list (now redirects directly to chat thread)
+        // Admin checks list
         $response = $this->actingAs($this->adminUser)->get(route('admin.pesan.index'));
-        $response->assertStatus(302);
+        $response->assertStatus(200);
 
         // Admin views detail
         $response2 = $this->actingAs($this->adminUser)->get(route('admin.pesan.show', $pesan->id));
@@ -155,9 +155,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // 4. Guru checks list (now redirects directly to chat thread)
+        // 4. Guru checks list
         $response = $this->actingAs($this->guruUser)->get(route('guru.pesan.index'));
-        $response->assertStatus(302);
+        $response->assertStatus(200);
 
         // 5. Guru replies
         $response2 = $this->actingAs($this->guruUser)->post(route('guru.pesan.reply', $pesan->id), [
@@ -207,9 +207,9 @@ class HubungiSekolahTest extends TestCase
             'status' => 'menunggu_tanggapan',
         ]);
 
-        // Admin checks list (now redirects directly to chat thread)
+        // Admin checks list
         $response = $this->actingAs($this->adminUser)->get(route('admin.pesan-guru.index'));
-        $response->assertStatus(302);
+        $response->assertStatus(200);
 
         // Admin views detail
         $response2 = $this->actingAs($this->adminUser)->get(route('admin.pesan-guru.show', $pesan->id));

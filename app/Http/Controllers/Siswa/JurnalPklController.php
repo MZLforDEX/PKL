@@ -75,12 +75,20 @@ class JurnalPklController extends Controller
         if ($jurnalPkl->status === 'valid') {
             return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
         }
+        $pengajuan = $jurnalPkl->pengajuanPkl;
+        if (!in_array($pengajuan->status, ['disetujui', 'sedang_pkl'])) {
+            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'PKL tidak aktif, jurnal tidak dapat diubah.']);
+        }
         return view('siswa.jurnal.edit', compact('jurnalPkl'));
     }
 
     public function update(UpdateJurnalPklRequest $request, JurnalPkl $jurnalPkl)
     {
         $this->authorizeOwner($jurnalPkl);
+        $pengajuan = $jurnalPkl->pengajuanPkl;
+        if (!in_array($pengajuan->status, ['disetujui', 'sedang_pkl'])) {
+            return redirect()->back()->withErrors(['msg' => 'PKL tidak aktif, jurnal tidak dapat diubah.']);
+        }
         if ($jurnalPkl->status === 'valid') {
             return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
         }

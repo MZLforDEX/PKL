@@ -18,7 +18,7 @@ class PenilaianPkl extends Model
         'nilai_sikap' => 'integer',
         'nilai_keterampilan' => 'integer',
         'nilai_laporan' => 'integer',
-        'nilai_akhir' => 'float',
+        'nilai_akhir' => 'decimal:2',
     ];
 
     public function pengajuanPkl(): BelongsTo

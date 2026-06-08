@@ -6,31 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\PesanGuru;
 use App\Notifications\PesanGuruDibalas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AduanGuruController extends Controller
 {
     public function index()
     {
-        // Auto-create chat threads for all gurus if not exist
-        $gurus = \App\Models\Guru::all();
-        foreach ($gurus as $g) {
-            $exists = PesanGuru::where('guru_id', $g->id)->exists();
-            if (!$exists) {
-                PesanGuru::create([
-                    'guru_id' => $g->id,
-                    'subjek' => 'Chat Hubungi Admin',
-                    'kategori' => 'lainnya',
-                    'pesan' => 'Halo, ini adalah sesi chat Hubungi Admin Anda.',
-                    'status' => 'menunggu_tanggapan',
-                ]);
-            }
-        }
-
-        $latest = PesanGuru::latest()->first();
-        if ($latest) {
-            return redirect()->route('admin.pesan-guru.show', $latest->id);
-        }
-
         $conversations = PesanGuru::with(['guru.user'])
             ->latest()
             ->get();
@@ -111,8 +92,8 @@ class AduanGuruController extends Controller
         $reply = \App\Models\PesanGuruReply::create($replyData);
 
         $pesan->update([
-            'tanggapan' => $request->tanggapan,
             'status' => $request->status,
+            'tanggapan' => $request->tanggapan,
             'dibalas_oleh_id' => auth()->id(),
             'dibalas_pada' => now(),
         ]);

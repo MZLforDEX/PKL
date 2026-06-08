@@ -14,9 +14,6 @@ class UpdateSiswaRequest extends FormRequest
     public function rules(): array
     {
         $siswa = $this->route('siswa');
-        if (!$siswa) {
-            return [];
-        }
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $siswa->user_id,

@@ -144,7 +144,7 @@
                                 <div>
                                     <div class="flex items-center gap-2.5">
                                         <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
-                                            <i data-lucide="bar-chart-3" class="w-4.5 h-4.5"></i>
+                                            <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i>
                                         </div>
                                         <h2 class="text-base md:text-lg font-bold text-surface-900">Statistik & Progres PKL</h2>
                                     </div>
@@ -351,7 +351,7 @@
                         @if(in_array($pengajuan->status, ['sedang_pkl', 'disetujui']))
                             <div class="card-premium p-5 overflow-hidden relative">
                                 <h3 class="text-sm font-bold text-surface-900 mb-3.5 flex items-center gap-2">
-                                    <i data-lucide="calendar-check-2" class="w-4.5 h-4.5 text-brand-500"></i>
+                                    <i data-lucide="calendar-check-2" class="w-[18px] h-[18px] text-brand-500"></i>
                                     Kehadiran Hari Ini
                                 </h3>
                                 @if($absensiHariIni)
@@ -382,7 +382,7 @@
                         @else
                             <div class="card-premium p-5 bg-surface-50">
                                 <h3 class="text-sm font-bold text-surface-900 mb-2 flex items-center gap-2">
-                                    <i data-lucide="calendar-check-2" class="w-4.5 h-4.5 text-surface-400"></i>
+                                    <i data-lucide="calendar-check-2" class="w-[18px] h-[18px] text-surface-400"></i>
                                     Kehadiran Hari Ini
                                 </h3>
                                 <p class="text-xs text-surface-400 leading-relaxed">

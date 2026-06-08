@@ -39,7 +39,7 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shrink-0 shadow-sm">
-                                            <i data-lucide="mail" class="w-4.5 h-4.5"></i>
+                                            <i data-lucide="mail" class="w-[18px] h-[18px]"></i>
                                         </div>
                                         <div>
                                             <div class="text-sm font-bold text-surface-900">{{ $p->subjek }}</div>

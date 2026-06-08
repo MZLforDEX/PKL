@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -17,7 +18,7 @@ class UserController extends Controller
 
     public function approve(User $user)
     {
-        $user->update(['is_approved' => true]);
+        $user->forceFill(['is_approved' => true])->save();
 
         // If the user's role is 'siswa' and they don't have a siswa record, create an empty one
         if ($user->role === 'siswa' && !$user->siswa) {
@@ -36,16 +37,25 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->siswa) {
-            $user->siswa->delete();
+        if ($user->id === auth()->id()) {
+            abort(403, 'Tidak dapat menghapus akun sendiri.');
         }
-        if ($user->guru) {
-            $user->guru->delete();
-        }
-        if ($user->pembimbingIndustri) {
-            $user->pembimbingIndustri->delete();
-        }
-        $user->delete();
+
+        DB::transaction(function () use ($user) {
+            if ($user->siswa) {
+                $user->siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
+                $user->siswa->delete();
+            }
+            if ($user->guru) {
+                $user->guru->pengajuanPkl->each(function ($p) { $p->delete(); });
+                $user->guru->delete();
+            }
+            if ($user->pembimbingIndustri) {
+                $user->pembimbingIndustri->delete();
+            }
+            $user->delete();
+        });
+
         return back()->with('success', 'Akun pendaftar berhasil ditolak dan dihapus.');
     }
 }

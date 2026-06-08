@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('status')->default('menunggu_validasi');
             $table->text('catatan_guru')->nullable();
             $table->timestamps();
+            $table->unique(['pengajuan_pkl_id', 'tanggal']);
         });
     }
 

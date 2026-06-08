@@ -85,20 +85,26 @@ class LaporanPklController extends Controller
     {
         $this->authorizeOwner($laporanPkl);
 
+        $pengajuan = $laporanPkl->pengajuanPkl;
+        if (!in_array($pengajuan->status, ['disetujui', 'sedang_pkl'])) {
+            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'PKL tidak aktif, laporan tidak dapat diperbarui.']);
+        }
+
         if ($laporanPkl->status !== 'revisi') {
             return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Laporan tidak dapat diperbarui.']);
         }
+
+        $path = $request->file('file_laporan')->store('laporan', 'public');
 
         if ($laporanPkl->file_laporan) {
             Storage::disk('public')->delete($laporanPkl->file_laporan);
         }
 
         $laporanPkl->update([
-            'file_laporan' => $request->file('file_laporan')->store('laporan', 'public'),
+            'file_laporan' => $path,
             'status' => 'menunggu_review',
         ]);
 
-        $pengajuan = $laporanPkl->pengajuanPkl;
         $this->notifyGuruLaporan($pengajuan, $laporanPkl->fresh());
 
         return redirect()->route('siswa.laporan.index')->with('success', 'Laporan berhasil diperbaiki dan dikirim ulang.');

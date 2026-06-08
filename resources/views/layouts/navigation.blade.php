@@ -76,7 +76,7 @@
     <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-zinc-800 shrink-0">
         <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm ring-4 ring-indigo-500/10">
-                <i data-lucide="graduation-cap" class="w-4.5 h-4.5"></i>
+                <i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i>
             </div>
             <div>
                 <span class="text-sm font-extrabold tracking-tight text-gray-900 dark:text-white">SiPKL</span>
@@ -100,7 +100,7 @@
         <div>
             <a href="{{ route($dashboardRoute) }}" 
                class="flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
-                <i data-lucide="layout-dashboard" class="w-4.5 h-4.5 shrink-0"></i>
+                <i data-lucide="layout-dashboard" class="w-[18px] h-[18px] shrink-0"></i>
                 <span>Dashboard</span>
             </a>
         </div>
@@ -112,11 +112,11 @@
             @foreach($navItems as $item)
                 @php
                     $isActive = request()->is($item['pattern']) || request()->routeIs($item['route']);
-                    $unreadCount = ($item['route'] === 'notifications.index') ? auth()->user()->unreadNotifications->count() : 0;
+                    $unreadCount = ($item['route'] === 'notifications.index') ? auth()->user()->unreadNotifications()->count() : 0;
                 @endphp
                 <a href="{{ route($item['route']) }}" 
                    class="flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg transition-colors {{ $isActive ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400 font-semibold' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
-                    <i data-lucide="{{ $item['icon'] }}" class="w-4.5 h-4.5 shrink-0"></i>
+                    <i data-lucide="{{ $item['icon'] }}" class="w-[18px] h-[18px] shrink-0"></i>
                     <span class="truncate">{{ $item['label'] }}</span>
                     @if($unreadCount > 0)
                         <span class="ml-auto bg-rose-500 text-white rounded-full px-1.5 py-0.5 text-[9px] font-bold">

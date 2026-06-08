@@ -1,16 +1,16 @@
 # AGENTS.md
 
-Laravel 12 SiPKL (Sistem Informasi Praktik Kerja Lapangan) — Breeze auth, role middleware, migrations, models, controllers, views, routes, seeder. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`"SiPKL"`.
+Laravel 12 SiPKL (Sistem Informasi Praktik Kerja Lapangan) — Breeze auth, role middleware, 14 models, role-grouped controllers/views/routes. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`"SiPKL"`.
 
-**53 feature tests passing** — run via `composer run test`.
+**59 tests passing** — run via `composer run test`.
 
 ---
 
 ## Commands
 
 ```bash
-composer run setup       # full install: composer install + .env + key:generate + migrate + npm install && build
-composer run dev         # concurrent: serve + queue:listen + pail (logs) + vite
+composer run setup       # composer install + .env + key:generate + migrate + npm install && build
+composer run dev         # serve + queue:listen + pail + vite (concurrent)
 composer run test        # config:clear then php artisan test
 php artisan storage:link # symlink for file uploads (needed after clone)
 php artisan migrate --seed
@@ -21,7 +21,7 @@ php artisan migrate --seed
 - `timezone` → `Asia/Makassar`, `locale` → `id`, `faker_locale` → `id_ID`
 - `.env.example` defaults to SQLite; actual `.env` uses MySQL
 - `QUEUE_CONNECTION=database`, `SESSION_DRIVER=database`, `CACHE_STORE=database`
-- Tests override to `array` (cache/session) and `sync` (queue) — see `phpunit.xml`
+- Tests override to `array` (cache/session), `sync` (queue), SQLite in-memory — see `phpunit.xml`
 
 ## Roles
 
@@ -32,17 +32,17 @@ php artisan migrate --seed
 | Siswa | `siswa` | `/siswa` |
 | Pembimbing industri | `pembimbing_industri` | `/pembimbing` |
 
-Public pages: `/` (welcome), `/guide`. Notifications (in-app, database channel): `/notifications` — all authenticated roles.
+Public: `/` (welcome), `/guide`. Notifications (database channel): `/notifications` — all auth roles.
 
 ## Architecture
 
-**Controllers** grouped by role under `app/Http/Controllers/{Admin,Guru,Siswa,PembimbingIndustri}/`. Shared: `ProfileController`, `NotificationController`. Middleware: `role` alias registered in `bootstrap/app.php` → `RoleMiddleware` (single-role string match, abort 403).
+**Controllers** under `app/Http/Controllers/{Admin,Guru,Siswa,PembimbingIndustri}/`. Shared: `ProfileController`, `NotificationController`. Middleware alias `role` → `RoleMiddleware` (single-role string match, abort 403) registered in `bootstrap/app.php`.
 
-**Models** (12): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`, `PesanPembimbing`, `PesanGuru`. All use `$fillable`.
+**Models** (14): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`, `PesanPembimbing`, `PesanGuru`, `PesanPembimbingReply`, `PesanGuruReply`. All use `$fillable`.
 
-**Routes** defined in `routes/web.php` — role groupings via `->middleware(['auth', 'role:...'])`. Auth routes are default Breeze — do not modify.
+**Routes** in `routes/web.php` — role groupings via `->middleware(['auth', 'role:...'])`. Auth routes are default Breeze — do not modify.
 
-**Login redirection** (`AuthenticatedSessionController@store`): role-based → `{admin,guru,siswa,pembimbing}.dashboard`. Unapproved users (`is_approved = false`) are rejected at login.
+**Login redirection** (`AuthenticatedSessionController@store`): role-based → `{admin,guru,siswa,pembimbing}.dashboard`. Unapproved users (`is_approved = false`) rejected at login.
 
 ## Status Workflows
 
@@ -52,28 +52,23 @@ Public pages: `/` (welcome), `/guide`. Notifications (in-app, database channel):
 | Jurnal | `menunggu_validasi` → `valid` / `revisi` |
 | Laporan | `menunggu_review` → `diterima` / `revisi` |
 
-Key transitions:
-- Siswa submits: `draft`/`revisi` → `menunggu_persetujuan`
-- Guru approves/rejects/requests revision
-- First jurnal created: `disetujui` → `sedang_pkl`
-- Guru accepts laporan: `sedang_pkl` → `menunggu_penilaian`
-- Guru saves penilaian: `menunggu_penilaian` → `selesai`
+Key transitions: Siswa submits → guru approves/rejects/requests revision. First jurnal created sets `disetujui` → `sedang_pkl`. Guru accepts laporan → `menunggu_penilaian`. Guru saves penilaian → `selesai`.
 
 ## Business Rules
 
-- **Siswa**: one active pengajuan (excludes `ditolak`, `selesai`). Edit/delete only `draft`/`revisi` (delete also `ditolak`). `authorizeOwner()` on PengajuanPkl & JurnalPkl controllers. Absensi: clock-in once/day during PKL. Sertifikat: print only when `selesai`.
-- **Guru**: only assigned students (`guru_id`). `authorizeBimbingan()` on guru controllers. Checks quota when approving.
-- **Admin**: CRUD master data + assign `guru_id` on pengajuan + approve user registrations (`is_approved`). Admin-created accounts auto-approved.
+- **Siswa**: one active pengajuan (excl. `ditolak`, `selesai`). Edit/delete only `draft`/`revisi` (delete also `ditolak`). `authorizeOwner()` on PengajuanPkl & JurnalPkl controllers. Absensi: clock-in once/day during PKL. Sertifikat: print only when `selesai`.
+- **Guru**: only assigned students (`guru_id`). `authorizeBimbingan()`. Checks quota when approving.
+- **Admin**: CRUD master data + assign `guru_id` on pengajuan + approve `is_approved`. Admin-created accounts auto-approved.
 - **Pembimbing industri**: tied to `tempat_pkl_id`. Validates jurnal (parallel with guru). Views absensi.
-- **Quota** (`TempatPkl`): counts pengajuan with status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Exposed via `sisa_kuota` and `is_penuh` accessors.
-- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)` → sets pengajuan `selesai`. Validates `menunggu_penilaian` status before saving (redirects back with error if wrong).
-- **Messaging**: `PesanPembimbing` (pembimbing → admin/guru) and `PesanGuru` (guru → admin). Both support replies.
+- **Quota** (`TempatPkl`): counts status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Accessors: `sisa_kuota`, `is_penuh`.
+- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)`. Validates `menunggu_penilaian` status before save.
+- **Messaging**: `PesanPembimbing` + `PesanPembimbingReply` (pembimbing → admin/guru), `PesanGuru` + `PesanGuruReply` (guru → admin).
 
 ## Notifications (database + mail)
 
 | Event | Recipient | Class |
 |-------|-----------|-------|
-| Teacher changes pengajuan status | Student | `PengajuanPklStatusChanged` |
+| Teacher changes pengajuan status | Siswa | `PengajuanPklStatusChanged` |
 | Student uploads jurnal | Guru | `SiswaUploadJurnal` |
 | Student uploads/resubmits laporan | Guru | `SiswaUploadLaporan` |
 | Pembimbing sends message | Admin/guru | `PesanBaruDariIndustri` |
@@ -110,22 +105,21 @@ All password: `password`
 | `PembimbingIndustriTest` | Admin CRUD, jurnal validation |
 | `PengajuanPklQuotaTest` | Quota enforcement |
 | `HubungiSekolahTest` | Messaging: pembimbing→admin/guru, guru→admin |
-| `Auth/*`, `ProfileTest` | Breeze auth + profile |
+| `PenilaianPklTest` | Penilaian create/store, authorization, status guard |
+| `Auth/*` + `ProfileTest` | Default Breeze auth + profile |
 
-Tests use SQLite in-memory (`phpunit.xml`). No external services needed.
+Tests use SQLite in-memory. No external services needed.
 
 ## Gotchas
 
-- `README.md` is the **default Laravel skeleton** — unrelated.
-- Tailwind **v3** (PostCSS). `@tailwindcss/vite` v4 is installed but **unused**. Don't add v4 directives.
-- Custom theme in `tailwind.config.js`: `brand-50`–`950`, `surface-50`–`950`, shadows (`glass`, `neon`, `card`), animations (`fade-in`, `slide-up`, etc.). Check before picking colors.
-- No React/Vue/Inertia — **Blade + Tailwind + Alpine.js**. Alpine used for interactivity (`x-data`, `x-show`, `x-cloak`, `x-transition`).
-- Lucide icons via CDN (`unpkg.com/lucide@latest`). Must call `lucide.createIcons()` after DOM updates. Font Awesome 6.4 (`cdnjs.cloudflare.com`) also available.
+- `README.md` is the default Laravel skeleton — unrelated.
+- **Blade + Tailwind v3 (PostCSS) + Alpine.js** — no React/Vue/Inertia. `@tailwindcss/vite` v4 is installed but **unused**; don't add v4 directives.
+- Custom theme in `tailwind.config.js`: `brand-50`–`950`, `surface-50`–`950`, shadows (`glass`, `neon`, `card`), animations (`fade-in`, `slide-up`, etc.).
+- Lucide icons via CDN (`unpkg.com/lucide@latest`). Call `lucide.createIcons()` after DOM updates. Font Awesome 6.4 (`cdnjs.cloudflare.com`) also available.
 - SweetAlert2 via CDN — global `confirmAction(title, text, icon, confirmText, callback)` helper in `resources/views/layouts/app.blade.php`.
-- Route model binding `laporan/{laporanPkl}` must be defined **after** `laporan/create` (already correct in current routes).
-- Views use Blade component pattern: `<x-app-layout>` with `<x-slot name="header">` and `{{ $slot }}`.
 - UI language: Indonesian.
-- `QUEUE_CONNECTION=database` — queue listener (`composer run dev`) is needed for notifications.
-- Dark mode uses `class` + JS (`localStorage`) + `!important` CSS overrides in `resources/css/app.css`. Tailwind `dark:` variants may be overridden by these rules.
-- Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `resources/views/layouts/app.blade.php` loads Inter from Google Fonts with inline `font-family: 'Inter'`.
+- `QUEUE_CONNECTION=database` — queue listener (`composer run dev`) needed for notifications.
+- Dark mode: `class` + JS (`localStorage`) + `!important` CSS overrides in `resources/css/app.css`. Tailwind `dark:` variants may be overridden.
+- Font mismatch: `tailwind.config.js` references Plus Jakarta Sans / Outfit but `app.blade.php` loads Inter with inline `font-family: 'Inter'`.
+- Route model binding `laporan/{laporanPkl}` must be defined **after** `laporan/create` (already correct in current routes).
 - No `opencode.json` — config lives solely in `AGENTS.md`.

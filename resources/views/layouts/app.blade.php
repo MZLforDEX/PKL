@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.400.0"></script>
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" type="text/css">
@@ -111,8 +111,8 @@
 
                 <!-- Notifications Dropdown -->
                 @php
-                    $unreadNotifications = auth()->user()->unreadNotifications;
-                    $unreadCount = $unreadNotifications->count();
+                    $unreadNotifications = auth()->user()->unreadNotifications()->take(5)->get();
+                    $unreadCount = auth()->user()->unreadNotifications()->count();
                 @endphp
                 <div class="relative" x-data="{ open: false }" @click.away="open = false">
                     <button @click="open = !open" class="p-2 text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800 rounded-lg transition-colors relative">

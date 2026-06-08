@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSiswaRequest;
 use App\Http\Requests\UpdateSiswaRequest;
 use App\Models\Siswa;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class SiswaController extends Controller
 {
@@ -27,9 +28,8 @@ class SiswaController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => 'siswa',
-            'is_approved' => true, // Akun dibuat langsung oleh admin, langsung disetujui
         ]);
+        $user->forceFill(['role' => 'siswa', 'is_approved' => true])->save();
 
         Siswa::create([
             'user_id' => $user->id,
@@ -72,8 +72,11 @@ class SiswaController extends Controller
 
     public function destroy(Siswa $siswa)
     {
-        optional($siswa->user)->delete();
-        $siswa->delete();
+        DB::transaction(function () use ($siswa) {
+            $siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
+            optional($siswa->user)->delete();
+            $siswa->delete();
+        });
 
         return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil dihapus.');
     }

@@ -79,6 +79,15 @@ class PesanPembimbingController extends Controller
             $admin->notify(new PesanBaruDariIndustri($pesan));
         }
 
+        // Notify Gurus who have students at this tempat_pkl
+        $tempatPklId = $pembimbing->tempat_pkl_id;
+        $gurus = \App\Models\Guru::whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $tempatPklId))->with('user')->get();
+        foreach ($gurus as $guru) {
+            if ($guru->user) {
+                $guru->user->notify(new PesanBaruDariIndustri($pesan));
+            }
+        }
+
         return redirect()->route('pembimbing.hubungi-sekolah.index')
             ->with('success', 'Pesan berhasil dikirim ke sekolah.');
     }
@@ -118,8 +127,8 @@ class PesanPembimbingController extends Controller
         // Add initial message
         $messages[] = [
             'id' => 0,
-            'sender_id' => $pesan->pembimbingIndustri->user_id,
-            'sender_name' => $pesan->pembimbingIndustri->user->name,
+            'sender_id' => optional($pesan->pembimbingIndustri)->user_id,
+            'sender_name' => optional(optional($pesan->pembimbingIndustri)->user)->name,
             'pesan' => $pesan->pesan,
             'lampiran' => $pesan->lampiran ? asset('storage/' . $pesan->lampiran) : null,
             'lampiran_name' => $pesan->lampiran ? basename($pesan->lampiran) : null,
@@ -134,7 +143,7 @@ class PesanPembimbingController extends Controller
             $messages[] = [
                 'id' => $reply->id,
                 'sender_id' => $reply->sender_id,
-                'sender_name' => $reply->sender->name,
+                'sender_name' => optional($reply->sender)->name,
                 'pesan' => $reply->pesan,
                 'lampiran' => $reply->lampiran ? asset('storage/' . $reply->lampiran) : null,
                 'lampiran_name' => $reply->lampiran ? basename($reply->lampiran) : null,
@@ -189,6 +198,16 @@ class PesanPembimbingController extends Controller
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new PesanBaruDariIndustri($pesan));
+        }
+
+        // Notify Gurus who have students at this tempat_pkl
+        $pembimbing = auth()->user()->pembimbingIndustri;
+        $tempatPklId = $pembimbing->tempat_pkl_id;
+        $gurus = \App\Models\Guru::whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $tempatPklId))->with('user')->get();
+        foreach ($gurus as $guru) {
+            if ($guru->user) {
+                $guru->user->notify(new PesanBaruDariIndustri($pesan));
+            }
         }
 
         return response()->json([
