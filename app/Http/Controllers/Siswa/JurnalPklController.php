@@ -39,7 +39,8 @@ class JurnalPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
+        $pengajuan = PengajuanPkl::with('guru.user')
+            ->where('siswa_id', $siswa->id)
             ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
 
         if (!$pengajuan) {
@@ -72,8 +73,8 @@ class JurnalPklController extends Controller
     public function edit(JurnalPkl $jurnalPkl)
     {
         $this->authorizeOwner($jurnalPkl);
-        if ($jurnalPkl->status === 'valid') {
-            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
+        if (in_array($jurnalPkl->status, ['valid', 'menunggu_validasi'])) {
+            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Jurnal sudah divalidasi atau sedang menunggu validasi, tidak dapat diubah.']);
         }
         $pengajuan = $jurnalPkl->pengajuanPkl;
         if (!in_array($pengajuan->status, ['disetujui', 'sedang_pkl'])) {
@@ -89,8 +90,8 @@ class JurnalPklController extends Controller
         if (!in_array($pengajuan->status, ['disetujui', 'sedang_pkl'])) {
             return redirect()->back()->withErrors(['msg' => 'PKL tidak aktif, jurnal tidak dapat diubah.']);
         }
-        if ($jurnalPkl->status === 'valid') {
-            return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi, tidak dapat diubah.']);
+        if (in_array($jurnalPkl->status, ['valid', 'menunggu_validasi'])) {
+            return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi atau sedang menunggu validasi, tidak dapat diubah.']);
         }
 
         $data = $request->validated();

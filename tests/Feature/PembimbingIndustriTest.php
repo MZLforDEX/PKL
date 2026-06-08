@@ -146,12 +146,12 @@ class PembimbingIndustriTest extends TestCase
 
         // 4. Validate Jurnal
         $response = $this->actingAs($this->pembimbingUser)->put(route('pembimbing.jurnal.valid', $jurnal), [
-            'catatan_guru' => 'Bagus sekali.',
+            'catatan_pembimbing' => 'Bagus sekali.',
         ]);
 
         $response->assertRedirect();
         $this->assertEquals('valid', $jurnal->fresh()->status);
-        $this->assertEquals('Bagus sekali.', $jurnal->fresh()->catatan_guru);
+        $this->assertEquals('Bagus sekali.', $jurnal->fresh()->catatan_pembimbing);
     }
 
     public function test_siswa_can_edit_journal_when_revisi(): void

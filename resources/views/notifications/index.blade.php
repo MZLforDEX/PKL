@@ -146,32 +146,7 @@
                                                 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                             </a>
                                         @endif
-                                    @elseif(isset($data['pesan_id']))
-                                        @php
-                                            $role = auth()->user()->role;
-                                            $routeName = null;
-                                            if ($role === 'admin') {
-                                                if (isset($data['guru_name']) || (isset($data['title']) && str_contains($data['title'], 'Guru'))) {
-                                                    $routeName = 'admin.pesan-guru.show';
-                                                } else {
-                                                    $routeName = 'admin.pesan.show';
-                                                }
-                                            } elseif ($role === 'guru') {
-                                                if (isset($data['title']) && str_contains($data['title'], 'Admin')) {
-                                                    $routeName = 'guru.hubungi-admin.show';
-                                                } else {
-                                                    $routeName = 'guru.pesan.show';
-                                                }
-                                            } elseif ($role === 'pembimbing_industri') {
-                                                $routeName = 'pembimbing.hubungi-sekolah.show';
-                                            }
-                                        @endphp
-                                        @if($routeName)
-                                            <a href="{{ route($routeName, $data['pesan_id']) }}" class="inline-flex items-center text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors gap-1">
-                                                <span>Lihat Chat</span>
-                                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                        @endif
+
                                     @endif
                                 </div>
                             </div>

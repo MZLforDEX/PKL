@@ -41,8 +41,8 @@
                                             <i data-lucide="building-2" class="w-5 h-5"></i>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-surface-900">{{ $p->tempatPkl->nama_tempat }}</div>
-                                            <div class="text-xs text-surface-400 mt-0.5 leading-snug">{{ Str::limit($p->tempatPkl->alamat, 30) }}</div>
+                                            <div class="text-sm font-bold text-surface-900">{{ $p->tempatPkl?->nama_tempat ?? '-' }}</div>
+                                            <div class="text-xs text-surface-400 mt-0.5 leading-snug">{{ $p->tempatPkl ? Str::limit($p->tempatPkl->alamat, 30) : '-' }}</div>
                                         </div>
                                     </div>
                                 </td>

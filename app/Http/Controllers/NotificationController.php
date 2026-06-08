@@ -18,20 +18,7 @@ class NotificationController extends Controller
         $notification->markAsRead();
         $data = $notification->data;
         $role = auth()->user()->role;
-        if (isset($data['pesan_id'])) {
-            $routes = [
-                'admin' => isset($data['guru_name']) || (isset($data['title']) && str_contains($data['title'], 'Guru'))
-                    ? route('admin.pesan-guru.show', $data['pesan_id'])
-                    : route('admin.pesan.show', $data['pesan_id']),
-                'guru' => isset($data['title']) && str_contains($data['title'], 'Admin')
-                    ? route('guru.hubungi-admin.show', $data['pesan_id'])
-                    : route('guru.pesan.show', $data['pesan_id']),
-                'pembimbing_industri' => route('pembimbing.hubungi-sekolah.show', $data['pesan_id']),
-            ];
-            if (isset($routes[$role])) {
-                return redirect()->to($routes[$role]);
-            }
-        }
+
         if (isset($data['pengajuan_id'])) {
             $routeName = match($role) {
                 'admin' => 'admin.pengajuan.show',

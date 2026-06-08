@@ -11,7 +11,7 @@ class JurnalPkl extends Model
 
     protected $fillable = [
         'pengajuan_pkl_id', 'tanggal', 'kegiatan',
-        'kendala', 'dokumentasi', 'status', 'catatan_guru',
+        'kendala', 'dokumentasi', 'status', 'catatan_guru', 'catatan_pembimbing',
     ];
 
     public function pengajuanPkl(): BelongsTo

@@ -29,17 +29,17 @@
                                 <td class="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold mr-3 border border-slate-200">
-                                            {{ substr($p->siswa->user->name, 0, 1) }}
+                                            {{ substr($p->siswa?->user?->name ?? '-', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-slate-800">{{ $p->siswa->user->name }}</div>
-                                            <div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{{ $p->siswa->nis }}</div>
+                                            <div class="text-sm font-bold text-slate-800">{{ $p->siswa?->user?->name ?? '-' }}</div>
+                                            <div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{{ $p->siswa?->nis ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-slate-700">{{ $p->tempatPkl->nama_tempat }}</div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">{{ $p->tempatPkl->bidang_usaha }}</div>
+                                    <div class="text-sm font-medium text-slate-700">{{ $p->tempatPkl?->nama_tempat ?? '-' }}</div>
+                                    <div class="text-[11px] text-slate-400 mt-0.5">{{ $p->tempatPkl?->bidang_usaha ?? '-' }}</div>
                                 </td>
                                 <td class="px-3 py-3 md:px-6 md:py-4 whitespace-nowrap">
                                     @php

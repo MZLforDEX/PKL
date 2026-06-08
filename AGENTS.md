@@ -1,8 +1,8 @@
 # AGENTS.md
 
-Laravel 12 SiPKL (Sistem Informasi Praktik Kerja Lapangan) — Breeze auth, role middleware, 14 models, role-grouped controllers/views/routes. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`"SiPKL"`.
+Laravel 12 SiPKL (Sistem Informasi Praktik Kerja Lapangan) — Breeze auth, role middleware, 10 models, role-grouped controllers/views/routes. `.env` uses **MySQL** (`project_pkl_v5.2`), APP_NAME=`"SiPKL"`.
 
-**59 tests passing** — run via `composer run test`.
+**52 tests passing** — run via `composer run test`.
 
 ---
 
@@ -38,7 +38,7 @@ Public: `/` (welcome), `/guide`. Notifications (database channel): `/notificatio
 
 **Controllers** under `app/Http/Controllers/{Admin,Guru,Siswa,PembimbingIndustri}/`. Shared: `ProfileController`, `NotificationController`. Middleware alias `role` → `RoleMiddleware` (single-role string match, abort 403) registered in `bootstrap/app.php`.
 
-**Models** (14): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`, `PesanPembimbing`, `PesanGuru`, `PesanPembimbingReply`, `PesanGuruReply`. All use `$fillable`.
+**Models** (10): `User`, `Siswa`, `Guru`, `TempatPkl`, `PembimbingIndustri`, `PengajuanPkl`, `JurnalPkl`, `LaporanPkl`, `PenilaianPkl`, `AbsensiPkl`. All use `$fillable`.
 
 **Routes** in `routes/web.php` — role groupings via `->middleware(['auth', 'role:...'])`. Auth routes are default Breeze — do not modify.
 
@@ -61,8 +61,7 @@ Key transitions: Siswa submits → guru approves/rejects/requests revision. Firs
 - **Admin**: CRUD master data + assign `guru_id` on pengajuan + approve `is_approved`. Admin-created accounts auto-approved.
 - **Pembimbing industri**: tied to `tempat_pkl_id`. Validates jurnal (parallel with guru). Views absensi.
 - **Quota** (`TempatPkl`): counts status `disetujui`, `sedang_pkl`, `menunggu_penilaian`. Accessors: `sisa_kuota`, `is_penuh`.
-- **Penilaian**: `nilai_akhir = round((nilai_sikap + nilai_keterampilan + nilai_laporan) / 3, 2)`. Validates `menunggu_penilaian` status before save.
-- **Messaging**: `PesanPembimbing` + `PesanPembimbingReply` (pembimbing → admin/guru), `PesanGuru` + `PesanGuruReply` (guru → admin).
+
 
 ## Notifications (database + mail)
 
@@ -71,10 +70,6 @@ Key transitions: Siswa submits → guru approves/rejects/requests revision. Firs
 | Teacher changes pengajuan status | Siswa | `PengajuanPklStatusChanged` |
 | Student uploads jurnal | Guru | `SiswaUploadJurnal` |
 | Student uploads/resubmits laporan | Guru | `SiswaUploadLaporan` |
-| Pembimbing sends message | Admin/guru | `PesanBaruDariIndustri` |
-| Guru sends message to admin | Admin | `PesanBaruDariGuru` |
-| Admin replies to pembimbing | Pembimbing | `PesanTelahDibalasSekolah` |
-| Admin replies to guru | Guru | `PesanGuruDibalas` |
 
 ## File Uploads
 
@@ -104,7 +99,6 @@ All password: `password`
 | `NotificationSystemTest` | Notifications on pengajuan/jurnal/laporan events |
 | `PembimbingIndustriTest` | Admin CRUD, jurnal validation |
 | `PengajuanPklQuotaTest` | Quota enforcement |
-| `HubungiSekolahTest` | Messaging: pembimbing→admin/guru, guru→admin |
 | `PenilaianPklTest` | Penilaian create/store, authorization, status guard |
 | `Auth/*` + `ProfileTest` | Default Breeze auth + profile |
 

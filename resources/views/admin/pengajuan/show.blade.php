@@ -105,7 +105,7 @@
                                 <select name="guru_id" class="form-input-premium !py-2.5 text-sm" required>
                                     <option value="">-- Pilih Guru --</option>
                                     @foreach($guru as $g)
-                                        <option value="{{ $g->id }}">{{ $g->user->name }} ({{ $g->nip }})</option>
+                                        <option value="{{ $g->id }}">{{ $g->user?->name ?? '-' }} ({{ $g->nip }})</option>
                                     @endforeach
                                 </select>
                             </div>

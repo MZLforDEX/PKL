@@ -24,21 +24,23 @@ class SiswaController extends Controller
 
     public function store(StoreSiswaRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        $user->forceFill(['role' => 'siswa', 'is_approved' => true])->save();
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
+            $user->forceFill(['role' => 'siswa', 'is_approved' => true])->save();
 
-        Siswa::create([
-            'user_id' => $user->id,
-            'nis' => $request->nis,
-            'kelas' => $request->kelas,
-            'jurusan' => $request->jurusan,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-        ]);
+            Siswa::create([
+                'user_id' => $user->id,
+                'nis' => $request->nis,
+                'kelas' => $request->kelas,
+                'jurusan' => $request->jurusan,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+            ]);
+        });
 
         return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil ditambahkan.');
     }
@@ -73,7 +75,7 @@ class SiswaController extends Controller
     public function destroy(Siswa $siswa)
     {
         DB::transaction(function () use ($siswa) {
-            $siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
+            $siswa->pengajuanPkl()->delete();
             optional($siswa->user)->delete();
             $siswa->delete();
         });

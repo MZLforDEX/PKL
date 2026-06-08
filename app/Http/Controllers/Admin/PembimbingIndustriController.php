@@ -26,19 +26,21 @@ class PembimbingIndustriController extends Controller
 
     public function store(StorePembimbingIndustriRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        $user->forceFill(['role' => 'pembimbing_industri', 'is_approved' => true])->save();
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
+            $user->forceFill(['role' => 'pembimbing_industri', 'is_approved' => true])->save();
 
-        PembimbingIndustri::create([
-            'user_id' => $user->id,
-            'tempat_pkl_id' => $request->tempat_pkl_id,
-            'no_hp' => $request->no_hp,
-            'jabatan' => $request->jabatan,
-        ]);
+            PembimbingIndustri::create([
+                'user_id' => $user->id,
+                'tempat_pkl_id' => $request->tempat_pkl_id,
+                'no_hp' => $request->no_hp,
+                'jabatan' => $request->jabatan,
+            ]);
+        });
 
         return redirect()->route('admin.pembimbing-industri.index')->with('success', 'Pembimbing Industri berhasil ditambahkan.');
     }
@@ -72,8 +74,6 @@ class PembimbingIndustriController extends Controller
     public function destroy(PembimbingIndustri $pembimbingIndustri)
     {
         DB::transaction(function () use ($pembimbingIndustri) {
-            \App\Models\PesanPembimbing::where('pembimbing_industri_id', $pembimbingIndustri->id)
-                ->each(function ($p) { $p->delete(); });
             optional($pembimbingIndustri->user)->delete();
             $pembimbingIndustri->delete();
         });

@@ -20,8 +20,8 @@
                                     <i data-lucide="building-2" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-base md:text-lg font-bold text-surface-900 leading-snug">{{ $pengajuan->tempatPkl->nama_tempat }}</h3>
-                                    <p class="text-xs text-surface-400 font-medium mt-0.5">{{ $pengajuan->tempatPkl->alamat }}</p>
+                                    <h3 class="text-base md:text-lg font-bold text-surface-900 leading-snug">{{ $pengajuan->tempatPkl?->nama_tempat ?? '-' }}</h3>
+                                    <p class="text-xs text-surface-400 font-medium mt-0.5">{{ $pengajuan->tempatPkl?->alamat ?? '-' }}</p>
                                 </div>
                             </div>
                             @php

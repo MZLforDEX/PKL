@@ -39,9 +39,9 @@
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
-                                            {{ substr($p->user->name, 0, 1) }}
+                                            {{ substr($p->user?->name ?? '-', 0, 1) }}
                                         </div>
-                                        <span class="text-sm font-bold text-surface-900">{{ $p->user->name }}</span>
+                                        <span class="text-sm font-bold text-surface-900">{{ $p->user?->name ?? '-' }}</span>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-700">
@@ -51,7 +51,7 @@
                                     {{ $p->jabatan ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap text-sm text-surface-500">
-                                    {{ $p->user->email }}
+                                    {{ $p->user?->email ?? '-' }}
                                 </td>
                                 <td class="whitespace-nowrap text-right">
                                     <div class="flex justify-end gap-1.5">

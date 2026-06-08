@@ -43,11 +43,11 @@ class UserController extends Controller
 
         DB::transaction(function () use ($user) {
             if ($user->siswa) {
-                $user->siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
+                $user->siswa->pengajuanPkl()->delete();
                 $user->siswa->delete();
             }
             if ($user->guru) {
-                $user->guru->pengajuanPkl->each(function ($p) { $p->delete(); });
+                $user->guru->pengajuanPkl()->delete();
                 $user->guru->delete();
             }
             if ($user->pembimbingIndustri) {

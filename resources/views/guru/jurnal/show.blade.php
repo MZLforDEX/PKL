@@ -132,6 +132,17 @@
                             "{{ $jurnalPkl->catatan_guru ?? 'Tidak ada catatan' }}"
                         </div>
                     </div>
+                    @if($jurnalPkl->catatan_pembimbing)
+                    <div class="card-premium p-5 mt-4">
+                        <h4 class="font-bold text-surface-900 mb-4 flex items-center">
+                            <i data-lucide="building" class="w-4 h-4 mr-2 text-purple-500"></i>
+                            Catatan Pembimbing Industri
+                        </h4>
+                        <div class="p-4 bg-purple-50 rounded-2xl border border-purple-100/60 italic text-sm text-surface-600">
+                            "{{ $jurnalPkl->catatan_pembimbing }}"
+                        </div>
+                    </div>
+                    @endif
                     @endif
                 </div>
             </div>

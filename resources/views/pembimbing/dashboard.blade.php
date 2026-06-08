@@ -82,13 +82,9 @@
                         <i data-lucide="briefcase" class="w-5 h-5 text-white"></i>
                     </div>
                     <h2 class="text-lg font-bold mb-2">Mitra Industri</h2>
-                    <p class="text-indigo-100 text-sm mb-6 leading-relaxed">
-                        Terima kasih atas kontribusi Anda dalam membimbing siswa PKL SiPKL. Hubungi pihak sekolah jika terdapat kendala operasional atau administratif.
+                    <p class="text-indigo-100 text-sm leading-relaxed">
+                        Terima kasih atas kontribusi Anda dalam membimbing siswa PKL SiPKL. Hubungi pihak sekolah secara langsung jika terdapat kendala operasional atau administratif.
                     </p>
-                    <a href="{{ route('pembimbing.hubungi-sekolah.index') }}" class="flex items-center justify-center w-full py-3 bg-white text-indigo-600 rounded-xl font-bold text-sm hover:bg-indigo-50 transition-colors shadow-lg">
-                        <i data-lucide="message-square" class="w-4 h-4 mr-2"></i>
-                        Hubungi Sekolah
-                    </a>
                 </div>
             </div>
         </div>

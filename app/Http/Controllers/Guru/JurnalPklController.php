@@ -34,7 +34,7 @@ class JurnalPklController extends Controller
         $request->validate(['catatan_guru' => 'nullable|string|max:5000']);
         $jurnalPkl->update(['status' => 'valid', 'catatan_guru' => $request->filled('catatan_guru') ? $request->catatan_guru : $jurnalPkl->catatan_guru]);
         if ($jurnalPkl->pengajuanPkl->siswa && $jurnalPkl->pengajuanPkl->siswa->user) {
-            $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($jurnalPkl->pengajuanPkl, 'Jurnal ' . $jurnalPkl->status . ' oleh guru'));
+            $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\JurnalPklDiperbarui($jurnalPkl, 'valid'));
         }
         return redirect()->back()->with('success', 'Jurnal telah divalidasi.');
     }
@@ -48,7 +48,7 @@ class JurnalPklController extends Controller
         $request->validate(['catatan_guru' => 'required|string']);
         $jurnalPkl->update(['status' => 'revisi', 'catatan_guru' => $request->catatan_guru]);
         if ($jurnalPkl->pengajuanPkl->siswa && $jurnalPkl->pengajuanPkl->siswa->user) {
-            $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($jurnalPkl->pengajuanPkl, 'Jurnal ' . $jurnalPkl->status . ' oleh guru'));
+            $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\JurnalPklDiperbarui($jurnalPkl, 'revisi'));
         }
         return redirect()->back()->with('success', 'Revisi jurnal telah diminta.');
     }

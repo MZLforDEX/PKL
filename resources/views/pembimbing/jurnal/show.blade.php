@@ -99,7 +99,7 @@
                             <!-- Valid Form -->
                             <form action="{{ route('pembimbing.jurnal.valid', $jurnalPkl) }}" method="POST">
                                 @csrf @method('PUT')
-                                <input type="text" name="catatan_guru" placeholder="Catatan industri (opsional)" class="form-input-premium mb-3 !py-2.5 text-sm">
+                                <input type="text" name="catatan_pembimbing" placeholder="Catatan industri (opsional)" class="form-input-premium mb-3 !py-2.5 text-sm">
                                 <button type="submit" class="btn-primary w-full !py-3 !bg-purple-600 hover:!bg-purple-700">
                                     <i data-lucide="check" class="w-4 h-4 mr-2"></i>
                                     Validasi Jurnal
@@ -114,7 +114,7 @@
                             <!-- Revisi Form -->
                             <form action="{{ route('pembimbing.jurnal.revisi', $jurnalPkl) }}" method="POST">
                                 @csrf @method('PUT')
-                                <textarea name="catatan_guru" placeholder="Instruksi revisi dari industri..." class="form-input-premium mb-3 !py-2.5 text-sm" rows="3" required></textarea>
+                                <textarea name="catatan_pembimbing" placeholder="Instruksi revisi dari industri..." class="form-input-premium mb-3 !py-2.5 text-sm" rows="3" required></textarea>
                                 <button type="submit" class="btn-secondary w-full !py-3 !text-rose-600 hover:!bg-rose-50/50 hover:!border-rose-200">
                                     <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
                                     Minta Revisi
@@ -129,9 +129,20 @@
                             Catatan Validasi Industri
                         </h4>
                         <div class="p-4 bg-surface-50 rounded-2xl border border-surface-200/60 italic text-sm text-surface-600">
-                            "{{ $jurnalPkl->catatan_guru ?? 'Tidak ada catatan' }}"
+                            "{{ $jurnalPkl->catatan_pembimbing ?? 'Tidak ada catatan' }}"
                         </div>
                     </div>
+                    @if($jurnalPkl->catatan_guru)
+                    <div class="card-premium p-5 mt-4">
+                        <h4 class="font-bold text-surface-900 mb-4 flex items-center">
+                            <i data-lucide="graduation-cap" class="w-4 h-4 mr-2 text-brand-500"></i>
+                            Catatan Guru Pembimbing
+                        </h4>
+                        <div class="p-4 bg-brand-50 rounded-2xl border border-brand-100/60 italic text-sm text-surface-600">
+                            "{{ $jurnalPkl->catatan_guru }}"
+                        </div>
+                    </div>
+                    @endif
                     @endif
                 </div>
             </div>

@@ -130,13 +130,9 @@
                         <i data-lucide="life-buoy" class="w-5 h-5 text-white"></i>
                     </div>
                     <h2 class="text-lg font-bold mb-2">Butuh Bantuan?</h2>
-                    <p class="text-brand-100 text-sm mb-6 leading-relaxed">
-                        Jika Anda mengalami kendala dalam memberikan penilaian atau validasi jurnal, silakan hubungi Admin sistem.
+                    <p class="text-brand-100 text-sm leading-relaxed">
+                        Jika Anda mengalami kendala dalam memberikan penilaian atau validasi jurnal, silakan hubungi Administrator sekolah secara langsung.
                     </p>
-                    <a href="{{ route('guru.hubungi-admin.index') }}" class="flex items-center justify-center w-full py-3 bg-white text-brand-600 rounded-xl font-bold text-sm hover:bg-brand-50 transition-colors shadow-lg">
-                        <i data-lucide="message-square" class="w-4 h-4 mr-2"></i>
-                        Hubungi Admin
-                    </a>
                 </div>
             </div>
         </div>

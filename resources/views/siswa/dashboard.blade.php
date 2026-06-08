@@ -427,7 +427,7 @@
                                     <span class="truncate">{{ $pengajuan->guru?->user?->email ?? 'Email belum diatur' }}</span>
                                 </p>
                                 @if($pengajuan->guru?->user?->email)
-                                    <a href="mailto:{{ $pengajuan->guru->user->email }}" class="mt-3 inline-flex items-center text-xs text-brand-600 hover:text-brand-700 font-semibold gap-1">
+                                    <a href="mailto:{{ $pengajuan->guru?->user?->email }}" class="mt-3 inline-flex items-center text-xs text-brand-600 hover:text-brand-700 font-semibold gap-1">
                                         <i data-lucide="message-square" class="w-3.5 h-3.5 text-brand-500"></i>
                                         Hubungi Guru
                                     </a>

@@ -24,19 +24,21 @@ class GuruController extends Controller
 
     public function store(StoreGuruRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        $user->forceFill(['role' => 'guru', 'is_approved' => true])->save();
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
+            $user->forceFill(['role' => 'guru', 'is_approved' => true])->save();
 
-        Guru::create([
-            'user_id' => $user->id,
-            'nip' => $request->nip,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-        ]);
+            Guru::create([
+                'user_id' => $user->id,
+                'nip' => $request->nip,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+            ]);
+        });
 
         return redirect()->route('admin.guru.index')->with('success', 'Guru berhasil ditambahkan.');
     }
@@ -69,7 +71,7 @@ class GuruController extends Controller
     public function destroy(Guru $guru)
     {
         DB::transaction(function () use ($guru) {
-            $guru->pengajuanPkl->each(function ($p) { $p->delete(); });
+            $guru->pengajuanPkl()->delete();
             optional($guru->user)->delete();
             $guru->delete();
         });

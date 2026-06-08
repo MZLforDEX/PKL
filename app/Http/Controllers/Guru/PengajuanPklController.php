@@ -40,7 +40,9 @@ class PengajuanPklController extends Controller
         $request->validate(['catatan' => 'nullable|string']);
         $pengajuanPkl->update(['status' => 'disetujui', 'catatan' => $request->catatan]);
         
-        $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        if ($pengajuanPkl->siswa && $pengajuanPkl->siswa->user) {
+            $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        }
         
         return redirect()->back()->with('success', 'Pengajuan telah disetujui.');
     }
@@ -56,7 +58,9 @@ class PengajuanPklController extends Controller
         $request->validate(['catatan' => 'required|string']);
         $pengajuanPkl->update(['status' => 'ditolak', 'catatan' => $request->catatan]);
         
-        $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        if ($pengajuanPkl->siswa && $pengajuanPkl->siswa->user) {
+            $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        }
         
         return redirect()->back()->with('success', 'Pengajuan telah ditolak.');
     }
@@ -72,7 +76,9 @@ class PengajuanPklController extends Controller
         $request->validate(['catatan' => 'required|string']);
         $pengajuanPkl->update(['status' => 'revisi', 'catatan' => $request->catatan]);
         
-        $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        if ($pengajuanPkl->siswa && $pengajuanPkl->siswa->user) {
+            $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));
+        }
         
         return redirect()->back()->with('success', 'Revisi telah diminta.');
     }

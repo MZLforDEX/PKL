@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -68,25 +69,27 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
         Auth::logout();
 
-        if ($user->siswa) {
-            $user->siswa->pengajuanPkl->each(function ($p) { $p->delete(); });
-            $user->siswa->delete();
-        }
-        if ($user->guru) {
-            $user->guru->pengajuanPkl->each(function ($p) { $p->delete(); });
-            $user->guru->delete();
-        }
-        if ($user->pembimbingIndustri) {
-            $user->pembimbingIndustri->delete();
-        }
+        DB::transaction(function () use ($user) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
 
-        $user->delete();
+            if ($user->siswa) {
+                $user->siswa->pengajuanPkl()->delete();
+                $user->siswa->delete();
+            }
+            if ($user->guru) {
+                $user->guru->pengajuanPkl()->delete();
+                $user->guru->delete();
+            }
+            if ($user->pembimbingIndustri) {
+                $user->pembimbingIndustri->delete();
+            }
+
+            $user->delete();
+        });
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

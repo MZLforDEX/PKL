@@ -40,6 +40,9 @@ class LaporanPklController extends Controller
                 'catatan_guru' => $request->filled('catatan_guru') ? $request->catatan_guru : $laporanPkl->catatan_guru,
             ]);
             $laporanPkl->pengajuanPkl->update(['status' => 'menunggu_penilaian']);
+            if ($laporanPkl->pengajuanPkl->siswa && $laporanPkl->pengajuanPkl->siswa->user) {
+                $laporanPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\LaporanPklDiperbarui($laporanPkl, 'diterima'));
+            }
         });
         return redirect()->back()->with('success', 'Laporan telah diterima.');
     }
@@ -53,6 +56,9 @@ class LaporanPklController extends Controller
 
         $request->validate(['catatan_guru' => 'required|string']);
         $laporanPkl->update(['status' => 'revisi', 'catatan_guru' => $request->catatan_guru]);
+        if ($laporanPkl->pengajuanPkl->siswa && $laporanPkl->pengajuanPkl->siswa->user) {
+            $laporanPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\LaporanPklDiperbarui($laporanPkl, 'revisi'));
+        }
         return redirect()->back()->with('success', 'Revisi laporan telah diminta.');
     }
 

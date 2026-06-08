@@ -16,8 +16,6 @@
             ['route' => 'admin.pembimbing-industri.index', 'label' => 'Pembimbing Industri', 'icon' => 'briefcase', 'pattern' => 'admin/pembimbing-industri*'],
             ['route' => 'admin.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-text', 'pattern' => 'admin/pengajuan*'],
             ['route' => 'admin.users.unapproved', 'label' => 'Pendaftar', 'icon' => 'user-plus', 'pattern' => 'admin/users*'],
-            ['route' => 'admin.pesan.index', 'label' => 'Pesan Industri', 'icon' => 'message-square', 'pattern' => 'admin/pesan-industri*'],
-            ['route' => 'admin.pesan-guru.index', 'label' => 'Pesan Guru', 'icon' => 'mail', 'pattern' => 'admin/pesan-guru*'],
             ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         'guru' => [
@@ -26,8 +24,6 @@
             ['route' => 'guru.laporan.index', 'label' => 'Laporan', 'icon' => 'file-spreadsheet', 'pattern' => 'guru/laporan*'],
             ['route' => 'guru.absensi.index', 'label' => 'Absensi', 'icon' => 'calendar', 'pattern' => 'guru/absensi*'],
             ['route' => 'guru.penilaian.index', 'label' => 'Penilaian', 'icon' => 'award', 'pattern' => 'guru/penilaian*'],
-            ['route' => 'guru.pesan.index', 'label' => 'Pesan Industri', 'icon' => 'message-square', 'pattern' => 'guru/pesan-industri*'],
-            ['route' => 'guru.hubungi-admin.index', 'label' => 'Hubungi Admin', 'icon' => 'mail', 'pattern' => 'guru/hubungi-admin*'],
             ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         'siswa' => [
@@ -41,7 +37,6 @@
             ['route' => 'pembimbing.siswa.index', 'label' => 'Siswa PKL', 'icon' => 'users', 'pattern' => 'pembimbing/siswa*'],
             ['route' => 'pembimbing.jurnal.index', 'label' => 'Jurnal PKL', 'icon' => 'book-open', 'pattern' => 'pembimbing/jurnal*'],
             ['route' => 'pembimbing.absensi.index', 'label' => 'Absensi PKL', 'icon' => 'calendar', 'pattern' => 'pembimbing/absensi*'],
-            ['route' => 'pembimbing.hubungi-sekolah.index', 'label' => 'Hubungi Sekolah', 'icon' => 'message-square', 'pattern' => 'pembimbing/hubungi-sekolah*'],
             ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
         ],
         default => [],
