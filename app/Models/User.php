@@ -39,6 +39,15 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($user) {
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+        });
+    }
+
     public function siswa(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Siswa::class);

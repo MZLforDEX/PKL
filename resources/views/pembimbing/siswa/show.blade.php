@@ -85,18 +85,27 @@
                             </div>
 
                             <div class="space-y-3 pb-4 border-b border-surface-100">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-surface-500">Nilai Sikap:</span>
-                                    <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_sikap }}</span>
-                                </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-surface-500">Nilai Keterampilan:</span>
-                                    <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_keterampilan }}</span>
-                                </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-surface-500">Nilai Laporan:</span>
-                                    <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_laporan }}</span>
-                                </div>
+                                @if($pengajuanPkl->penilaianPkl->detail_nilai)
+                                    @foreach($pengajuanPkl->penilaianPkl->detail_nilai as $item)
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-surface-500">{{ $item['nama'] }}:</span>
+                                            <span class="font-bold text-surface-800">{{ $item['nilai'] }}</span>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-surface-500">Nilai Sikap:</span>
+                                        <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_sikap }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-surface-500">Nilai Keterampilan:</span>
+                                        <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_keterampilan }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-surface-500">Nilai Laporan:</span>
+                                        <span class="font-bold text-surface-800">{{ $pengajuanPkl->penilaianPkl->nilai_laporan }}</span>
+                                    </div>
+                                @endif
                             </div>
 
                             @if($pengajuanPkl->penilaianPkl->catatan_evaluasi)
@@ -107,6 +116,13 @@
                                     </p>
                                 </div>
                             @endif
+
+                            <div class="mt-5">
+                                <a href="{{ route('pembimbing.penilaian.edit', $pengajuanPkl->penilaianPkl) }}" class="btn-secondary w-full text-center inline-flex items-center justify-center gap-1.5 !text-xs">
+                                    <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                                    Edit Penilaian
+                                </a>
+                            </div>
                         </div>
                     @else
                         <div class="card-premium p-6 bg-surface-50/50">
@@ -114,9 +130,19 @@
                                 <i data-lucide="info" class="w-4 h-4 mr-2 text-surface-400"></i>
                                 Penilaian PKL
                             </h4>
-                            <p class="text-xs text-surface-500 leading-relaxed">
-                                Siswa ini belum dinilai. Penilaian akhir akan diberikan oleh Guru Pembimbing Sekolah setelah kegiatan PKL selesai.
-                            </p>
+                            @if($pengajuanPkl->status === 'menunggu_penilaian')
+                                <p class="text-xs text-surface-500 leading-relaxed mb-4">
+                                    Siswa ini telah menyelesaikan PKL dan siap untuk dinilai.
+                                </p>
+                                <a href="{{ route('pembimbing.penilaian.create', $pengajuanPkl) }}" class="btn-primary w-full text-center inline-flex items-center justify-center gap-1.5 !text-xs">
+                                    <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                                    Beri Penilaian
+                                </a>
+                            @else
+                                <p class="text-xs text-surface-500 leading-relaxed">
+                                    Siswa ini belum dinilai. Penilaian akhir dapat diberikan setelah kegiatan PKL siswa selesai dan status berubah menjadi menunggu penilaian.
+                                </p>
+                            @endif
                         </div>
                     @endif
                 </div>

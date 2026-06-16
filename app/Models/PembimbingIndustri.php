@@ -14,7 +14,21 @@ class PembimbingIndustri extends Model
         'tempat_pkl_id',
         'no_hp',
         'jabatan',
+        'tanda_tangan',
+        'logo',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function ($pembimbing) {
+            if ($pembimbing->tanda_tangan) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($pembimbing->tanda_tangan);
+            }
+            if ($pembimbing->logo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($pembimbing->logo);
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {

@@ -138,81 +138,6 @@
                     {{-- Left / Center Column: Stats & Tables (col-span 2) --}}
                     <div class="lg:col-span-2 space-y-6 md:space-y-8">
                         
-                        {{-- Statistik & Progres --}}
-                        <div class="card-premium p-5 sm:p-6 md:p-8">
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                                <div>
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
-                                            <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i>
-                                        </div>
-                                        <h2 class="text-base md:text-lg font-bold text-surface-900">Statistik & Progres PKL</h2>
-                                    </div>
-                                    <div class="flex flex-wrap items-center gap-2 mt-2.5 ml-[42px] text-xs md:text-sm text-surface-500">
-                                        <span>Periode: <span class="font-semibold text-surface-700">{{ $periode }}</span></span>
-                                        <span class="text-surface-300">•</span>
-                                        <span>Status:</span>
-                                        @php
-                                            $statusColor = match($pengajuan->status) {
-                                                'draft' => 'text-surface-500 bg-surface-100 border-surface-200',
-                                                'menunggu_persetujuan', 'menunggu_penilaian' => 'text-amber-700 bg-amber-50 border-amber-200',
-                                                'disetujui', 'sedang_pkl' => 'text-blue-700 bg-blue-50 border-blue-200',
-                                                'selesai' => 'text-emerald-700 bg-emerald-50 border-emerald-200',
-                                                'ditolak', 'revisi' => 'text-rose-700 bg-rose-50 border-rose-200',
-                                                default => 'text-surface-500 bg-surface-100 border-surface-200',
-                                            };
-                                        @endphp
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border {{ $statusColor }}">
-                                            {{ str_replace('_', ' ', ucwords($pengajuan->status)) }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 shadow-[0_2px_8px_rgba(99,102,241,0.15)] self-end sm:self-center">
-                                    <i data-lucide="trending-up" class="w-5 h-5"></i>
-                                </div>
-                            </div>
-
-                            @php
-                                $displayProgress = match($pengajuan->status) {
-                                    'draft' => 10,
-                                    'menunggu_persetujuan' => 20,
-                                    'revisi' => 15,
-                                    'disetujui' => 35,
-                                    'sedang_pkl', 'menunggu_penilaian' => $progressPersen,
-                                    'selesai' => 100,
-                                    default => 5,
-                                };
-                            @endphp
-
-                            <div class="mb-6">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-semibold text-surface-500">Total Progres</span>
-                                    <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">{{ $displayProgress }}% Selesai</span>
-                                </div>
-                                <div class="overflow-hidden h-2.5 rounded-full bg-surface-100">
-                                    <div style="width: {{ $displayProgress }}%" class="h-full rounded-full bg-gradient-to-r from-brand-600 to-brand-400 transition-all duration-700 ease-out shadow-[0_0_8px_rgba(99,102,241,0.4)]"></div>
-                                </div>
-                            </div>
-
-                            <hr class="border-surface-200/60 my-5" />
-
-                            <div class="grid grid-cols-2 gap-4 pt-2">
-                                <div>
-                                    <p class="text-xs font-bold text-surface-400 uppercase tracking-wider">Kehadiran Valid</p>
-                                    <div class="flex items-baseline gap-1 mt-1.5">
-                                        <span class="text-2xl md:text-3xl font-extrabold text-surface-900 tracking-tight">{{ $jmlValidJurnal }}</span>
-                                        <span class="text-xs md:text-sm font-medium text-surface-400">/ {{ $totalHari }} Hari</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-surface-400 uppercase tracking-wider">Jurnal Terisi</p>
-                                    <div class="flex items-baseline gap-1 mt-1.5">
-                                        <span class="text-2xl md:text-3xl font-extrabold text-surface-900 tracking-tight">{{ $jmlJurnal }}</span>
-                                        <span class="text-xs md:text-sm font-medium text-surface-400">Entri</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         {{-- Jurnal Terbaru --}}
                         <div class="card-premium overflow-hidden">
@@ -445,27 +370,38 @@
                                     <div class="flex items-center justify-between pb-3 border-b border-surface-100">
                                         <div>
                                             <span class="text-[10px] font-bold text-surface-400 uppercase block">Nilai Akhir</span>
-                                            <span class="text-3xl font-black text-brand-600 tracking-tight">{{ $pengajuan->penilaianPkl->nilai_akhir }}</span>
+                                            <span class="text-3xl font-black text-brand-600 tracking-tight">{{ number_format($pengajuan->penilaianPkl->nilai_akhir, 2) }}</span>
                                         </div>
                                         <span class="px-2.5 py-1 rounded text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400">
                                             {{ $pengajuan->penilaianPkl->predikat }}
                                         </span>
                                     </div>
 
-                                    <div class="grid grid-cols-3 gap-2 py-1.5 text-center">
-                                        <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
-                                            <span class="text-[9px] font-bold text-surface-400 uppercase block">Sikap</span>
-                                            <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_sikap }}</span>
+                                    @if($pengajuan->penilaianPkl->detail_nilai)
+                                        <div class="space-y-2 py-1.5">
+                                            @foreach($pengajuan->penilaianPkl->detail_nilai as $item)
+                                                <div class="flex justify-between items-center text-xs font-semibold p-2 bg-surface-50 border border-surface-100 rounded-lg">
+                                                    <span class="text-surface-600 truncate mr-2" title="{{ $item['nama'] }}">{{ $item['nama'] }}</span>
+                                                    <span class="text-brand-600 font-extrabold shrink-0">{{ $item['nilai'] }}</span>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                        <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
-                                            <span class="text-[9px] font-bold text-surface-400 uppercase block">Keterampilan</span>
-                                            <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_keterampilan }}</span>
+                                    @else
+                                        <div class="grid grid-cols-3 gap-2 py-1.5 text-center">
+                                            <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
+                                                <span class="text-[9px] font-bold text-surface-400 uppercase block">Sikap</span>
+                                                <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_sikap }}</span>
+                                            </div>
+                                            <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
+                                                <span class="text-[9px] font-bold text-surface-400 uppercase block">Keterampilan</span>
+                                                <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_keterampilan }}</span>
+                                            </div>
+                                            <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
+                                                <span class="text-[9px] font-bold text-surface-400 uppercase block">Laporan</span>
+                                                <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_laporan }}</span>
+                                            </div>
                                         </div>
-                                        <div class="p-2 bg-surface-50 border border-surface-100 rounded-lg">
-                                            <span class="text-[9px] font-bold text-surface-400 uppercase block">Laporan</span>
-                                            <span class="text-xs font-extrabold text-surface-700 mt-1 block">{{ $pengajuan->penilaianPkl->nilai_laporan }}</span>
-                                        </div>
-                                    </div>
+                                    @endif
 
                                     @if($pengajuan->penilaianPkl->catatan_evaluasi)
                                         <div class="p-3 bg-brand-50/50 border border-brand-100/60 rounded-lg">
@@ -487,7 +423,7 @@
                                     <div class="w-10 h-10 rounded-full bg-surface-100 flex items-center justify-center mx-auto mb-2 text-surface-300">
                                         <i data-lucide="award" class="w-5 h-5"></i>
                                     </div>
-                                    <p class="text-xs font-medium">Nilai belum dimasukkan oleh Guru Pembimbing.</p>
+                                    <p class="text-xs font-medium">Nilai belum dimasukkan oleh Pembimbing Industri.</p>
                                 </div>
                             @endif
                         </div>

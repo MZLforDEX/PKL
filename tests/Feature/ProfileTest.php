@@ -96,4 +96,56 @@ class ProfileTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_pembimbing_industri_profile_information_can_be_updated(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $user = User::factory()->create(['role' => 'pembimbing_industri']);
+        $tempat = \App\Models\TempatPkl::create([
+            'nama_tempat' => 'Company A',
+            'alamat' => 'Address A',
+            'bidang_usaha' => 'IT',
+            'kontak_person' => 'Budi',
+            'no_hp' => '081',
+            'email' => 'comp@test.com',
+            'kuota' => 5
+        ]);
+        $pembimbing = \App\Models\PembimbingIndustri::create([
+            'user_id' => $user->id,
+            'tempat_pkl_id' => $tempat->id,
+            'no_hp' => '08123456789',
+            'jabatan' => 'HRD Manager',
+        ]);
+
+        $signatureFile = \Illuminate\Http\UploadedFile::fake()->create('signature.png', 100, 'image/png');
+        $logoFile = \Illuminate\Http\UploadedFile::fake()->create('logo.png', 100, 'image/png');
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => 'Updated Pembimbing',
+                'email' => 'pembimbing_updated@example.com',
+                'jabatan' => 'CEO',
+                'no_hp' => '08999999999',
+                'tanda_tangan' => $signatureFile,
+                'logo' => $logoFile,
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+        $pembimbing->refresh();
+
+        $this->assertSame('Updated Pembimbing', $user->name);
+        $this->assertSame('pembimbing_updated@example.com', $user->email);
+        $this->assertSame('CEO', $pembimbing->jabatan);
+        $this->assertSame('08999999999', $pembimbing->no_hp);
+        $this->assertNotNull($pembimbing->tanda_tangan);
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($pembimbing->tanda_tangan);
+        $this->assertNotNull($pembimbing->logo);
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($pembimbing->logo);
+    }
 }

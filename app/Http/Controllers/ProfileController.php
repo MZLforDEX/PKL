@@ -55,6 +55,27 @@ class ProfileController extends Controller
             $user->siswa->update($request->only('nis', 'kelas', 'jurusan', 'alamat', 'no_hp'));
         }
 
+        if ($user->role === 'guru' && $user->guru) {
+            $user->guru->update($request->only('nip', 'alamat', 'no_hp'));
+        }
+
+        if ($user->role === 'pembimbing_industri' && $user->pembimbingIndustri) {
+            $data = $request->only('jabatan', 'no_hp');
+            if ($request->hasFile('tanda_tangan')) {
+                if ($user->pembimbingIndustri->tanda_tangan) {
+                    Storage::disk('public')->delete($user->pembimbingIndustri->tanda_tangan);
+                }
+                $data['tanda_tangan'] = $request->file('tanda_tangan')->store('signatures', 'public');
+            }
+            if ($request->hasFile('logo')) {
+                if ($user->pembimbingIndustri->logo) {
+                    Storage::disk('public')->delete($user->pembimbingIndustri->logo);
+                }
+                $data['logo'] = $request->file('logo')->store('logos', 'public');
+            }
+            $user->pembimbingIndustri->update($data);
+        }
+
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
@@ -72,22 +93,6 @@ class ProfileController extends Controller
         Auth::logout();
 
         DB::transaction(function () use ($user) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-
-            if ($user->siswa) {
-                $user->siswa->pengajuanPkl()->delete();
-                $user->siswa->delete();
-            }
-            if ($user->guru) {
-                $user->guru->pengajuanPkl()->delete();
-                $user->guru->delete();
-            }
-            if ($user->pembimbingIndustri) {
-                $user->pembimbingIndustri->delete();
-            }
-
             $user->delete();
         });
 

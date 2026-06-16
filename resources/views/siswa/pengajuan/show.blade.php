@@ -82,24 +82,39 @@
                             <i data-lucide="award" class="w-6 h-6 text-emerald-500 mr-2 shrink-0"></i>
                             <h3 class="text-base md:text-lg font-bold text-surface-900 uppercase tracking-tight">Hasil Penilaian Akhir</h3>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
-                                <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Sikap</span>
-                                <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_sikap }}</span>
+                        @if($pengajuan->penilaianPkl->detail_nilai)
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                @foreach($pengajuan->penilaianPkl->detail_nilai as $item)
+                                    <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100/40 flex justify-between items-center">
+                                        <span class="text-xs font-bold text-emerald-800">{{ $item['nama'] }}</span>
+                                        <span class="text-lg font-extrabold text-emerald-700">{{ $item['nilai'] }}</span>
+                                    </div>
+                                @endforeach
+                                <div class="p-4 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl flex justify-between items-center shadow-lg shadow-emerald-100/50 md:col-span-2">
+                                    <span class="text-xs font-bold text-emerald-100 uppercase">Nilai Rata-rata Akhir</span>
+                                    <span class="text-xl font-extrabold text-white">{{ number_format($pengajuan->penilaianPkl->nilai_akhir, 2) }}</span>
+                                </div>
                             </div>
-                            <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
-                                <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Skill</span>
-                                <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_keterampilan }}</span>
+                        @else
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
+                                    <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Sikap</span>
+                                    <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_sikap }}</span>
+                                </div>
+                                <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
+                                    <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Skill</span>
+                                    <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_keterampilan }}</span>
+                                </div>
+                                <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
+                                    <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Laporan</span>
+                                    <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_laporan }}</span>
+                                </div>
+                                <div class="p-4 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl text-center shadow-lg shadow-emerald-100/50">
+                                    <span class="block text-[10px] font-bold text-emerald-100 uppercase mb-1">Akhir</span>
+                                    <span class="text-lg md:text-2xl font-extrabold text-white">{{ $pengajuan->penilaianPkl->nilai_akhir }}</span>
+                                </div>
                             </div>
-                            <div class="p-4 bg-emerald-50/50 rounded-2xl text-center border border-emerald-100/50">
-                                <span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Laporan</span>
-                                <span class="text-lg md:text-2xl font-extrabold text-emerald-700">{{ $pengajuan->penilaianPkl->nilai_laporan }}</span>
-                            </div>
-                            <div class="p-4 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl text-center shadow-lg shadow-emerald-100/50">
-                                <span class="block text-[10px] font-bold text-emerald-100 uppercase mb-1">Akhir</span>
-                                <span class="text-lg md:text-2xl font-extrabold text-white">{{ $pengajuan->penilaianPkl->nilai_akhir }}</span>
-                            </div>
-                        </div>
+                        @endif
                         @if($pengajuan->penilaianPkl->catatan_evaluasi)
                         <div class="p-4 bg-surface-50 rounded-2xl border border-surface-200/60 italic text-sm text-surface-600">
                             "{{ $pengajuan->penilaianPkl->catatan_evaluasi }}"

@@ -70,12 +70,12 @@
                                 </td>
                                 <td class="whitespace-nowrap text-right">
                                     <div class="flex justify-end items-center">
-                                        @if($j->status === 'menunggu_validasi')
+                                        @if($j->status === 'revisi')
                                             <a href="{{ route('siswa.jurnal.edit', $j) }}" class="p-2 text-brand-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit Jurnal">
                                                 <i data-lucide="edit-3" class="w-4 h-4"></i>
                                             </a>
                                         @else
-                                            <span class="p-2 text-surface-300" title="Terkunci (Sudah divalidasi)">
+                                            <span class="p-2 text-surface-300" title="{{ $j->status === 'menunggu_validasi' ? 'Terkunci (Menunggu Validasi)' : 'Terkunci (Sudah Divalidasi)' }}">
                                                 <i data-lucide="lock" class="w-4 h-4"></i>
                                             </span>
                                         @endif

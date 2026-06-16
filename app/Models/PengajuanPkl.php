@@ -27,6 +27,31 @@ class PengajuanPkl extends Model
         return $this->belongsTo(Guru::class);
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($pengajuan) {
+            if ($pengajuan->file_dokumen) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($pengajuan->file_dokumen);
+            }
+
+            foreach ($pengajuan->jurnalPkl as $jurnal) {
+                $jurnal->delete();
+            }
+
+            if ($pengajuan->laporanPkl) {
+                $pengajuan->laporanPkl->delete();
+            }
+
+            if ($pengajuan->penilaianPkl) {
+                $pengajuan->penilaianPkl->delete();
+            }
+
+            foreach ($pengajuan->absensiPkl as $absensi) {
+                $absensi->delete();
+            }
+        });
+    }
+
     public function tempatPkl(): BelongsTo
     {
         return $this->belongsTo(TempatPkl::class);

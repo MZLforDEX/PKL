@@ -11,6 +11,20 @@
     <div class="py-6 md:py-10 animate-fade-in">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="card-premium p-6 sm:p-8">
+                @if($jurnalPkl->status === 'revisi' && ($jurnalPkl->catatan_guru || $jurnalPkl->catatan_pembimbing))
+                    <div class="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl">
+                        <h4 class="font-bold text-rose-700 text-sm flex items-center gap-1.5 mb-2">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            Catatan Revisi
+                        </h4>
+                        @if($jurnalPkl->catatan_guru)
+                            <p class="text-xs text-rose-600 mb-1"><span class="font-bold">Guru Pembimbing:</span> {{ $jurnalPkl->catatan_guru }}</p>
+                        @endif
+                        @if($jurnalPkl->catatan_pembimbing)
+                            <p class="text-xs text-rose-600"><span class="font-bold">Pembimbing Industri:</span> {{ $jurnalPkl->catatan_pembimbing }}</p>
+                        @endif
+                    </div>
+                @endif
                 <form action="{{ route('siswa.jurnal.update', $jurnalPkl) }}" method="POST" enctype="multipart/form-data">
                     @csrf @method('PUT')
                     <div class="grid grid-cols-1 gap-6">

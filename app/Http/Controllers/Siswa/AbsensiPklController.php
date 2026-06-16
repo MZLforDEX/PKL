@@ -118,6 +118,12 @@ class AbsensiPklController extends Controller
             ]);
 
             DB::commit();
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
+                return redirect()->back()->withErrors(['msg' => 'Anda sudah melakukan absensi hari ini.']);
+            }
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

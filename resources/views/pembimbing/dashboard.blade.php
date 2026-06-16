@@ -11,6 +11,32 @@
                 <p class="text-surface-500 mt-1 ml-5 text-sm md:text-base">Selamat datang, <strong>{{ auth()->user()->name }}</strong> dari <strong>{{ $pembimbing->tempatPkl?->nama_tempat ?? '-' }}</strong>.</p>
             </div>
 
+            @if(!$pembimbing->no_hp || !$pembimbing->jabatan || !$pembimbing->tanda_tangan || !$pembimbing->logo)
+                <div class="mb-8 p-4 md:p-5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl flex gap-3 md:gap-4 items-start shadow-xs">
+                    <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600 dark:text-amber-400 shrink-0">
+                        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-amber-900 dark:text-amber-200">Profil Belum Lengkap!</h4>
+                        <p class="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed font-medium">
+                            Anda belum melengkapi profil pembimbing industri. Harap lengkapi data berikut agar dapat memvalidasi jurnal dan melakukan penilaian siswa PKL:
+                        </p>
+                        <ul class="list-disc list-inside mt-2 text-xs text-amber-800 dark:text-amber-300 font-semibold space-y-1">
+                            @if(!$pembimbing->jabatan) <li>Jabatan / Posisi</li> @endif
+                            @if(!$pembimbing->no_hp) <li>Nomor WhatsApp</li> @endif
+                            @if(!$pembimbing->tanda_tangan) <li>File Tanda Tangan</li> @endif
+                            @if(!$pembimbing->logo) <li>Logo Perusahaan / Industri</li> @endif
+                        </ul>
+                        <div class="mt-4">
+                            <a href="{{ route('profile.edit') }}" class="inline-flex items-center text-xs font-bold text-amber-950 dark:text-amber-200 bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/50 dark:hover:bg-amber-900/70 border border-amber-300 dark:border-amber-800 px-3.5 py-2 rounded-xl transition-all shadow-xs">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5 mr-1.5"></i>
+                                Lengkapi Profil Sekarang
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Stats Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 stagger-children">
                 {{-- Total Bimbingan --}}

@@ -14,6 +14,15 @@ class JurnalPkl extends Model
         'kendala', 'dokumentasi', 'status', 'catatan_guru', 'catatan_pembimbing',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($jurnal) {
+            if ($jurnal->dokumentasi) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($jurnal->dokumentasi);
+            }
+        });
+    }
+
     public function pengajuanPkl(): BelongsTo
     {
         return $this->belongsTo(PengajuanPkl::class);

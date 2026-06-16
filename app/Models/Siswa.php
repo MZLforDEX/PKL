@@ -19,6 +19,15 @@ class Siswa extends Model
         'no_hp',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($siswa) {
+            foreach ($siswa->pengajuanPkl as $pengajuan) {
+                $pengajuan->delete();
+            }
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

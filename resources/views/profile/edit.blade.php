@@ -129,6 +129,87 @@
                                         <x-input-error class="text-xs mt-1" :messages="$errors->get('alamat')" />
                                     </div>
                                 @endif
+
+                                @if($user->role === 'guru' && $user->guru)
+                                    <!-- NIP -->
+                                    <div class="space-y-2">
+                                        <x-input-label for="nip" :value="__('NIP')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <x-text-input id="nip" name="nip" type="text" class="w-full rounded-xl border-surface-200 focus:ring-brand-500 focus:border-brand-500 text-sm font-medium" :value="old('nip', $user->guru->nip)" required />
+                                        <x-input-error class="text-xs mt-1" :messages="$errors->get('nip')" />
+                                    </div>
+
+                                    <!-- No HP -->
+                                    <div class="space-y-2">
+                                        <x-input-label for="no_hp" :value="__('Nomor WhatsApp')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <x-text-input id="no_hp" name="no_hp" type="text" class="w-full rounded-xl border-surface-200 focus:ring-brand-500 focus:border-brand-500 text-sm font-medium" :value="old('no_hp', $user->guru->no_hp)" required />
+                                        <x-input-error class="text-xs mt-1" :messages="$errors->get('no_hp')" />
+                                    </div>
+
+                                    <!-- Alamat -->
+                                    <div class="space-y-2 md:col-span-2">
+                                        <x-input-label for="alamat" :value="__('Alamat Lengkap')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <textarea id="alamat" name="alamat" rows="3" class="w-full rounded-xl border-surface-200 focus:ring-brand-500 focus:border-brand-500 text-sm font-medium">{{ old('alamat', $user->guru->alamat) }}</textarea>
+                                        <x-input-error class="text-xs mt-1" :messages="$errors->get('alamat')" />
+                                    </div>
+                                @endif
+
+                                @if($user->role === 'pembimbing_industri' && $user->pembimbingIndustri)
+                                    <!-- Jabatan -->
+                                    <div class="space-y-2">
+                                        <x-input-label for="jabatan" :value="__('Jabatan / Posisi')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <x-text-input id="jabatan" name="jabatan" type="text" class="w-full rounded-xl border-surface-200 focus:ring-brand-500 focus:border-brand-500 text-sm font-medium" :value="old('jabatan', $user->pembimbingIndustri->jabatan)" required />
+                                        <x-input-error class="text-xs mt-1" :messages="$errors->get('jabatan')" />
+                                    </div>
+
+                                    <!-- No HP -->
+                                    <div class="space-y-2">
+                                        <x-input-label for="no_hp" :value="__('Nomor WhatsApp')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <x-text-input id="no_hp" name="no_hp" type="text" class="w-full rounded-xl border-surface-200 focus:ring-brand-500 focus:border-brand-500 text-sm font-medium" :value="old('no_hp', $user->pembimbingIndustri->no_hp)" required />
+                                        <x-input-error class="text-xs mt-1" :messages="$errors->get('no_hp')" />
+                                    </div>
+
+                                    <!-- Tanda Tangan -->
+                                    <div class="space-y-2 md:col-span-2">
+                                        <x-input-label for="tanda_tangan" :value="__('File Tanda Tangan (PNG Transparan Direkomendasikan)')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <div class="flex items-center gap-6 p-4 bg-surface-50 rounded-2xl border border-surface-200/60">
+                                            @if($user->pembimbingIndustri->tanda_tangan)
+                                                <div class="w-32 h-20 bg-white border border-surface-200 rounded-xl overflow-hidden p-1 flex items-center justify-center shadow-sm shrink-0">
+                                                    <img src="{{ asset('storage/' . $user->pembimbingIndustri->tanda_tangan) }}" alt="Tanda Tangan" class="max-w-full max-h-full object-contain">
+                                                </div>
+                                            @else
+                                                <div class="w-32 h-20 bg-white border border-dashed border-surface-300 rounded-xl flex items-center justify-center text-xs text-surface-400 font-bold shrink-0">
+                                                    Belum Ada TTD
+                                                </div>
+                                            @endif
+                                            <div class="flex-1 space-y-1">
+                                                <input id="tanda_tangan" name="tanda_tangan" type="file" class="w-full text-xs font-bold text-surface-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-all" accept="image/*" />
+                                                <p class="text-[10px] text-surface-400 font-medium leading-normal">Unggah foto tanda tangan digital Anda. Format JPG/PNG, maks 2MB.</p>
+                                                <x-input-error class="text-xs mt-1" :messages="$errors->get('tanda_tangan')" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Logo Industri -->
+                                    <div class="space-y-2 md:col-span-2">
+                                        <x-input-label for="logo" :value="__('Logo Perusahaan / Industri')" class="text-[10px] font-bold text-surface-400 uppercase tracking-widest" />
+                                        <div class="flex items-center gap-6 p-4 bg-surface-50 rounded-2xl border border-surface-200/60">
+                                            @if($user->pembimbingIndustri->logo)
+                                                <div class="w-32 h-20 bg-white border border-surface-200 rounded-xl overflow-hidden p-1 flex items-center justify-center shadow-sm shrink-0">
+                                                    <img src="{{ asset('storage/' . $user->pembimbingIndustri->logo) }}" alt="Logo Industri" class="max-w-full max-h-full object-contain">
+                                                </div>
+                                            @else
+                                                <div class="w-32 h-20 bg-white border border-dashed border-surface-300 rounded-xl flex items-center justify-center text-xs text-surface-400 font-bold shrink-0">
+                                                    Belum Ada Logo
+                                                </div>
+                                            @endif
+                                            <div class="flex-1 space-y-1">
+                                                <input id="logo" name="logo" type="file" class="w-full text-xs font-bold text-surface-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-all" accept="image/*" />
+                                                <p class="text-[10px] text-surface-400 font-medium leading-normal">Unggah logo perusahaan/industri Anda. Format JPG/PNG, maks 2MB.</p>
+                                                <x-input-error class="text-xs mt-1" :messages="$errors->get('logo')" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="flex items-center gap-4 pt-4">

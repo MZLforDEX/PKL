@@ -84,9 +84,7 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('laporan/{laporanPkl}', [GuruLaporanPklController::class, 'show'])->name('laporan.show');
         Route::put('laporan/{laporanPkl}/terima', [GuruLaporanPklController::class, 'terima'])->name('laporan.terima');
         Route::put('laporan/{laporanPkl}/revisi', [GuruLaporanPklController::class, 'mintaRevisi'])->name('laporan.revisi');
-        Route::get('penilaian', [PenilaianPklController::class, 'index'])->name('penilaian.index');
-        Route::get('penilaian/{pengajuanPkl}/create', [PenilaianPklController::class, 'create'])->name('penilaian.create');
-        Route::post('penilaian/{pengajuanPkl}', [PenilaianPklController::class, 'store'])->name('penilaian.store');
+
         Route::get('absensi', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'index'])->name('absensi.index');
 
 
@@ -128,6 +126,12 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
         Route::put('jurnal/{jurnalPkl}/valid', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'valid'])->name('jurnal.valid');
         Route::put('jurnal/{jurnalPkl}/revisi', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'mintaRevisi'])->name('jurnal.revisi');
         Route::get('absensi', [\App\Http\Controllers\PembimbingIndustri\AbsensiPklController::class, 'index'])->name('absensi.index');
+        Route::get('penilaian', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'index'])->name('penilaian.index');
+        Route::get('penilaian/{pengajuanPkl}/create', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'create'])->name('penilaian.create');
+        Route::post('penilaian/{pengajuanPkl}', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'store'])->name('penilaian.store');
+        Route::get('penilaian/{penilaianPkl}/edit', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'edit'])->name('penilaian.edit');
+        Route::put('penilaian/{penilaianPkl}', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'update'])->name('penilaian.update');
+        Route::delete('penilaian/{penilaianPkl}', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'destroy'])->name('penilaian.destroy');
 
 
     });

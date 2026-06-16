@@ -13,6 +13,15 @@ class LaporanPkl extends Model
         'pengajuan_pkl_id', 'file_laporan', 'status', 'catatan_guru',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($laporan) {
+            if ($laporan->file_laporan) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->file_laporan);
+            }
+        });
+    }
+
     public function pengajuanPkl(): BelongsTo
     {
         return $this->belongsTo(PengajuanPkl::class);

@@ -33,12 +33,22 @@ class PengajuanPklController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak sedang menunggu persetujuan.']);
         }
 
-        if ($pengajuanPkl->tempatPkl->is_penuh) {
-            return redirect()->back()->withErrors(['msg' => 'Tidak dapat menyetujui pengajuan karena kuota Tempat PKL ini sudah penuh.']);
-        }
-
         $request->validate(['catatan' => 'nullable|string']);
-        $pengajuanPkl->update(['status' => 'disetujui', 'catatan' => $request->catatan]);
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($pengajuanPkl, $request) {
+                // Lock the TempatPkl row to prevent concurrent modifications
+                $tempatPkl = \App\Models\TempatPkl::where('id', $pengajuanPkl->tempat_pkl_id)->lockForUpdate()->firstOrFail();
+
+                if ($tempatPkl->is_penuh) {
+                    throw new \Exception('Tidak dapat menyetujui pengajuan karena kuota Tempat PKL ini sudah penuh.');
+                }
+
+                $pengajuanPkl->update(['status' => 'disetujui', 'catatan' => $request->catatan]);
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+        }
         
         if ($pengajuanPkl->siswa && $pengajuanPkl->siswa->user) {
             $pengajuanPkl->siswa->user->notify(new \App\Notifications\PengajuanPklStatusChanged($pengajuanPkl));

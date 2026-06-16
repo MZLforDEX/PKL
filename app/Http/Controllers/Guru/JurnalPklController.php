@@ -28,11 +28,14 @@ class JurnalPklController extends Controller
     public function valid(Request $request, JurnalPkl $jurnalPkl)
     {
         $this->authorizeBimbingan($jurnalPkl);
-        if ($jurnalPkl->status !== 'menunggu_validasi') {
-            return redirect()->back()->withErrors(['msg' => 'Jurnal tidak dalam status menunggu validasi.']);
+        if ($jurnalPkl->status !== 'menunggu_validasi' && ($jurnalPkl->status !== 'valid' || !is_null($jurnalPkl->catatan_guru))) {
+            return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi oleh Anda atau tidak dapat divalidasi.']);
         }
         $request->validate(['catatan_guru' => 'nullable|string|max:5000']);
-        $jurnalPkl->update(['status' => 'valid', 'catatan_guru' => $request->filled('catatan_guru') ? $request->catatan_guru : $jurnalPkl->catatan_guru]);
+        $jurnalPkl->update([
+            'status' => 'valid', 
+            'catatan_guru' => $request->filled('catatan_guru') ? $request->catatan_guru : ($jurnalPkl->catatan_guru ?? '-')
+        ]);
         if ($jurnalPkl->pengajuanPkl->siswa && $jurnalPkl->pengajuanPkl->siswa->user) {
             $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\JurnalPklDiperbarui($jurnalPkl, 'valid'));
         }
@@ -42,11 +45,14 @@ class JurnalPklController extends Controller
     public function mintaRevisi(Request $request, JurnalPkl $jurnalPkl)
     {
         $this->authorizeBimbingan($jurnalPkl);
-        if ($jurnalPkl->status !== 'menunggu_validasi') {
-            return redirect()->back()->withErrors(['msg' => 'Jurnal tidak dalam status menunggu validasi.']);
+        if ($jurnalPkl->status !== 'menunggu_validasi' && ($jurnalPkl->status !== 'valid' || !is_null($jurnalPkl->catatan_guru))) {
+            return redirect()->back()->withErrors(['msg' => 'Jurnal sudah divalidasi oleh Anda atau tidak dapat divalidasi.']);
         }
         $request->validate(['catatan_guru' => 'required|string']);
-        $jurnalPkl->update(['status' => 'revisi', 'catatan_guru' => $request->catatan_guru]);
+        $jurnalPkl->update([
+            'status' => 'revisi', 
+            'catatan_guru' => $request->catatan_guru
+        ]);
         if ($jurnalPkl->pengajuanPkl->siswa && $jurnalPkl->pengajuanPkl->siswa->user) {
             $jurnalPkl->pengajuanPkl->siswa->user->notify(new \App\Notifications\JurnalPklDiperbarui($jurnalPkl, 'revisi'));
         }

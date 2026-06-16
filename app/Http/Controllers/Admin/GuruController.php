@@ -71,9 +71,11 @@ class GuruController extends Controller
     public function destroy(Guru $guru)
     {
         DB::transaction(function () use ($guru) {
-            $guru->pengajuanPkl()->delete();
-            optional($guru->user)->delete();
-            $guru->delete();
+            if ($guru->user) {
+                $guru->user->delete();
+            } else {
+                $guru->delete();
+            }
         });
 
         return redirect()->route('admin.guru.index')->with('success', 'Guru berhasil dihapus.');

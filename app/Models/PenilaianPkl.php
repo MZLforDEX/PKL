@@ -11,7 +11,7 @@ class PenilaianPkl extends Model
 
     protected $fillable = [
         'pengajuan_pkl_id', 'nilai_sikap', 'nilai_keterampilan',
-        'nilai_laporan', 'nilai_akhir', 'catatan_evaluasi',
+        'nilai_laporan', 'nilai_akhir', 'catatan_evaluasi', 'detail_nilai',
     ];
 
     protected $casts = [
@@ -19,6 +19,7 @@ class PenilaianPkl extends Model
         'nilai_keterampilan' => 'integer',
         'nilai_laporan' => 'integer',
         'nilai_akhir' => 'decimal:2',
+        'detail_nilai' => 'array',
     ];
 
     public function pengajuanPkl(): BelongsTo

@@ -4,298 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sertifikat PKL - {{ $pengajuan->siswa?->user?->name ?? 'Siswa' }}</title>
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1c",
+                        "surface-container-high": "#e8e8e8",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#000000",
+                        "surface-tint": "#5e5e5e",
+                        "tertiary-fixed": "#b5f39b",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed": "#032100",
+                        "primary": "#000000",
+                        "on-primary-fixed-variant": "#474747",
+                        "outline": "#7e7576",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#8f1019",
+                        "outline-variant": "#cfc4c5",
+                        "on-secondary-fixed": "#410004",
+                        "tertiary-container": "#032100",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "primary-container": "#1b1b1b",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#fc635f",
+                        "on-tertiary-fixed-variant": "#1c520c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#65000b",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#848484",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-container-low": "#f3f3f4",
+                        "background": "#f9f9f9",
+                        "primary-fixed": "#e2e2e2",
+                        "inverse-surface": "#2f3131",
+                        "surface": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#4c4546",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-container": "#599146",
+                        "secondary-fixed": "#ffdad7",
+                        "inverse-primary": "#c6c6c6",
+                        "tertiary-fixed-dim": "#9ad682",
+                        "on-primary-fixed": "#1b1b1b",
+                        "secondary": "#b02c2e",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e2e2e2"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "gutter": "24px",
+                        "border-frame": "40px",
+                        "content-margin": "80px",
+                        "table-cell-padding": "12px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Work Sans"],
+                        "headline-xl": ["Source Serif 4"],
+                        "body-md": ["Work Sans"],
+                        "signature": ["Source Serif 4"],
+                        "label-sm": ["Work Sans"],
+                        "headline-lg": ["Source Serif 4"],
+                        "headline-md": ["Source Serif 4"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "signature": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+    
     <style>
         @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 0;
         }
+        
         body {
-            margin: 0;
-            padding: 20px 0;
             background-color: #cbd5e1;
-            font-family: 'Montserrat', sans-serif;
-            -webkit-print-color-adjust: exact;
+            margin: 0;
+            padding: 40px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 40px;
+            -webkit-print-color-adjust: exact;
         }
-        .certificate-container {
-            width: 297mm;
-            height: 210mm;
-            background-color: #ffffff;
+        
+        .certificate-page {
+            width: 210mm;
+            height: 297mm;
             position: relative;
+            background-color: #ffffff;
             overflow: hidden;
-            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             box-sizing: border-box;
             flex-shrink: 0;
         }
-        
-        .page-break {
-            page-break-after: always;
-            break-after: page;
-        }
-        
-        /* Inner Pad */
-        .certificate-content {
-            position: absolute;
-            top: 45px;
-            left: 45px;
-            right: 45px;
-            bottom: 45px;
+
+        .content-canvas {
+            position: relative;
+            z-index: 20;
+            height: 100%;
+            padding: 40px 120px 100px 120px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box;
-            z-index: 10;
-        }
-
-        /* Top Brand */
-        .school-brand {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 15px;
-            text-align: center;
-        }
-        .school-brand h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 16pt;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
-            letter-spacing: 3px;
-        }
-        .school-brand p {
-            font-size: 8pt;
-            font-weight: 600;
-            color: #64748b;
-            margin: 2px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* Title Area */
-        .cert-title {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .cert-title h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 36pt;
-            font-weight: 700;
-            color: #8c6f1c;
-            background: linear-gradient(135deg, #c5a880 0%, #8c6f1c 50%, #b2902b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-            letter-spacing: 6px;
-        }
-        .cert-title p {
-            font-size: 10pt;
-            font-weight: 700;
-            color: #1e293b;
-            margin: 6px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-        }
-
-        .award-to {
-            font-size: 11pt;
-            font-weight: 500;
-            color: #64748b;
-            margin-top: 25px;
-        }
-
-        /* Student Name */
-        .student-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: 48pt;
-            color: #0f172a;
-            margin: 10px 0 5px 0;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0 50px;
-        }
-
-        .student-meta {
-            font-size: 9.5pt;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 25px;
-        }
-
-        /* Description Page 1 */
-        .cert-desc {
-            font-size: 11pt;
-            color: #334155;
-            line-height: 1.7;
-            text-align: center;
-            max-width: 220mm;
-            margin: 0 auto;
-        }
-        .cert-desc strong {
-            color: #0f172a;
-        }
-
-        /* Grades Page 2 Title */
-        .grades-title {
-            font-family: 'Cinzel', serif;
-            font-size: 20pt;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 15px;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-
-        /* Table Area Page 2 */
-        .page2-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            width: 100%;
-            padding: 0 50px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            font-size: 9pt;
-            color: #334155;
-            line-height: 1.6;
-        }
-        .page2-meta table {
-            width: 100%;
-        }
-        .page2-meta td {
-            padding: 3px 0;
-        }
-        .page2-meta td.label {
-            font-weight: 600;
-            color: #64748b;
-            width: 130px;
-        }
-        .page2-meta td.value {
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .grades-container {
-            display: flex;
-            align-items: stretch;
-            gap: 40px;
-            width: 100%;
-            padding: 0 50px;
-            box-sizing: border-box;
-        }
-
-        .grade-table-wrapper {
-            flex: 1;
-        }
-        .grade-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9pt;
-            text-align: left;
-        }
-        .grade-table th {
-            background-color: #0f172a;
-            color: #ffffff;
-            font-weight: 700;
-            padding: 10px 14px;
-            border: 1px solid #1e293b;
-            text-transform: uppercase;
-            font-size: 8.5pt;
-        }
-        .grade-table td {
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            color: #334155;
-            font-weight: 600;
-        }
-
-        .grade-summary-card {
-            width: 200px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .grade-summary-card p {
-            margin: 0;
-        }
-        .grade-summary-card .score-title {
-            font-size: 9pt;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .grade-summary-card .score-val {
-            font-size: 32pt;
-            font-weight: 800;
-            color: #8c6f1c;
-            margin: 8px 0;
-        }
-        .grade-summary-card .score-predikat {
-            font-size: 10pt;
-            font-weight: 700;
-            color: #0f172a;
-            text-transform: uppercase;
-        }
-
-        /* Footer & Signatures */
-        .signatures-area {
-            display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            width: 100%;
-            margin-top: auto;
-            padding: 0 50px 10px 50px;
             box-sizing: border-box;
         }
-        .signature-box {
-            text-align: center;
-            width: 200px;
-            font-size: 8.5pt;
-            color: #475569;
-        }
-        .signature-line {
-            width: 100%;
-            height: 1px;
-            background-color: #94a3b8;
-            margin: 50px auto 8px auto;
-        }
-        .signature-box .signer-title {
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        .signature-box .signer-name {
-            font-weight: 700;
-            color: #0f172a;
-            font-size: 10pt;
-        }
 
-        /* QR Validation Code Box */
-        .qr-validation {
+        .seal-placeholder {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #cfc4c5;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-        .qr-box {
-            width: 60px;
-            height: 60px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 4px;
-            background-color: white;
+            justify-content: center;
+            opacity: 0.5;
         }
 
-        /* Control Box */
+        .signature-line {
+            width: 200px;
+            border-bottom: 1.5px solid #000000;
+            margin-bottom: 8px;
+        }
+        
+        /* Grades Table Styles */
+        .grade-table-wrapper table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        .grade-table-wrapper th, .grade-table-wrapper td {
+            border: 1px solid black;
+            padding: 5px 10px;
+        }
+        
+        /* Controls */
         .no-print {
             position: fixed;
             top: 20px;
@@ -345,22 +212,101 @@
         }
 
         @media print {
-            .no-print { display: none; }
+            .no-print { display: none !important; }
             body { 
-                background-color: white; 
-                margin: 0;
-                padding: 0;
-                gap: 0;
+                background-color: white !important; 
+                margin: 0 !important;
+                padding: 0 !important;
+                gap: 0 !important;
             }
-            .certificate-container { 
-                box-shadow: none; 
-                margin: 0;
-                transform: none;
+            .certificate-page { 
+                margin: 0 !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+                page-break-after: always !important;
+                break-after: page !important;
+                border-radius: 0 !important;
             }
         }
     </style>
 </head>
 <body>
+    @php
+        function penyebut($nilai) {
+            $nilai = abs($nilai);
+            $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+            $temp = "";
+            if ($nilai < 12) {
+                $temp = " " . $huruf[$nilai];
+            } else if ($nilai < 20) {
+                $temp = penyebut($nilai - 10). " belas";
+            } else if ($nilai < 100) {
+                $temp = penyebut((int)($nilai/10))." puluh". penyebut($nilai % 10);
+            } else if ($nilai < 200) {
+                $temp = " seratus" . penyebut($nilai - 100);
+            } else if ($nilai < 1000) {
+                $temp = penyebut((int)($nilai/100)) . " ratus" . penyebut($nilai % 100);
+            }
+            return $temp;
+        }
+
+        function terbilang($nilai) {
+            $nilaiStr = strval($nilai);
+            if (strpos($nilaiStr, '.') !== false) {
+                list($bulat, $pecahan) = explode('.', $nilaiStr);
+                $hasilBulat = terbilang(intval($bulat));
+                
+                $digits = [
+                    '0' => 'nol', '1' => 'satu', '2' => 'dua', '3' => 'tiga', '4' => 'empat',
+                    '5' => 'lima', '6' => 'enam', '7' => 'tujuh', '8' => 'delapan', '9' => 'sembilan'
+                ];
+                $hasilPecahan = [];
+                for ($i = 0; $i < strlen($pecahan); $i++) {
+                    $char = $pecahan[$i];
+                    $hasilPecahan[] = isset($digits[$char]) ? $digits[$char] : $char;
+                }
+                
+                return $hasilBulat . " Koma " . ucwords(implode(' ', $hasilPecahan));
+            }
+
+            $nilai = abs(intval($nilai));
+            if ($nilai == 0) {
+                $hasil = "nol";
+            } else {
+                $hasil = trim(penyebut($nilai));
+            }
+            return ucwords($hasil);
+        }
+        
+        $aspekTeknis = [];
+        $aspekNonTeknis = [];
+        
+        $nonTeknisKeywords = ['sikap', 'disiplin', 'kepribadian', 'motivasi', 'tanggung jawab', 'kerja sama', 'kemampuan kerja', 'etika', 'kehadiran', 'perilaku', 'kerajinan', 'loyalitas', 'inisiatif', 'kerapian', 'non teknis', 'non-teknis'];
+        
+        if ($pengajuan->penilaianPkl && $pengajuan->penilaianPkl->detail_nilai) {
+            foreach ($pengajuan->penilaianPkl->detail_nilai as $item) {
+                $isNonTeknis = false;
+                $namaLower = strtolower($item['nama']);
+                foreach ($nonTeknisKeywords as $keyword) {
+                    if (str_contains($namaLower, $keyword)) {
+                        $isNonTeknis = true;
+                        break;
+                    }
+                }
+                if ($isNonTeknis) {
+                    $aspekNonTeknis[] = $item;
+                } else {
+                    $aspekTeknis[] = $item;
+                }
+            }
+        } else {
+            // Fallback legacy values
+            $aspekNonTeknis[] = ['nama' => 'Aspek Sikap dan Kedisiplinan Kerja', 'nilai' => $pengajuan->penilaianPkl?->nilai_sikap ?? 0];
+            $aspekTeknis[] = ['nama' => 'Aspek Keterampilan Teknik & Kerja Lapangan', 'nilai' => $pengajuan->penilaianPkl?->nilai_keterampilan ?? 0];
+            $aspekTeknis[] = ['nama' => 'Kualitas Penulisan & Pemaparan Laporan Akhir', 'nilai' => $pengajuan->penilaianPkl?->nilai_laporan ?? 0];
+        }
+    @endphp
+
     <div class="no-print">
         <a href="{{ route('siswa.pengajuan.index') }}" class="btn-back">
             <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
@@ -372,264 +318,246 @@
         </button>
     </div>
 
-    <!-- PAGE 1: CERTIFICATE -->
-    <div class="certificate-container page-break">
-        <!-- SVG Guilloche & Golden Ornate Borders -->
-        <svg class="absolute inset-0 w-full h-full pointer-events-none" style="position: absolute; top:0; left:0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1122 793" fill="none">
-            <defs>
-                <pattern id="guilloche" width="30" height="30" patternUnits="userSpaceOnUse">
-                    <path d="M0 15 Q7.5 7.5, 15 15 T30 15" stroke="#f8fafc" stroke-width="0.75" fill="none"/>
-                    <path d="M15 0 Q22.5 7.5, 15 15 T15 30" stroke="#f8fafc" stroke-width="0.75" fill="none"/>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#guilloche)" />
-            
-            <rect x="20" y="20" width="1082" height="753" rx="14" stroke="#8c6f1c" stroke-width="4.5"/>
-            <rect x="30" y="30" width="1062" height="733" rx="10" stroke="#c5a880" stroke-width="1.5"/>
-            <rect x="36" y="36" width="1050" height="721" rx="8" stroke="#8c6f1c" stroke-width="1"/>
-
-            <!-- Corners -->
-            <path d="M 20,70 L 70,20 L 95,45 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 20,20 L 100,20 L 100,25 L 25,25 L 25,100 L 20,100 Z" fill="#0f172a"/>
-            <circle cx="50" cy="50" r="4" fill="#8c6f1c"/>
-            <path d="M 40,40 L 60,40 M 40,40 L 40,60" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 1102,70 L 1052,20 L 1027,45 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 1102,20 L 1022,20 L 1022,25 L 1097,25 L 1097,100 L 1102,100 Z" fill="#0f172a"/>
-            <circle cx="1072" cy="50" r="4" fill="#8c6f1c"/>
-            <path d="M 1082,40 L 1062,40 M 1082,40 L 1082,60" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 20,723 L 70,773 L 95,748 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 20,773 L 100,773 L 100,768 L 25,768 L 25,693 L 20,693 Z" fill="#0f172a"/>
-            <circle cx="50" cy="743" r="4" fill="#8c6f1c"/>
-            <path d="M 40,753 L 60,753 M 40,753 L 40,733" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 1102,723 L 1052,773 L 1027,748 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 1102,773 L 1022,773 L 1022,768 L 1097,768 L 1097,693 L 1102,693 Z" fill="#0f172a"/>
-            <circle cx="1072" cy="743" r="4" fill="#8c6f1c"/>
-            <path d="M 1082,753 L 1062,753 M 1082,753 L 1082,733" stroke="#c5a880" stroke-width="1.5"/>
-        </svg>
-
-        <div class="certificate-content">
-            <div class="school-brand">
-                <h2>SEKOLAH MENENGAH KEJURUAN</h2>
-                <p>NPSN: 10403020 &bull; Terakreditasi A &bull; Program Keahlian Teknologi</p>
-            </div>
-
-            <div class="cert-title">
-                <h1>SERTIFIKAT</h1>
-                <p>Praktik Kerja Lapangan (PKL)</p>
-            </div>
-
-            <div class="award-to">Diberikan kepada:</div>
-            
-            <div class="student-name">{{ $pengajuan->siswa?->user?->name ?? 'Siswa' }}</div>
-            
-            <div class="student-meta">
-                NIS: {{ $pengajuan->siswa?->nis ?? '-' }} &nbsp;&bull;&nbsp; Kelas: {{ $pengajuan->siswa?->kelas ?? '-' }} &nbsp;&bull;&nbsp; Jurusan: {{ $pengajuan->siswa?->jurusan ?? '-' }}
-            </div>
-
-            <div class="cert-desc">
-                Telah berhasil dan sukses melaksanakan program <strong>Praktik Kerja Lapangan (PKL)</strong> sebagai bagian wajib dari kurikulum pendidikan sekolah kejuruan, yang bertempat pada mitra kerja industri <strong>{{ $pengajuan->tempatPkl?->nama_tempat ?? 'Industri Mitra' }}</strong> dari tanggal <strong>{{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d M Y') }}</strong> sampai dengan <strong>{{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->format('d M Y') }}</strong> dengan predikat kelulusan <strong>{{ $pengajuan->penilaianPkl?->predikat ?? '-' }}</strong>.
-            </div>
-
-            <div class="signatures-area">
-                <div class="signature-box">
-                    <p class="signer-title">Pihak Mitra Kerja,</p>
-                    <p style="font-weight: 700;">{{ $pengajuan->tempatPkl?->nama_tempat ?? 'Industri Mitra' }}</p>
-                    <div class="signature-line"></div>
-                    <p class="signer-name">Pembimbing Industri</p>
-                    <p>Tanda Tangan & Stempel</p>
-                </div>
-
-                <div class="qr-validation">
-                    <div class="qr-box">
-                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100" height="100" fill="white"/>
-                            <rect x="5" y="5" width="25" height="25" fill="#0f172a"/>
-                            <rect x="10" y="10" width="15" height="15" fill="white"/>
-                            <rect x="13" y="13" width="9" height="9" fill="#0f172a"/>
-                            <rect x="70" y="5" width="25" height="25" fill="#0f172a"/>
-                            <rect x="75" y="10" width="15" height="15" fill="white"/>
-                            <rect x="78" y="13" width="9" height="9" fill="#0f172a"/>
-                            <rect x="5" y="70" width="25" height="25" fill="#0f172a"/>
-                            <rect x="10" y="75" width="15" height="15" fill="white"/>
-                            <rect x="13" y="78" width="9" height="9" fill="#0f172a"/>
-                            <rect x="35" y="5" width="5" height="10" fill="#0f172a"/>
-                            <rect x="45" y="15" width="10" height="5" fill="#0f172a"/>
-                            <rect x="60" y="5" width="5" height="25" fill="#0f172a"/>
-                            <rect x="35" y="25" width="15" height="5" fill="#0f172a"/>
-                            <rect x="50" y="35" width="20" height="5" fill="#0f172a"/>
-                            <rect x="35" y="45" width="5" height="15" fill="#0f172a"/>
-                            <rect x="45" y="55" width="15" height="5" fill="#0f172a"/>
-                            <rect x="5" y="35" width="10" height="5" fill="#0f172a"/>
-                            <rect x="20" y="45" width="5" height="15" fill="#0f172a"/>
-                            <rect x="75" y="35" width="10" height="15" fill="#0f172a"/>
-                            <rect x="90" y="55" width="5" height="15" fill="#0f172a"/>
-                            <rect x="70" y="70" width="15" height="5" fill="#0f172a"/>
-                            <rect x="60" y="80" width="5" height="15" fill="#0f172a"/>
-                            <rect x="80" y="85" width="15" height="5" fill="#0f172a"/>
+    <!-- PAGE 1: CERTIFICATE FRONT -->
+    <main class="certificate-page relative" style="background-image: url('{{ asset('images/sertifikat-depan.jpg?v=2') }}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat;">
+        <!-- Certificate Content -->
+        <div class="content-canvas text-center">
+            <!-- Certificate Header (Logo + SERTIFIKAT + PRAKTIK KERJA INDUSTRI) -->
+            <div style="height: 95mm;" class="w-full shrink-0 flex flex-col items-center justify-end pb-8">
+                <!-- Logo -->
+                <div class="mb-4 flex items-center justify-center h-20">
+                    @if($pengajuan->tempatPkl?->pembimbingIndustri?->first()?->logo)
+                        <img src="{{ asset('storage/' . $pengajuan->tempatPkl->pembimbingIndustri->first()->logo) }}" alt="Logo Industri" class="h-20 max-w-[150px] object-contain select-none">
+                    @else
+                        <svg class="w-20 h-20" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#dfba6b" />
+                                    <stop offset="50%" stop-color="#c5a85c" />
+                                    <stop offset="100%" stop-color="#917335" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Circular Gear -->
+                            <path d="M32 6C28.5 6 27.8 8.8 25.8 9.5C23.8 10.2 20.8 8.5 18.5 10.2C16.2 11.9 17.8 14.8 16.4 16.7C15 18.6 11.8 18.5 11.1 20.8C10.4 23.1 12.8 25.1 12.8 27.4C12.8 29.7 10.4 31.7 11.1 34C11.8 36.3 15 36.2 16.4 38.1C17.8 40 16.2 42.9 18.5 44.6C20.8 46.3 23.8 44.6 25.8 45.3C27.8 46 28.5 48.8 32 48.8C35.5 48.8 36.2 46 38.2 45.3C40.2 44.6 43.2 46.3 45.5 44.6C47.8 42.9 46.2 40 47.6 38.1C49 36.2 52.2 36.3 52.9 34C53.6 31.7 51.2 29.7 51.2 27.4C51.2 25.1 53.6 23.1 52.9 20.8C52.2 18.5 49 18.6 47.6 16.7C46.2 14.8 47.8 11.9 45.5 10.2C43.2 8.5 40.2 10.2 38.2 9.5C36.2 8.8 35.5 6 32 6Z" stroke="url(#gold-grad)" stroke-width="2.5" stroke-linejoin="round" />
+                            <circle cx="32" cy="27.4" r="14" stroke="url(#gold-grad)" stroke-width="2" />
+                            <!-- Factory/Industry Towers inside -->
+                            <path d="M24 35V26L28 29V23L32 26V20L36 23V35H24Z" fill="url(#gold-grad)" />
+                            <path d="M38 35V24L41 27V35H38Z" fill="url(#gold-grad)" opacity="0.8" />
+                            <!-- Laurel Wreath wings below -->
+                            <path d="M12 41C16 45 24 47 32 47C40 47 48 45 52 41M16 38C18 41 24 43 32 43C40 43 46 41 48 38" stroke="url(#gold-grad)" stroke-width="1.5" stroke-linecap="round" />
                         </svg>
-                    </div>
-                    <p style="font-size: 6.5pt; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">Digitally Verified</p>
+                    @endif
                 </div>
+                
+                <!-- "SERTIFIKAT" Title -->
+                <h1 class="text-[34pt] font-extrabold uppercase tracking-[0.15em] leading-none mb-1.5" style="font-family: 'Source Serif 4', serif; background: linear-gradient(135deg, #dfba6b 0%, #c5a85c 50%, #917335 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.1));">
+                    Sertifikat
+                </h1>
+                
+                <!-- Subtitle "PRAKTIK KERJA INDUSTRI" -->
+                <div class="flex items-center gap-3">
+                    <div class="h-[1.5px] w-6 bg-gradient-to-r from-transparent to-[#c5a85c]"></div>
+                    <h2 class="text-[10pt] font-semibold uppercase tracking-[0.35em] text-[#856c36] whitespace-nowrap" style="font-family: 'Work Sans', sans-serif;">
+                        Praktik Kerja Industri
+                    </h2>
+                    <div class="h-[1.5px] w-6 bg-gradient-to-l from-transparent to-[#c5a85c]"></div>
+                </div>
+            </div>
 
-                <div class="signature-box">
-                    <p class="signer-title">Jawa Barat, {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->format('d F Y') }}</p>
-                    <p style="font-weight: 700;">Guru Pembimbing Sekolah</p>
+            <!-- Recipient Section -->
+            <div class="w-full flex flex-col items-center">
+                <p class="font-body-lg text-body-lg text-on-surface-variant italic mb-2">
+                    Diberikan kepada:
+                </p>
+                <h3 class="font-headline-xl text-headline-xl text-primary border-b-2 border-outline-variant px-8 pb-2 mb-6">
+                    {{ strtoupper($pengajuan->siswa?->user?->name ?? 'Siswa') }}
+                </h3>
+                <p class="font-body-lg text-body-lg text-on-surface max-w-2xl leading-relaxed">
+                    Siswa dari <span class="font-bold">SMK Negeri 1 SiPKL</span> telah berhasil menyelesaikan Program Praktik Kerja Industri (Prakerin) di <span class="font-bold">{{ $pengajuan->tempatPkl?->nama_tempat ?? 'Mitra Industri' }}</span> untuk periode <span class="font-bold">{{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->translatedFormat('d F Y') }}</span>.
+                </p>
+            </div>
+            
+            <!-- Validation/Statement Section -->
+            <div class="w-full mt-4">
+                <p class="font-body-md text-body-md text-on-surface-variant mb-12">
+                    Ditetapkan dengan segala hak dan tanggung jawab yang menyertainya sebagai pengakuan atas pencapaian kompetensi industri.
+                </p>
+            </div>
+            
+            <!-- Signatures Section -->
+            <div class="w-full flex justify-center items-end">
+                <!-- Industry Supervisor -->
+                <div class="flex flex-col items-center" style="width: 250px;">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant mb-1 text-[10px]">
+                        {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->translatedFormat('d F Y') }}
+                    </p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest text-[10px] mb-2">
+                        Pembimbing Industri
+                    </p>
+                    
+                    <!-- Signature Image Area -->
+                    <div class="h-16 w-full flex items-center justify-center relative">
+                        @if($pengajuan->tempatPkl?->pembimbingIndustri?->first()?->tanda_tangan)
+                            <img src="{{ asset('storage/' . $pengajuan->tempatPkl->pembimbingIndustri->first()->tanda_tangan) }}" alt="Tanda Tangan" class="h-16 max-w-[150px] object-contain select-none z-10 absolute bottom-[-4px]">
+                        @else
+                            <div class="h-16"></div>
+                        @endif
+                    </div>
+
                     <div class="signature-line"></div>
-                    <p class="signer-name">{{ $pengajuan->guru?->user?->name ?? 'Nama Guru' }}</p>
-                    <p>NIP. {{ $pengajuan->guru?->nip ?? '-' }}</p>
+                    <p class="font-signature text-signature text-primary">
+                        {{ strtoupper($pengajuan->tempatPkl?->pembimbingIndustri?->first()?->user?->name ?? 'Pembimbing') }}
+                    </p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant text-[10px]">
+                        {{ $pengajuan->tempatPkl?->pembimbingIndustri?->first()?->jabatan ?? 'Pembimbing Industri' }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Seal Area -->
+            <div class="absolute bottom-24 left-1/2 -translate-x-1/2 opacity-20">
+                <div class="seal-placeholder">
+                    <span class="font-label-sm uppercase text-center text-xs">Stempel Resmi</span>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- PAGE 2: TRANSCRIPT -->
-    <div class="certificate-container">
-        <!-- SVG Guilloche & Golden Ornate Borders -->
-        <svg class="absolute inset-0 w-full h-full pointer-events-none" style="position: absolute; top:0; left:0;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1122 793" fill="none">
-            <defs>
-                <pattern id="guilloche2" width="30" height="30" patternUnits="userSpaceOnUse">
-                    <path d="M0 15 Q7.5 7.5, 15 15 T30 15" stroke="#f8fafc" stroke-width="0.75" fill="none"/>
-                    <path d="M15 0 Q22.5 7.5, 15 15 T15 30" stroke="#f8fafc" stroke-width="0.75" fill="none"/>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#guilloche2)" />
+    <!-- PAGE 2: GRADES BACK -->
+    <div class="certificate-page bg-cover bg-center bg-no-repeat" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYpP4mrc0yGfJnbWpnb_6cGmIfx-Dyk2CnF8d9wcJzU8aQO_pdhwZp7-Ig_8dqcPIH5NihDtcQoa_wpp2QO7dfyKlpyt8-HH8088h4xsyjKlradHEIIjdH9XSKRlmeAMnC24liKdd7M3baG2Tad-IpBJa7cv6CFIHrprXUXUST8NQjmEzxm2iP1TKqW8Yv6WFvY35bbRFFNrFwu6joS-9L2jlTyblyLtAsPOHC4KASZ8fEL3nLVNuC2XwJMT4Pj_0BFEoR2Pq2QxE'); font-family: 'Times New Roman', Times, serif;">
+        <!-- Main Content -->
+        <div class="content-wrapper" style="padding: 100px 110px; background-color: transparent;">
+            <!-- Header Section -->
+            <header class="text-center mb-8">
+                <h1 class="text-xl font-bold uppercase tracking-wider">Daftar Nilai</h1>
+                <h2 class="text-xl font-bold uppercase tracking-wider">Praktik Kerja Industri</h2>
+            </header>
             
-            <rect x="20" y="20" width="1082" height="753" rx="14" stroke="#8c6f1c" stroke-width="4.5"/>
-            <rect x="30" y="30" width="1062" height="733" rx="10" stroke="#c5a880" stroke-width="1.5"/>
-            <rect x="36" y="36" width="1050" height="721" rx="8" stroke="#8c6f1c" stroke-width="1"/>
-
-            <!-- Corners -->
-            <path d="M 20,70 L 70,20 L 95,45 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 20,20 L 100,20 L 100,25 L 25,25 L 25,100 L 20,100 Z" fill="#0f172a"/>
-            <circle cx="50" cy="50" r="4" fill="#8c6f1c"/>
-            <path d="M 40,40 L 60,40 M 40,40 L 40,60" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 1102,70 L 1052,20 L 1027,45 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 1102,20 L 1022,20 L 1022,25 L 1097,25 L 1097,100 L 1102,100 Z" fill="#0f172a"/>
-            <circle cx="1072" cy="50" r="4" fill="#8c6f1c"/>
-            <path d="M 1082,40 L 1062,40 M 1082,40 L 1082,60" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 20,723 L 70,773 L 95,748 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 20,773 L 100,773 L 100,768 L 25,768 L 25,693 L 20,693 Z" fill="#0f172a"/>
-            <circle cx="50" cy="743" r="4" fill="#8c6f1c"/>
-            <path d="M 40,753 L 60,753 M 40,753 L 40,733" stroke="#c5a880" stroke-width="1.5"/>
-
-            <path d="M 1102,723 L 1052,773 L 1027,748 Z" fill="#c5a880" opacity="0.2"/>
-            <path d="M 1102,773 L 1022,773 L 1022,768 L 1097,768 L 1097,693 L 1102,693 Z" fill="#0f172a"/>
-            <circle cx="1072" cy="743" r="4" fill="#8c6f1c"/>
-            <path d="M 1082,753 L 1062,753 M 1082,753 L 1082,733" stroke="#c5a880" stroke-width="1.5"/>
-        </svg>
-
-        <div class="certificate-content">
-            <div class="school-brand">
-                <h2>SEKOLAH MENENGAH KEJURUAN SiPKL</h2>
-                <p>NPSN: 10403020 &bull; Terakreditasi A &bull; Program Keahlian Teknologi</p>
+            <!-- Metadata Grid -->
+            <div class="grid grid-cols-2 gap-8 text-[11pt] mb-6 leading-relaxed">
+                <div class="space-y-1">
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Nama Siswa</span><span class="mr-2">:</span><span>{{ $pengajuan->siswa?->user?->name ?? '-' }}</span></div>
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Nomor Induk (NIS)</span><span class="mr-2">:</span><span>{{ $pengajuan->siswa?->nis ?? '-' }}</span></div>
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Kompetensi Keahlian</span><span class="mr-2">:</span><span>{{ $pengajuan->siswa?->jurusan ?? '-' }}</span></div>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Tempat PKL</span><span class="mr-2">:</span><span>{{ $pengajuan->tempatPkl?->nama_tempat ?? '-' }}</span></div>
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Alamat Mitra</span><span class="mr-2">:</span><span>{{ $pengajuan->tempatPkl?->alamat ?? '-' }}</span></div>
+                    <div class="flex"><span class="w-36 font-bold shrink-0">Durasi Pelaksanaan</span><span class="mr-2">:</span><span>{{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->translatedFormat('d M Y') }}</span></div>
+                </div>
             </div>
-
-            <div class="grades-title">
-                DAFTAR NILAI PRAKTIK KERJA LAPANGAN
-            </div>
-
-            <!-- Meta Data Grid -->
-            <div class="page2-meta">
-                <table>
-                    <tr>
-                        <td class="label">Nama Siswa</td>
-                        <td style="width:10px;">:</td>
-                        <td class="value">{{ $pengajuan->siswa?->user?->name ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Nomor Induk (NIS)</td>
-                        <td>:</td>
-                        <td class="value">{{ $pengajuan->siswa?->nis ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Kompetensi Keahlian</td>
-                        <td>:</td>
-                        <td class="value">{{ $pengajuan->siswa?->jurusan ?? '-' }}</td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td class="label">Tempat PKL</td>
-                        <td style="width:10px;">:</td>
-                        <td class="value">{{ $pengajuan->tempatPkl?->nama_tempat ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Alamat Mitra</td>
-                        <td>:</td>
-                        <td class="value">{{ $pengajuan->tempatPkl?->alamat ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Durasi Pelaksanaan</td>
-                        <td>:</td>
-                        <td class="value">{{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->format('d M Y') }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Grades & Info Row -->
-            <div class="grades-container">
+            
+            <!-- Section A: Technical -->
+            <section class="mb-6">
+                <h3 class="font-bold mb-2 text-[12pt]">A. Penilaian Aspek Teknis</h3>
                 <div class="grade-table-wrapper">
-                    <table class="grade-table">
+                    <table data-purpose="technical-assessment-table">
                         <thead>
-                            <tr>
-                                <th style="width: 10%; text-align: center;">No.</th>
-                                <th style="width: 60%">Komponen Penilaian</th>
-                                <th style="width: 30%; text-align: center;">Nilai (Skala 1-100)</th>
+                            <tr class="bg-gray-50">
+                                <th class="w-12 text-center" rowspan="2">No.</th>
+                                <th class="text-left" rowspan="2">Uraian Keterampilan</th>
+                                <th class="text-center" colspan="2">Nilai</th>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <th class="w-20 text-center">Angka</th>
+                                <th class="text-left">Huruf</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="text-align: center;">1.</td>
-                                <td>Aspek Sikap dan Kedisiplinan Kerja</td>
-                                <td style="text-align: center; font-weight: 700; font-size: 11pt;">{{ $pengajuan->penilaianPkl?->nilai_sikap ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center;">2.</td>
-                                <td>Aspek Keterampilan Teknik & Kerja Lapangan</td>
-                                <td style="text-align: center; font-weight: 700; font-size: 11pt;">{{ $pengajuan->penilaianPkl?->nilai_keterampilan ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center;">3.</td>
-                                <td>Kualitas Penulisan & Pemaparan Laporan Akhir</td>
-                                <td style="text-align: center; font-weight: 700; font-size: 11pt;">{{ $pengajuan->penilaianPkl?->nilai_laporan ?? '-' }}</td>
-                            </tr>
-                            <tr style="background-color: #f8fafc;">
-                                <td colspan="2" style="text-align: right; font-weight: 700;">Rata-rata Nilai</td>
-                                <td style="text-align: center; font-weight: 800; font-size: 11pt; color: #8c6f1c;">{{ $pengajuan->penilaianPkl?->nilai_akhir ?? '-' }}</td>
-                            </tr>
+                            @php $noTeknis = 1; @endphp
+                            @foreach($aspekTeknis as $item)
+                                <tr>
+                                    <td class="text-center">{{ $noTeknis++ }}</td>
+                                    <td class="">{{ $item['nama'] }}</td>
+                                    <td class="text-center font-bold">{{ $item['nilai'] }}</td>
+                                    <td class="">{{ terbilang($item['nilai']) }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-
-                <div class="grade-summary-card">
-                    <p class="score-title">Predikat Akhir</p>
-                    <p class="score-val" style="font-size: 20pt; margin: 15px 0;">{{ $pengajuan->penilaianPkl?->predikat ?? '-' }}</p>
-                    <p class="score-predikat" style="font-size: 7.5pt; color: #64748b;">SMK SiPKL OFFICIAL GRADE</p>
+                <!-- Summary for Section A -->
+                <div class="mt-2 border-x border-b border-black p-2 font-bold space-y-1 text-[11pt]">
+                    <div class="flex">
+                        <span class="w-48">Nilai Akhir ( Rata - rata )</span>
+                        <span class="">: {{ $pengajuan->penilaianPkl ? number_format($pengajuan->penilaianPkl->nilai_akhir, 2) : '-' }} ({{ $pengajuan->penilaianPkl ? strtoupper(terbilang($pengajuan->penilaianPkl->nilai_akhir)) : '-' }})</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-48">Kualifikasi Nilai</span>
+                        <span class="">: {{ $pengajuan->penilaianPkl ? strtoupper($pengajuan->penilaianPkl->predikat) : '-' }}</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section B: Non Technical -->
+            <section class="mb-8">
+                <h3 class="font-bold mb-2 text-[12pt]">B. Penilaian Aspek Non Teknis</h3>
+                <div class="grade-table-wrapper">
+                    <table data-purpose="non-technical-assessment-table">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="w-12 text-center">No.</th>
+                                <th class="text-left">Aspek Penilaian</th>
+                                <th class="w-24 text-center">Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $noNonTeknis = 1; @endphp
+                            @foreach($aspekNonTeknis as $item)
+                                <tr>
+                                    <td class="text-center">{{ $noNonTeknis++ }}</td>
+                                    <td class="">{{ $item['nama'] }}</td>
+                                    <td class="text-center font-bold">{{ $item['nilai'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- FooterInfo -->
+            <div class="flex justify-between items-end mt-12">
+                <!-- Grading Scale Legend -->
+                <div class="text-[10pt]">
+                    <h4 class="font-bold underline mb-2">Kualifikasi Nilai ( KN ) :</h4>
+                    <div class="grid grid-cols-[100px_min-content_auto] gap-x-2 leading-tight">
+                        <span class="">Sangat Baik</span><span class="">:</span><span class="">90 - 100</span>
+                        <span class="">Baik</span><span class="">:</span><span class="">80 - 89</span>
+                        <span class="">Cukup</span><span class="">:</span><span class="">70 - 79</span>
+                        <span class="">Kurang</span><span class="">:</span><span class="">60 - 69</span>
+                        <span class="">Sangat Kurang</span><span class="">:</span><span class="">0 - 59</span>
+                    </div>
+                </div>
+                
+                <!-- Signature Block -->
+                <div class="text-center text-[10pt] flex flex-col items-center" style="width: 250px;">
+                    <p class="mb-1">{{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->translatedFormat('d F Y') }}</p>
+                    <p class="mb-2">Pembimbing Industri</p>
+                    
+                    <!-- Signature Image Area -->
+                    <div class="h-16 w-full flex items-center justify-center relative">
+                        @if($pengajuan->tempatPkl?->pembimbingIndustri?->first()?->tanda_tangan)
+                            <img src="{{ asset('storage/' . $pengajuan->tempatPkl->pembimbingIndustri->first()->tanda_tangan) }}" alt="Tanda Tangan" class="h-16 max-w-[150px] object-contain select-none z-10 absolute bottom-[-4px]">
+                        @else
+                            <!-- Signature Placeholder / Wave line fallback -->
+                            <div class="absolute -top-12 left-1/2 -translate-x-1/2 opacity-60 italic text-blue-800 pointer-events-none">
+                                <svg fill="none" height="40" viewBox="0 0 100 40" width="100" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 30C25 10 40 45 55 25C70 5 85 30 95 20" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                                </svg>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <div class="signature-line w-48 mt-1 border-b-[1.5px] border-black"></div>
+                    
+                    <div class="relative inline-block w-full mt-1">
+                        <p class="font-bold underline uppercase">
+                            {{ strtoupper($pengajuan->tempatPkl?->pembimbingIndustri?->first()?->user?->name ?? 'Pembimbing') }}
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            <!-- Footnotes & Signatures -->
-            <div class="signatures-area" style="margin-top: 15px;">
-                <div class="signature-box">
-                    <p class="signer-title">Pembimbing Industri,</p>
-                    <div class="signature-line" style="margin-top: 40px;"></div>
-                    <p class="signer-name">Pihak Industri</p>
-                    <p>Tanda Tangan & Stempel</p>
-                </div>
-
-                <div class="signature-box">
-                    <p class="signer-title">Jawa Barat, {{ \Carbon\Carbon::parse($pengajuan->tanggal_selesai)->format('d F Y') }}</p>
-                    <p class="signer-title">Guru Pembimbing,</p>
-                    <div class="signature-line" style="margin-top: 40px;"></div>
-                    <p class="signer-name">{{ $pengajuan->guru?->user?->name ?? 'Guru Pembimbing' }}</p>
-                    <p>NIP. {{ $pengajuan->guru?->nip ?? '-' }}</p>
-                </div>
-            </div>
+            
         </div>
     </div>
 

@@ -75,9 +75,11 @@ class SiswaController extends Controller
     public function destroy(Siswa $siswa)
     {
         DB::transaction(function () use ($siswa) {
-            $siswa->pengajuanPkl()->delete();
-            optional($siswa->user)->delete();
-            $siswa->delete();
+            if ($siswa->user) {
+                $siswa->user->delete();
+            } else {
+                $siswa->delete();
+            }
         });
 
         return redirect()->route('admin.siswa.index')->with('success', 'Siswa berhasil dihapus.');

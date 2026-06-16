@@ -26,12 +26,16 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'nis' => array_values(array_filter(['nullable', 'string', 'max:50', $this->user()->siswa ? \Illuminate\Validation\Rule::unique('siswa', 'nis')->ignore($this->user()->siswa->id) : null], fn($v) => $v !== null)),
+            'nip' => array_values(array_filter(['nullable', 'string', 'max:50', $this->user()->guru ? \Illuminate\Validation\Rule::unique('guru', 'nip')->ignore($this->user()->guru->id) : null], fn($v) => $v !== null)),
             'kelas' => ['nullable', 'string', 'max:50'],
             'jurusan' => ['nullable', 'string', 'max:255'],
             'alamat' => ['nullable', 'string'],
             'no_hp' => ['nullable', 'string', 'max:20'],
+            'jabatan' => ['nullable', 'string', 'max:255'],
+            'tanda_tangan' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }
 }

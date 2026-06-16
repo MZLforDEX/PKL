@@ -96,6 +96,8 @@ class JurnalPklController extends Controller
 
         $data = $request->validated();
         $data['status'] = 'menunggu_validasi';
+        $data['catatan_guru'] = null;
+        $data['catatan_pembimbing'] = null;
         if ($request->hasFile('dokumentasi')) {
             if ($jurnalPkl->dokumentasi) {
                 Storage::disk('public')->delete($jurnalPkl->dokumentasi);

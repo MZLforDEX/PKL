@@ -41,11 +41,13 @@ class TempatPklController extends Controller
 
     public function destroy(TempatPkl $tempatPkl)
     {
-        $pengajuanCount = PengajuanPkl::where('tempat_pkl_id', $tempatPkl->id)->count();
+        $activePengajuanCount = PengajuanPkl::where('tempat_pkl_id', $tempatPkl->id)
+            ->whereNotIn('status', ['ditolak', 'selesai'])
+            ->count();
         $pembimbingCount = PembimbingIndustri::where('tempat_pkl_id', $tempatPkl->id)->count();
 
-        if ($pengajuanCount > 0 || $pembimbingCount > 0) {
-            return redirect()->route('admin.tempat-pkl.index')->with('error', 'Tempat PKL tidak dapat dihapus karena masih memiliki data terkait.');
+        if ($activePengajuanCount > 0 || $pembimbingCount > 0) {
+            return redirect()->route('admin.tempat-pkl.index')->with('error', 'Tempat PKL tidak dapat dihapus karena masih memiliki data aktif terkait.');
         }
 
         $tempatPkl->delete();

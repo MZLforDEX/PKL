@@ -24,7 +24,7 @@ class PengajuanPklController extends Controller
 
     public function assignGuru(Request $request, PengajuanPkl $pengajuanPkl)
     {
-        if (!in_array($pengajuanPkl->status, ['menunggu_persetujuan', 'disetujui', 'revisi'])) {
+        if (!in_array($pengajuanPkl->status, ['menunggu_persetujuan', 'disetujui', 'revisi', 'sedang_pkl', 'menunggu_penilaian'])) {
             return redirect()->back()->withErrors(['msg' => 'Guru hanya dapat ditugaskan pada pengajuan aktif.']);
         }
 

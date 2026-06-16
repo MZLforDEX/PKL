@@ -88,7 +88,7 @@
                         </div>
                     </div>
 
-                    @if($jurnalPkl->status === 'menunggu_validasi')
+                    @if($jurnalPkl->status === 'menunggu_validasi' || ($jurnalPkl->status === 'valid' && is_null($jurnalPkl->catatan_guru)))
                     <div class="card-premium p-5 border-t-4 border-brand-500">
                         <h4 class="font-bold text-surface-900 mb-6 flex items-center">
                             <i data-lucide="shield-check" class="w-4 h-4 mr-2 text-brand-500"></i>

@@ -42,17 +42,6 @@ class UserController extends Controller
         }
 
         DB::transaction(function () use ($user) {
-            if ($user->siswa) {
-                $user->siswa->pengajuanPkl()->delete();
-                $user->siswa->delete();
-            }
-            if ($user->guru) {
-                $user->guru->pengajuanPkl()->delete();
-                $user->guru->delete();
-            }
-            if ($user->pembimbingIndustri) {
-                $user->pembimbingIndustri->delete();
-            }
             $user->delete();
         });
 
