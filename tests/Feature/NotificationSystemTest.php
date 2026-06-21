@@ -66,8 +66,9 @@ class NotificationSystemTest extends TestCase
             'status' => 'menunggu_persetujuan',
         ]);
 
-        // 5. Guru approves the pengajuan
-        $response = $this->actingAs($guruUser)->put(route('guru.pengajuan.setujui', $pengajuan), [
+        // 5. Admin approves the pengajuan
+        $adminUser = User::factory()->create(['role' => 'admin', 'is_approved' => true]);
+        $response = $this->actingAs($adminUser)->put(route('admin.pengajuan.setujui', $pengajuan), [
             'catatan' => 'Disetujui, harap laksanakan dengan baik.',
         ]);
 

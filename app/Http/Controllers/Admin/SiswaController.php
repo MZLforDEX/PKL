@@ -13,7 +13,18 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        $siswa = Siswa::with('user')->paginate(10);
+        $search = request('search');
+        $siswa = Siswa::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where('nis', 'like', "%{$search}%")
+                    ->orWhere('kelas', 'like', "%{$search}%")
+                    ->orWhere('jurusan', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            })
+            ->paginate(10)->withQueryString();
         return view('admin.siswa.index', compact('siswa'));
     }
 

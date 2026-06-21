@@ -14,7 +14,19 @@ class PembimbingIndustriController extends Controller
 {
     public function index()
     {
-        $pembimbing = PembimbingIndustri::with(['user', 'tempatPkl'])->paginate(10);
+        $search = request('search');
+        $pembimbing = PembimbingIndustri::with(['user', 'tempatPkl'])
+            ->when($search, function ($query, $search) {
+                $query->where('jabatan', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('tempatPkl', function ($q) use ($search) {
+                        $q->where('nama_tempat', 'like', "%{$search}%");
+                    });
+            })
+            ->paginate(10)->withQueryString();
         return view('admin.pembimbing.index', compact('pembimbing'));
     }
 

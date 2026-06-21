@@ -80,6 +80,67 @@
 
                 <!-- Assignment Sidebar -->
                 <div class="space-y-6">
+                    @if($pengajuanPkl->status === 'menunggu_persetujuan')
+                    <div class="card-premium p-5 border-t-4 border-brand-500">
+                        <h4 class="font-bold text-surface-900 mb-6 flex items-center">
+                            <i data-lucide="check-square" class="w-4 h-4 mr-2 text-brand-500"></i>
+                            Keputusan Admin
+                        </h4>
+                        
+                        <div class="space-y-6">
+                            <!-- Approve -->
+                            <form action="{{ route('admin.pengajuan.setujui', $pengajuanPkl) }}" method="POST">
+                                @csrf @method('PUT')
+                                <button type="submit" class="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 flex items-center justify-center">
+                                    <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                                    Setujui Pengajuan
+                                </button>
+                            </form>
+
+                            <div class="relative py-2">
+                                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-200"></div></div>
+                                <div class="relative flex justify-center text-[10px] uppercase font-bold text-surface-400 bg-white px-2">Atau</div>
+                            </div>
+
+                            <!-- Revisi/Tolak -->
+                            <div x-data="{ action: null }">
+                                <div class="flex gap-2 mb-4">
+                                    <button @click="action = 'revisi'" :class="action === 'revisi' ? 'bg-orange-500 text-white' : 'bg-surface-100 text-surface-600'" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all">Revisi</button>
+                                    <button @click="action = 'tolak'" :class="action === 'tolak' ? 'bg-rose-500 text-white' : 'bg-surface-100 text-surface-600'" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all">Tolak</button>
+                                </div>
+
+                                <div x-show="action === 'revisi'" x-transition>
+                                    <form action="{{ route('admin.pengajuan.revisi', $pengajuanPkl) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <textarea name="catatan" placeholder="Apa yang perlu diperbaiki?" class="w-full rounded-xl border-surface-200 text-sm focus:ring-orange-500 focus:border-orange-500 mb-3" required></textarea>
+                                        <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl font-bold text-xs shadow-lg shadow-orange-100">Kirim Instruksi Revisi</button>
+                                    </form>
+                                </div>
+
+                                <div x-show="action === 'tolak'" x-transition>
+                                    <form action="{{ route('admin.pengajuan.tolak', $pengajuanPkl) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <textarea name="catatan" placeholder="Alasan penolakan..." class="w-full rounded-xl border-surface-200 text-sm focus:ring-rose-500 focus:border-rose-500 mb-3" required></textarea>
+                                        <button type="submit" class="w-full py-2 bg-rose-500 text-white rounded-xl font-bold text-xs shadow-lg shadow-rose-100">Konfirmasi Penolakan</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(in_array($pengajuanPkl->status, ['disetujui', 'ditolak', 'revisi']) && $pengajuanPkl->catatan)
+                    <div class="card-premium p-5">
+                        <h4 class="font-bold text-surface-900 mb-4 flex items-center">
+                            <i data-lucide="message-square" class="w-4 h-4 mr-2 text-brand-500"></i>
+                            Catatan Keputusan
+                        </h4>
+                        <div class="p-4 bg-surface-50 rounded-2xl border border-surface-200/60 italic text-sm text-surface-600">
+                            "{{ $pengajuanPkl->catatan }}"
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="card-premium p-5 sm:p-6 {{ $pengajuanPkl->guru_id ? 'border-brand-200' : 'border-t-4 border-amber-500' }}">
                         <h4 class="font-bold text-surface-900 mb-6 flex items-center">
                             <i data-lucide="user-plus" class="w-4 h-4 mr-2 text-brand-500"></i>

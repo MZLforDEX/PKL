@@ -13,7 +13,17 @@ class GuruController extends Controller
 {
     public function index()
     {
-        $guru = Guru::with('user')->paginate(10);
+        $search = request('search');
+        $guru = Guru::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where('nip', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            })
+            ->paginate(10)->withQueryString();
         return view('admin.guru.index', compact('guru'));
     }
 

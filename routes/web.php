@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/security', [ProfileController::class, 'security'])->name('profile.security');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Notifications
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
@@ -56,7 +56,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('pengajuan', [AdminPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [AdminPengajuanPklController::class, 'show'])->name('pengajuan.show');
         Route::put('pengajuan/{pengajuanPkl}/guru', [AdminPengajuanPklController::class, 'assignGuru'])->name('pengajuan.assign-guru');
-        
+        Route::put('pengajuan/{pengajuanPkl}/setujui', [AdminPengajuanPklController::class, 'setujui'])->name('pengajuan.setujui');
+        Route::put('pengajuan/{pengajuanPkl}/tolak', [AdminPengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
+        Route::put('pengajuan/{pengajuanPkl}/revisi', [AdminPengajuanPklController::class, 'mintaRevisi'])->name('pengajuan.revisi');
+
         // User approvals
         Route::get('users/unapproved', [\App\Http\Controllers\Admin\UserController::class, 'unapproved'])->name('users.unapproved');
         Route::put('users/{user}/approve', [\App\Http\Controllers\Admin\UserController::class, 'approve'])->name('users.approve');
@@ -73,9 +76,6 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
         Route::get('pengajuan', [GuruPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [GuruPengajuanPklController::class, 'show'])->name('pengajuan.show');
-        Route::put('pengajuan/{pengajuanPkl}/setujui', [GuruPengajuanPklController::class, 'setujui'])->name('pengajuan.setujui');
-        Route::put('pengajuan/{pengajuanPkl}/tolak', [GuruPengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
-        Route::put('pengajuan/{pengajuanPkl}/revisi', [GuruPengajuanPklController::class, 'mintaRevisi'])->name('pengajuan.revisi');
         Route::get('jurnal', [GuruJurnalPklController::class, 'index'])->name('jurnal.index');
         Route::get('jurnal/{jurnalPkl}', [GuruJurnalPklController::class, 'show'])->name('jurnal.show');
         Route::put('jurnal/{jurnalPkl}/valid', [GuruJurnalPklController::class, 'valid'])->name('jurnal.valid');
@@ -86,6 +86,7 @@ Route::middleware(['auth', 'role:guru'])
         Route::put('laporan/{laporanPkl}/revisi', [GuruLaporanPklController::class, 'mintaRevisi'])->name('laporan.revisi');
 
         Route::get('absensi', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'index'])->name('absensi.index');
+        Route::get('penilaian', [PenilaianPklController::class, 'index'])->name('penilaian.index');
 
 
     });
@@ -136,4 +137,4 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
 
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

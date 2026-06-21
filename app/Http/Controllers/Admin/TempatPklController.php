@@ -13,7 +13,13 @@ class TempatPklController extends Controller
 {
     public function index()
     {
-        $tempatPkl = TempatPkl::paginate(10);
+        $search = request('search');
+        $tempatPkl = TempatPkl::when($search, function ($query, $search) {
+                $query->where('nama_tempat', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('bidang_usaha', 'like', "%{$search}%");
+            })
+            ->paginate(10)->withQueryString();
         return view('admin.tempat-pkl.index', compact('tempatPkl'));
     }
 

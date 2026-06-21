@@ -19,6 +19,7 @@ class PengajuanPklQuotaTest extends TestCase
     protected Siswa $siswa1;
     protected Siswa $siswa2;
     protected User $guruUser;
+    protected User $adminUser;
     protected Guru $guru;
     protected TempatPkl $tempatPkl;
 
@@ -26,13 +27,15 @@ class PengajuanPklQuotaTest extends TestCase
     {
         parent::setUp();
 
-        // Tempat PKL with quota = 1
         $this->tempatPkl = TempatPkl::create([
             'nama_tempat' => 'PT Satu Kuota',
             'alamat' => 'Jl. Kuota No. 1',
             'bidang_usaha' => 'IT',
             'kuota' => 1,
         ]);
+
+        // Admin
+        $this->adminUser = User::factory()->create(['role' => 'admin', 'is_approved' => true]);
 
         // Guru
         $this->guruUser = User::factory()->create(['role' => 'guru', 'is_approved' => true]);
@@ -124,7 +127,7 @@ class PengajuanPklQuotaTest extends TestCase
         $this->assertEquals('draft', $pengajuan2->fresh()->status);
     }
 
-    public function test_guru_cannot_approve_when_quota_is_full(): void
+    public function test_admin_cannot_approve_when_quota_is_full(): void
     {
         // Student 1 has a pending request
         $pengajuan1 = PengajuanPkl::create([
@@ -148,13 +151,13 @@ class PengajuanPklQuotaTest extends TestCase
             'status' => 'menunggu_persetujuan',
         ]);
 
-        // Guru approves Student 1
-        $response1 = $this->actingAs($this->guruUser)->put(route('guru.pengajuan.setujui', $pengajuan1));
+        // Admin approves Student 1
+        $response1 = $this->actingAs($this->adminUser)->put(route('admin.pengajuan.setujui', $pengajuan1));
         $response1->assertSessionHasNoErrors();
         $this->assertEquals('disetujui', $pengajuan1->fresh()->status);
 
-        // Guru tries to approve Student 2, but quota is now 0
-        $response2 = $this->actingAs($this->guruUser)->put(route('guru.pengajuan.setujui', $pengajuan2));
+        // Admin tries to approve Student 2, but quota is now 0
+        $response2 = $this->actingAs($this->adminUser)->put(route('admin.pengajuan.setujui', $pengajuan2));
         $response2->assertSessionHasErrors('msg');
         $this->assertEquals('menunggu_persetujuan', $pengajuan2->fresh()->status);
     }

@@ -91,9 +91,8 @@
 
     <!-- BEGIN: BackgroundSlider -->
     <div class="slider-container" data-purpose="background-slider">
-        <div class="slide active" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCrrWNg9tn7GBfeqbKUGIk8EOSKA9_gAAw1GgzuDels-oMNPjQC2RBiSdI0L8UTUxHEnNOjrG18hzosYlREVMByjCF2t3hQsy4VyLwbjaiN3auBrsnzrvSggZ5gdkdMJPTiiF81p0T9ZNoX5oImdLaMUPdGupmfCsi1JuTkU_WBSkPqaRq28_VhA1h-eP5IRRDeGJZAt7Opj7ncFYSfAo_I9KPeYHxmRYSdMgI38eJVzWZYAQSIzaJhGfMYEOXlCkhCpTaFFHX3xRw');"></div>
-        <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBAreU7QDiGbIsFopMsF5PhRRjRFoL7B-cDHznyTWT7xSJFscI4iAhmzhv8lBFyCVDF8msx7z3ldMYaVZa2ZuXFXhVs057-RwzSOJ4LS1iTTcp4nbid1ZzHScq6JyOY3S9VWgGrG6jZSJeRbSSJzZsdVpg8cmJ_nZPIt33xvYShuzJCwI5N9YMfrRPv1QdsSx0ocWnKEK0s1Q4B4c8RmqFpp0-csXCipJuoKtfRjgO7_z7hNK-SxVuZtmajSXr3q13A-Affsr85H7w');"></div>
-        <div class="slide" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5UIBwbT9qZApjoxjH6tmABWScInvm8nn_NdLT0yLXwtAu1YMs-VrMoZQ-YWwM_f2EREVhzseMCv5mqxtUpUNtEl5K-0cLrdBOj9RQP9Zb1pF55Twb-j6F3Et94xSc-UoTFeo1tShwqlY0uvEA_u7-nl3J_8L2g_OIhW-g1YQt2M3jXO0VBAVwWg9ICqT_1zKQ3Jd26QfAGEoxcweWQsvAfQYpy2tojXg14fWs6FGxvXKwHro77XY_3r9Mn4wYseW_QePjReh6LVk');"></div>
+        <div class="slide active" style="background-image: url('{{ asset('images/slider-siswa.jpg') }}');"></div>
+        <div class="slide" style="background-image: url('{{ asset('images/slider-sekolah.jpg') }}');"></div>
         <div class="slider-overlay"></div>
     </div>
     <!-- END: BackgroundSlider -->    <div class="relative min-h-screen flex flex-col justify-between z-10">
@@ -141,9 +140,9 @@
 
             <!-- Badges -->
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 text-xs font-semibold text-indigo-700 dark:text-indigo-400 mb-8 animate-fade-in shadow-sm">
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 text-xs font-semibold text-indigo-700 dark:text-indigo-400 mb-6 animate-fade-in shadow-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                SiPKL v5.3.1 PKL Management
+                SiPKL PKL Management
             </div>
 
             <!-- Title -->
@@ -151,18 +150,16 @@
                 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white max-w-4xl leading-tight">
                 Transformasi Digital Program <br class="hidden sm:inline" />
                 <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-500 dark:from-indigo-400 dark:via-violet-400 dark:to-indigo-300">Kerja
-                    Lapangan</span> Siswa.
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-500 dark:from-indigo-400 dark:via-violet-400 dark:to-indigo-300">Kerja Lapangan</span> Siswa.
             </h1>
 
             <!-- Subtitle -->
-            <p class="text-base sm:text-lg text-gray-500 dark:text-zinc-400 max-w-2xl mt-6 leading-relaxed">
-                Platform modern untuk pengajuan tempat PKL, validasi jurnal harian, absensi kehadiran, dan penilaian
-                akhir secara transparan dan akurat.
+            <p class="text-base sm:text-lg text-gray-500 dark:text-zinc-400 max-w-2xl mt-4 leading-relaxed">
+                Platform modern untuk pengajuan tempat PKL, validasi jurnal harian, absensi kehadiran, dan penilaian akhir secara transparan dan akurat.
             </p>
 
             <!-- Actions -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-10 w-full sm:w-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-8 w-full sm:w-auto">
                 <a href="{{ route('login') }}"
                     class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm shadow-md hover:shadow-indigo-500/20 active:scale-[0.98] transition-all">
                     Mulai Sekarang
@@ -176,7 +173,7 @@
             </div>
 
             <!-- Features Grid (Glassmorphism from Stitch) -->
-            <div class="grid sm:grid-cols-3 gap-6 max-w-4xl w-full mt-20">
+            <div class="grid sm:grid-cols-3 gap-6 max-w-4xl w-full mt-28">
                 <!-- Card 1 -->
                 <div class="glass-card p-8 rounded-2xl text-left shadow-lg transition-transform hover:-translate-y-1 duration-300">
                     <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center mb-6">

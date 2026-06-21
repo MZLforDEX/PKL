@@ -114,9 +114,9 @@
                         </div>
 
                         @if($laporanPkl->pengajuanPkl?->status === 'menunggu_penilaian')
-                        <a href="{{ route('guru.penilaian.create', $laporanPkl->pengajuanPkl) }}" class="btn-primary w-full !py-3.5">
-                            <i data-lucide="award" class="w-4 h-4 mr-2"></i>
-                            Beri Nilai Sekarang
+                        <a href="{{ route('guru.penilaian.index') }}" class="btn-primary w-full !py-3.5">
+                            <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
+                            Pantau Nilai
                         </a>
                         @endif
                     </div>
