@@ -1,59 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SiPKL — Sistem Informasi Praktik Kerja Lapangan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SiPKL adalah platform manajemen program Praktik Kerja Lapangan (PKL) berbasis web yang dirancang khusus untuk mempermudah administrasi antara pihak sekolah, siswa, dan dunia industri. 
 
-## About Laravel
+Sistem ini membantu mendokumentasikan seluruh rangkaian kegiatan PKL secara transparan dan terstruktur, mulai dari pengajuan tempat, pencatatan jurnal harian, absensi kehadiran, hingga proses penilaian akhir dan pencetakan sertifikat resmi.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 👥 Hak Akses & Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Sistem ini membagi akses menjadi 4 peran utama dengan tanggung jawab masing-masing:
 
-## Learning Laravel
+### 1. Siswa
+* **Pengajuan PKL Mandiri:** Mengajukan tempat PKL, mengunggah berkas kelengkapan, dan memantau status persetujuan secara *real-time*.
+* **Jurnal Harian Digital:** Mencatat aktivitas harian beserta bukti foto dokumentasi langsung di aplikasi.
+* **Absensi GPS & Kamera:** Melakukan absen harian secara akurat menggunakan foto selfie (Webcam API) dan koordinat lokasi (Geolocation API).
+* **Pengumpulan Laporan Akhir:** Mengunggah draf laporan PKL untuk ditinjau guru pembimbing.
+* **Cetak Sertifikat:** Mengunduh dan mencetak sertifikat PKL berformat resmi jika program telah selesai.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 2. Guru Pembimbing
+* **Manajemen Bimbingan:** Memantau seluruh siswa yang berada di bawah bimbingannya.
+* **Validasi Kegiatan:** Memeriksa dan memberikan validasi (terima/revisi) pada jurnal harian serta laporan akhir siswa.
+* **Input Nilai:** Mengisi evaluasi nilai akhir untuk siswa bimbingan.
+* **Notifikasi Sistem:** Mendapat pemberitahuan langsung setiap kali siswa mengunggah berkas baru.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Pembimbing Industri
+* **Manajemen Kuota Magang:** Mengatur batas maksimal kapasitas siswa yang bisa ditampung di perusahaannya.
+* **Verifikasi Ganda:** Memvalidasi jurnal kegiatan harian siswa di tempat kerja (sejajar dengan guru).
+* **Monitoring Kehadiran:** Memantau rekap absen harian siswa magang.
+* **Penilaian Kinerja:** Memberikan nilai langsung berdasarkan performa kerja siswa selama di industri.
 
-## Laravel Sponsors
+### 4. Admin Sekolah
+* **Manajemen Master Data:** Melakukan CRUD data siswa, guru, pembimbing industri, dan tempat PKL (perusahaan).
+* **Persetujuan Akun & Pengajuan:** Mengaktifkan akun pengguna baru dan memvalidasi pengajuan awal tempat PKL siswa.
+* **Penugasan Guru:** Memetakan guru pembimbing untuk siswa yang pengajuannya telah disetujui.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🛠️ Spesifikasi Teknologi
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Sistem ini dibangun menggunakan kombinasi teknologi modern agar performanya ringan, aman, dan mudah dikembangkan:
 
-## Contributing
+* **Framework Backend:** Laravel 12 (PHP ^8.2)
+* **Starter Kit Autentikasi:** Laravel Breeze
+* **Framework Frontend & UI:** Tailwind CSS v3 & Alpine.js (tanpa React/Vue, murni Server-Side Rendering dengan Blade Template)
+* **Database:** MySQL
+* **Kamera & Lokasi:** HTML5 Webcam API (MediaDevices) & Geolocation API (Native Browser)
+* **Notifikasi Asinkron:** Database Channel dengan Queue Worker Laravel
+* **Library Eksternal (CDN):** Lucide Icons, Font Awesome 6, dan SweetAlert2
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🚀 Cara Menjalankan Project Secara Lokal
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi SiPKL di komputer lokal Anda:
 
-## Security Vulnerabilities
+### 1. Persyaratan Awal
+Pastikan Anda sudah menginstal:
+* PHP versi **8.2** atau lebih baru
+* Composer
+* Node.js & NPM
+* Web Server lokal (seperti XAMPP, Laragon, atau Herd) dengan MySQL aktif.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 2. Clone Repositori
+```bash
+git clone https://github.com/MZLforDEX/PKL.git
+cd PKL
+```
 
-## License
+### 3. Setup Project Otomatis
+Gunakan script setup bawaan untuk menginstal dependensi PHP/NPM, menyalin file konfigurasi `.env`, men-generate key, serta mem-build aset secara otomatis:
+```bash
+composer run setup
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 4. Konfigurasi Database
+Buka file `.env` yang baru dibuat di folder root project, sesuaikan pengaturan databasenya:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database_anda
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Jalankan Migrasi & Seeder Database
+```bash
+php artisan migrate --seed
+```
+
+### 6. Buat Symbolic Link Storage
+Agar file dokumen pengajuan, foto jurnal, dan laporan yang diunggah siswa dapat diakses secara publik, jalankan:
+```bash
+php artisan storage:link
+```
+
+### 7. Jalankan Server Dev
+Jalankan perintah berikut untuk mengaktifkan local server Laravel, Queue Listener untuk notifikasi, dan Vite Compiler secara bersamaan:
+```bash
+composer run dev
+```
+Aplikasi kini dapat diakses melalui browser di alamat **`http://127.0.0.1:8000`**.
+
+---
+
+## 🔑 Akun Uji Coba Default (Seeder)
+
+Untuk keperluan pengujian di lokal, Anda dapat login menggunakan akun-akun demo berikut (semua password adalah `password`):
+
+| Peran (Role) | Email | Deskripsi |
+|---|---|---|
+| **Admin** | `admin@pkl.test` | Akses penuh master data & approval |
+| **Guru Pembimbing** | `guru1@pkl.test` / `guru2@pkl.test` | Bimbingan & input nilai |
+| **Siswa** | `siswa1@pkl.test` s/d `siswa5@pkl.test` | Mengisi absen, jurnal, & laporan |
+| **Pembimbing Industri** | `pembimbing@pkl.test` | Kontrol industri & kuota magang |
+
+---
+
+## 🧪 Pengujian Sistem
+Sistem ini dilengkapi dengan 52+ unit/feature tests otomatis. Anda dapat menjalankan seluruh pengujian dengan mengetik:
+```bash
+composer run test
+```
+*(Proses pengujian menggunakan konfigurasi database SQLite *in-memory* sehingga tidak akan mengotori database MySQL utama Anda).*
