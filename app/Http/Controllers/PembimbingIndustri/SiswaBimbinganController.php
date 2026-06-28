@@ -11,8 +11,11 @@ class SiswaBimbinganController extends Controller
     public function index()
     {
         $pembimbing = $this->getPembimbing();
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $siswa = PengajuanPkl::with(['siswa.user', 'guru.user'])
             ->where('tempat_pkl_id', $pembimbing->tempat_pkl_id)
+            ->where('periode_pkl_id', $selectedPeriodeId)
             ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian', 'selesai'])
             ->latest()->paginate(10);
 

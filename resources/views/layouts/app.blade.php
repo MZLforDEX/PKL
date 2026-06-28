@@ -47,7 +47,7 @@
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-900 dark:bg-zinc-950 dark:text-zinc-50 min-h-screen flex antialiased">
+<body class="bg-slate-100/70 text-gray-900 dark:bg-zinc-950 dark:text-zinc-50 min-h-screen flex antialiased">
 
     <!-- Sidebar wrapper -->
     @include('layouts.navigation')
@@ -113,6 +113,28 @@
 
             <!-- Topbar Right Actions -->
             <div class="flex items-center gap-2">
+
+                @if(Auth::user()->role !== 'siswa')
+                    @php
+                        $periodesForSelect = \App\Models\PeriodePkl::orderByDesc('tanggal_mulai')->get();
+                        $selectedPeriodeIdForSelect = \App\Models\PeriodePkl::getSelectedPeriodId();
+                    @endphp
+                    @if($periodesForSelect->isNotEmpty())
+                        <div class="relative mr-2">
+                            <form action="{{ route('periode-pkl.select') }}" method="POST" id="periode-select-form">
+                                @csrf
+                                <select name="periode_pkl_id" onchange="document.getElementById('periode-select-form').submit()"
+                                    class="text-xs bg-gray-50 border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700 text-gray-700 dark:text-zinc-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer font-semibold transition-all">
+                                    @foreach($periodesForSelect as $p)
+                                        <option value="{{ $p->id }}" {{ $selectedPeriodeIdForSelect == $p->id ? 'selected' : '' }}>
+                                            Periode: {{ $p->nama_periode }} {{ $p->status_aktif ? '(Aktif)' : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </div>
+                    @endif
+                @endif
 
                 <!-- Dark Mode Toggle -->
                 <button @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"

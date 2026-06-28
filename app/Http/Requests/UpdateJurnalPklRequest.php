@@ -16,9 +16,14 @@ class UpdateJurnalPklRequest extends FormRequest
     public function rules(): array
     {
         $siswa = auth()->user()->siswa;
-        $pengajuan = $siswa ? \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])
-            ->first() : null;
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $pengajuan = null;
+        if ($siswa && $activePeriodId) {
+            $pengajuan = \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])
+                ->first();
+        }
         $pengajuanId = $pengajuan ? $pengajuan->id : null;
 
         $jurnal = $this->route('jurnalPkl');

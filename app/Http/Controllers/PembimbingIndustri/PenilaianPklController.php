@@ -14,8 +14,11 @@ class PenilaianPklController extends Controller
     public function index()
     {
         $pembimbing = $this->getPembimbing();
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $pengajuan = PengajuanPkl::with(['siswa.user', 'penilaianPkl'])
             ->where('tempat_pkl_id', $pembimbing->tempat_pkl_id)
+            ->where('periode_pkl_id', $selectedPeriodeId)
             ->whereIn('status', ['menunggu_penilaian', 'selesai'])
             ->latest()->paginate(10);
 

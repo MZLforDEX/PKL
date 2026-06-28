@@ -40,21 +40,23 @@
             {{-- Stats Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 stagger-children">
                 {{-- Total Bimbingan --}}
-                <div class="stat-card">
+                <div class="stat-card border-l-purple-600">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="icon-box bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-neon">
+                        <div class="icon-box bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400">
                             <i data-lucide="users" class="w-5 h-5"></i>
                         </div>
-                        <span class="text-[10px] font-semibold text-surface-400 uppercase tracking-widest">Siswa PKL</span>
+                        <span class="text-[10px] font-bold text-surface-400 uppercase tracking-widest">Siswa PKL</span>
                     </div>
                     <h3 class="text-3xl md:text-4xl font-extrabold text-surface-900 tracking-tight">{{ $totalBimbingan }}</h3>
-                    <div class="mt-3 text-xs text-purple-600 font-medium">Siswa terdaftar di perusahaan Anda</div>
+                    <div class="mt-3 text-xs text-purple-700 dark:text-purple-400 font-bold flex items-center gap-1">
+                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> Siswa terdaftar di perusahaan Anda
+                    </div>
                 </div>
 
                 {{-- Jurnal Menunggu --}}
-                <div class="stat-card border-b-[3px] border-b-orange-400">
+                <div class="stat-card border-l-orange-500">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="icon-box bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white">
+                        <div class="icon-box bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400">
                             <i data-lucide="book-open" class="w-5 h-5"></i>
                         </div>
                         @if($jurnalMenunggu > 0)
@@ -67,7 +69,9 @@
                         @endif
                     </div>
                     <h3 class="text-3xl md:text-4xl font-extrabold text-surface-900 tracking-tight">{{ $jurnalMenunggu }}</h3>
-                    <div class="mt-3 text-xs text-orange-600 font-medium">Jurnal harian belum divalidasi</div>
+                    <div class="mt-3 text-xs text-orange-700 dark:text-orange-400 font-bold flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Jurnal harian belum divalidasi
+                    </div>
                 </div>
             </div>
 
@@ -77,19 +81,19 @@
                 {{-- Pending Tasks --}}
                 <div class="lg:col-span-2 card-premium p-5 sm:p-6 md:p-8 animate-slide-up" style="animation-delay: 200ms">
                     <div class="flex items-center gap-2.5 mb-6">
-                        <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
+                        <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center text-orange-600 dark:text-orange-400">
                             <i data-lucide="list-checks" class="w-4 h-4"></i>
                         </div>
                         <h2 class="text-base md:text-lg font-bold text-surface-900">Tugas Pending</h2>
                     </div>
                     <div class="space-y-3">
                         @if($jurnalMenunggu > 0)
-                            <div class="p-4 bg-orange-50/60 rounded-xl flex items-center justify-between border border-orange-100/60">
+                            <div class="p-4 bg-orange-50/60 dark:bg-orange-950/20 rounded-xl flex items-center justify-between border border-orange-100/60 dark:border-orange-900/30">
                                 <div class="flex items-center gap-3">
                                     <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
-                                    <span class="text-sm text-orange-800 font-medium">{{ $jurnalMenunggu }} Jurnal harian menunggu validasi industri</span>
+                                    <span class="text-sm text-orange-800 dark:text-orange-200 font-medium">{{ $jurnalMenunggu }} Jurnal harian menunggu validasi industri</span>
                                 </div>
-                                <a href="{{ route('pembimbing.jurnal.index') }}" class="text-xs font-bold text-orange-700 hover:underline shrink-0 ml-3">Validasi Jurnal →</a>
+                                <a href="{{ route('pembimbing.jurnal.index') }}" class="text-xs font-bold text-orange-700 dark:text-orange-400 hover:underline shrink-0 ml-3">Validasi Jurnal →</a>
                             </div>
                         @else
                             <div class="empty-state">

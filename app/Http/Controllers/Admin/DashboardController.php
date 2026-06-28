@@ -13,32 +13,48 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalSiswa = Siswa::count();
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
+        $totalSiswa = Siswa::whereHas('pengajuanPkl', function ($q) use ($selectedPeriodeId) {
+            $q->where('periode_pkl_id', $selectedPeriodeId);
+        })->count();
         $totalGuru = Guru::count();
         $totalTempatPkl = TempatPkl::count();
-        $totalPengajuan = PengajuanPkl::count();
-        $totalMenunggu = PengajuanPkl::where('status', 'menunggu_persetujuan')->count();
-        $totalSelesai = PengajuanPkl::where('status', 'selesai')->count();
-        $pengajuanTerbaru = PengajuanPkl::with(['siswa.user', 'tempatPkl'])
+        $totalPengajuan = PengajuanPkl::where('periode_pkl_id', $selectedPeriodeId)->count();
+        $totalMenunggu = PengajuanPkl::where('periode_pkl_id', $selectedPeriodeId)->where('status', 'menunggu_persetujuan')->count();
+        $totalSelesai = PengajuanPkl::where('periode_pkl_id', $selectedPeriodeId)->where('status', 'selesai')->count();
+        
+        $pengajuanTerbaru = PengajuanPkl::where('periode_pkl_id', $selectedPeriodeId)
+            ->with(['siswa.user', 'tempatPkl'])
             ->latest()->take(5)->get();
 
         // Additional cool stats
         $unapprovedUsersCount = User::where('is_approved', false)->count();
         
-        $tempatPklList = TempatPkl::withCount(['pengajuanPkl' => function ($query) {
-            $query->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian']);
+        $tempatPklList = TempatPkl::withCount(['pengajuanPkl' => function ($query) use ($selectedPeriodeId) {
+            $query->where('periode_pkl_id', $selectedPeriodeId)
+                  ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian']);
         }])->orderByDesc('pengajuan_pkl_count')->take(4)->get();
 
-        $bidangUsahaStats = TempatPkl::selectRaw('bidang_usaha, count(*) as total')
-            ->groupBy('bidang_usaha')
-            ->orderByDesc('total')
-            ->take(4)
-            ->get();
+        // Query historical statistics per period for comparison
+        $periodeStats = \App\Models\PeriodePkl::withCount([
+            'pengajuanPkl as total_pengajuan',
+            'pengajuanPkl as total_selesai' => function ($query) {
+                $query->where('status', 'selesai');
+            }
+        ])->orderBy('tanggal_mulai')->get();
+
+        // Query active period industrial partners and their quotas
+        $mitraQuotaStats = TempatPkl::withCount(['pengajuanPkl' => function ($query) use ($selectedPeriodeId) {
+            $query->where('periode_pkl_id', $selectedPeriodeId)
+                  ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian']);
+        }])->orderByDesc('kuota')->take(6)->get();
 
         return view('admin.dashboard', compact(
             'totalSiswa', 'totalGuru', 'totalTempatPkl',
             'totalPengajuan', 'totalMenunggu', 'totalSelesai', 'pengajuanTerbaru',
-            'unapprovedUsersCount', 'tempatPklList', 'bidangUsahaStats'
+            'unapprovedUsersCount', 'tempatPklList',
+            'periodeStats', 'mitraQuotaStats'
         ));
     }
 }

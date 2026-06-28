@@ -173,4 +173,73 @@ class AbsensiPklTest extends TestCase
         $response->assertSee($this->siswaUser->name);
         $response->assertSee('Terlambat');
     }
+
+    public function test_guru_can_export_absensi_excel(): void
+    {
+        // Set period session helper
+        $this->actingAs($this->guruUser);
+        $selectedPeriod = \App\Models\PeriodePkl::where('status_aktif', true)->first();
+        if (!$selectedPeriod) {
+            $selectedPeriod = \App\Models\PeriodePkl::create([
+                'nama_periode' => 'PKL 2025/2026',
+                'tanggal_mulai' => '2025-07-01',
+                'tanggal_selesai' => '2026-06-30',
+                'status_aktif' => true,
+            ]);
+        }
+
+        $response = $this->actingAs($this->guruUser)->get(route('guru.absensi.export', [
+            'bulan' => 5,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="Rekap_Absensi_Siswa_Bimbingan_PKL_2025_2026_Mei_2026.xls"');
+        $response->assertSee('LAPORAN HARIAN ABSENSI SISWA PKL');
+        $response->assertSee($this->siswa->user->name);
+    }
+
+    public function test_pembimbing_industri_can_export_absensi_excel(): void
+    {
+        // Set period session helper
+        $this->actingAs($this->pembimbingUser);
+        $selectedPeriod = \App\Models\PeriodePkl::where('status_aktif', true)->first();
+        if (!$selectedPeriod) {
+            $selectedPeriod = \App\Models\PeriodePkl::create([
+                'nama_periode' => 'PKL 2025/2026',
+                'tanggal_mulai' => '2025-07-01',
+                'tanggal_selesai' => '2026-06-30',
+                'status_aktif' => true,
+            ]);
+        }
+
+        $response = $this->actingAs($this->pembimbingUser)->get(route('pembimbing.absensi.export', [
+            'bulan' => 5,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="Rekap_Absensi_Siswa_Magang_PKL_2025_2026_Mei_2026.xls"');
+        $response->assertSee('LAPORAN HARIAN ABSENSI SISWA PKL');
+        $response->assertSee($this->siswa->user->name);
+    }
+
+    public function test_non_authorized_role_cannot_export_absensi_excel(): void
+    {
+        // Siswa role trying to access guru export
+        $response = $this->actingAs($this->siswaUser)->get(route('guru.absensi.export', [
+            'bulan' => 5,
+            'tahun' => 2026,
+        ]));
+        $response->assertStatus(403);
+
+        // Siswa role trying to access pembimbing export
+        $response = $this->actingAs($this->siswaUser)->get(route('pembimbing.absensi.export', [
+            'bulan' => 5,
+            'tahun' => 2026,
+        ]));
+        $response->assertStatus(403);
+    }
 }

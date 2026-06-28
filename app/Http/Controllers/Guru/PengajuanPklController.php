@@ -12,8 +12,12 @@ class PengajuanPklController extends Controller
     {
         $guru = auth()->user()->guru;
         if (!$guru) abort(403, 'Profil guru belum diatur.');
+        
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $pengajuan = PengajuanPkl::with(['siswa.user', 'tempatPkl'])
             ->where('guru_id', $guru->id)
+            ->where('periode_pkl_id', $selectedPeriodeId)
             ->latest()->paginate(10);
         return view('guru.pengajuan.index', compact('pengajuan'));
     }

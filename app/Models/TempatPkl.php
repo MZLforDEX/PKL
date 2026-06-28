@@ -32,9 +32,16 @@ class TempatPkl extends Model
 
     public function getSisaKuotaAttribute(): int
     {
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        if (!$activePeriodId) {
+            return $this->kuota;
+        }
+
         $occupied = $this->pengajuanPkl()
+            ->where('periode_pkl_id', $activePeriodId)
             ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian'])
             ->count();
+            
         return max(0, $this->kuota - $occupied);
     }
 

@@ -12,8 +12,10 @@ class JurnalPklController extends Controller
     public function index()
     {
         $pembimbing = $this->getPembimbing();
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $jurnal = JurnalPkl::with(['pengajuanPkl.siswa.user'])
-            ->whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $pembimbing->tempat_pkl_id))
+            ->whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $pembimbing->tempat_pkl_id)->where('periode_pkl_id', $selectedPeriodeId))
             ->latest()->paginate(10);
 
         return view('pembimbing.jurnal.index', compact('jurnal'));

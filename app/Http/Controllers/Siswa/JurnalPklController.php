@@ -25,11 +25,17 @@ class JurnalPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
+
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $pengajuan = null;
+        if ($activePeriodId) {
+            $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
+        }
 
         if (!$pengajuan) {
-            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Belum ada pengajuan disetujui.']);
+            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Belum ada pengajuan disetujui pada periode aktif saat ini.']);
         }
 
         return view('siswa.jurnal.create', compact('pengajuan'));
@@ -39,12 +45,18 @@ class JurnalPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuan = PengajuanPkl::with('guru.user')
-            ->where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
+
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $pengajuan = null;
+        if ($activePeriodId) {
+            $pengajuan = PengajuanPkl::with('guru.user')
+                ->where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])->first();
+        }
 
         if (!$pengajuan) {
-            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Belum ada pengajuan disetujui.']);
+            return redirect()->route('siswa.jurnal.index')->withErrors(['msg' => 'Belum ada pengajuan disetujui pada periode aktif saat ini.']);
         }
 
         $data = $request->validated();

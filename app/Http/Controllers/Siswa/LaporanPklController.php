@@ -19,10 +19,15 @@ class LaporanPklController extends Controller
             ->whereHas('pengajuanPkl', fn($q) => $q->where('siswa_id', $siswa->id))
             ->latest()->paginate(10);
 
-        $canUpload = PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])
-            ->whereDoesntHave('laporanPkl')
-            ->exists();
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $canUpload = false;
+        if ($activePeriodId) {
+            $canUpload = PengajuanPkl::where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])
+                ->whereDoesntHave('laporanPkl')
+                ->exists();
+        }
 
         return view('siswa.laporan.index', compact('laporan', 'canUpload'));
     }
@@ -31,13 +36,19 @@ class LaporanPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuanAktif = PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])
-            ->whereDoesntHave('laporanPkl')
-            ->first();
+
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $pengajuanAktif = null;
+        if ($activePeriodId) {
+            $pengajuanAktif = PengajuanPkl::where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])
+                ->whereDoesntHave('laporanPkl')
+                ->first();
+        }
 
         if (!$pengajuanAktif) {
-            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Tidak ada pengajuan aktif atau laporan sudah ada.']);
+            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Tidak ada pengajuan aktif atau laporan sudah ada pada periode aktif saat ini.']);
         }
 
         return view('siswa.laporan.create', compact('pengajuanAktif'));
@@ -47,13 +58,19 @@ class LaporanPklController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
-            ->whereIn('status', ['disetujui', 'sedang_pkl'])
-            ->whereDoesntHave('laporanPkl')
-            ->first();
+
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        $pengajuan = null;
+        if ($activePeriodId) {
+            $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->whereIn('status', ['disetujui', 'sedang_pkl'])
+                ->whereDoesntHave('laporanPkl')
+                ->first();
+        }
 
         if (!$pengajuan) {
-            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Tidak ada pengajuan aktif atau laporan sudah diunggah.']);
+            return redirect()->route('siswa.laporan.index')->withErrors(['msg' => 'Tidak ada pengajuan aktif atau laporan sudah diunggah pada periode aktif saat ini.']);
         }
 
         $data = $request->validated();

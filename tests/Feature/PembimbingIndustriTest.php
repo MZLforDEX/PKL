@@ -54,7 +54,7 @@ class PembimbingIndustriTest extends TestCase
 
     public function test_admin_can_view_pembimbing_industri_list(): void
     {
-        $response = $this->actingAs($this->adminUser)->get(route('admin.pembimbing-industri.index'));
+        $response = $this->actingAs($this->adminUser)->get(route('admin.pembimbing-industri.index', ['periode_id' => '']));
         $response->assertStatus(200);
         $response->assertSee($this->pembimbingUser->name);
         $response->assertSee('PT Test Industri');

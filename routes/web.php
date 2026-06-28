@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+
+    // Periode PKL Selection
+    Route::post('periode-pkl/select', [\App\Http\Controllers\PeriodePklSelectionController::class, 'select'])->name('periode-pkl.select');
 });
 
 // Admin
@@ -53,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('guru', GuruController::class)->except(['show']);
         Route::resource('tempat-pkl', TempatPklController::class)->except(['show']);
         Route::resource('pembimbing-industri', \App\Http\Controllers\Admin\PembimbingIndustriController::class)->except(['show']);
+        Route::resource('periode-pkl', \App\Http\Controllers\Admin\PeriodePklController::class)->except(['show']);
         Route::get('pengajuan', [AdminPengajuanPklController::class, 'index'])->name('pengajuan.index');
         Route::get('pengajuan/{pengajuanPkl}', [AdminPengajuanPklController::class, 'show'])->name('pengajuan.show');
         Route::put('pengajuan/{pengajuanPkl}/guru', [AdminPengajuanPklController::class, 'assignGuru'])->name('pengajuan.assign-guru');
@@ -86,6 +90,7 @@ Route::middleware(['auth', 'role:guru'])
         Route::put('laporan/{laporanPkl}/revisi', [GuruLaporanPklController::class, 'mintaRevisi'])->name('laporan.revisi');
 
         Route::get('absensi', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'index'])->name('absensi.index');
+        Route::get('absensi/export', [\App\Http\Controllers\Guru\AbsensiPklController::class, 'export'])->name('absensi.export');
         Route::get('penilaian', [PenilaianPklController::class, 'index'])->name('penilaian.index');
 
 
@@ -127,6 +132,7 @@ Route::middleware(['auth', 'role:pembimbing_industri'])
         Route::put('jurnal/{jurnalPkl}/valid', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'valid'])->name('jurnal.valid');
         Route::put('jurnal/{jurnalPkl}/revisi', [\App\Http\Controllers\PembimbingIndustri\JurnalPklController::class, 'mintaRevisi'])->name('jurnal.revisi');
         Route::get('absensi', [\App\Http\Controllers\PembimbingIndustri\AbsensiPklController::class, 'index'])->name('absensi.index');
+        Route::get('absensi/export', [\App\Http\Controllers\PembimbingIndustri\AbsensiPklController::class, 'export'])->name('absensi.export');
         Route::get('penilaian', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'index'])->name('penilaian.index');
         Route::get('penilaian/{pengajuanPkl}/create', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'create'])->name('penilaian.create');
         Route::post('penilaian/{pengajuanPkl}', [\App\Http\Controllers\PembimbingIndustri\PenilaianPklController::class, 'store'])->name('penilaian.store');

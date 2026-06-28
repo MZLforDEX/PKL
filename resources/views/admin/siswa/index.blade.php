@@ -21,20 +21,32 @@
                 </div>
             @endif
 
-            {{-- Search Form --}}
-            <form method="GET" action="{{ route('admin.siswa.index') }}" class="mb-5 flex gap-2 max-w-sm">
-                <div class="relative flex-1">
+            {{-- Search & Filter Form --}}
+            <form method="GET" action="{{ route('admin.siswa.index') }}" class="mb-5 flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1 max-w-sm">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-surface-400">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </span>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari siswa..." class="form-input-premium !pl-9 !py-2 text-sm w-full">
                 </div>
-                @if(request('search'))
-                    <a href="{{ route('admin.siswa.index') }}" class="btn-secondary !py-2 !px-3 inline-flex items-center justify-center hover:bg-surface-200" title="Reset">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </a>
-                @endif
-                <button type="submit" class="btn-primary !py-2 !px-4 text-sm font-semibold">Cari</button>
+
+                <div class="flex items-center gap-2">
+                    <select name="periode_id" onchange="this.form.submit()" class="form-input-premium !py-2 text-sm cursor-pointer">
+                        <option value="">Semua Periode</option>
+                        @foreach($periodes as $p)
+                            <option value="{{ $p->id }}" {{ $selectedPeriodeId == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama_periode }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(request('search') || request('periode_id'))
+                        <a href="{{ route('admin.siswa.index') }}" class="btn-secondary !py-2 !px-3 inline-flex items-center justify-center hover:bg-surface-200" title="Reset">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </a>
+                    @endif
+                    <button type="submit" class="btn-primary !py-2 !px-4 text-sm font-semibold">Filter</button>
+                </div>
             </form>
 
             <div class="card-premium overflow-hidden">

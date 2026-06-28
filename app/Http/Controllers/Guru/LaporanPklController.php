@@ -13,8 +13,11 @@ class LaporanPklController extends Controller
     {
         $guru = auth()->user()->guru;
         if (!$guru) abort(403, 'Profil guru belum diatur.');
+
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $laporan = LaporanPkl::with(['pengajuanPkl.siswa.user'])
-            ->whereHas('pengajuanPkl', fn($q) => $q->where('guru_id', $guru->id))
+            ->whereHas('pengajuanPkl', fn($q) => $q->where('guru_id', $guru->id)->where('periode_pkl_id', $selectedPeriodeId))
             ->latest()->paginate(10);
         return view('guru.laporan.index', compact('laporan'));
     }

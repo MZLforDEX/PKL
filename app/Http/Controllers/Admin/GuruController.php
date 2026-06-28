@@ -13,18 +13,29 @@ class GuruController extends Controller
 {
     public function index()
     {
+        $selectedPeriodeId = request()->has('periode_id') ? request('periode_id') : \App\Models\PeriodePkl::getSelectedPeriodId();
         $search = request('search');
         $guru = Guru::with('user')
+            ->when($selectedPeriodeId, function ($query, $selectedPeriodeId) {
+                $query->whereHas('pengajuanPkl', function ($q) use ($selectedPeriodeId) {
+                    $q->where('periode_pkl_id', $selectedPeriodeId);
+                });
+            })
             ->when($search, function ($query, $search) {
-                $query->where('nip', 'like', "%{$search}%")
-                    ->orWhere('alamat', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('nip', 'like', "%{$search}%")
+                        ->orWhere('alamat', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
             })
             ->paginate(10)->withQueryString();
-        return view('admin.guru.index', compact('guru'));
+
+        $periodes = \App\Models\PeriodePkl::orderByDesc('tanggal_mulai')->get();
+
+        return view('admin.guru.index', compact('guru', 'periodes', 'selectedPeriodeId'));
     }
 
     public function create()

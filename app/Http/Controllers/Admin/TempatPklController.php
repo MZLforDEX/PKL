@@ -13,14 +13,25 @@ class TempatPklController extends Controller
 {
     public function index()
     {
+        $selectedPeriodeId = request()->has('periode_id') ? request('periode_id') : \App\Models\PeriodePkl::getSelectedPeriodId();
         $search = request('search');
-        $tempatPkl = TempatPkl::when($search, function ($query, $search) {
-                $query->where('nama_tempat', 'like', "%{$search}%")
-                    ->orWhere('alamat', 'like', "%{$search}%")
-                    ->orWhere('bidang_usaha', 'like', "%{$search}%");
+        $tempatPkl = TempatPkl::when($selectedPeriodeId, function ($query, $selectedPeriodeId) {
+                $query->whereHas('pengajuanPkl', function ($q) use ($selectedPeriodeId) {
+                    $q->where('periode_pkl_id', $selectedPeriodeId);
+                });
+            })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_tempat', 'like', "%{$search}%")
+                        ->orWhere('alamat', 'like', "%{$search}%")
+                        ->orWhere('bidang_usaha', 'like', "%{$search}%");
+                });
             })
             ->paginate(10)->withQueryString();
-        return view('admin.tempat-pkl.index', compact('tempatPkl'));
+
+        $periodes = \App\Models\PeriodePkl::orderByDesc('tanggal_mulai')->get();
+
+        return view('admin.tempat-pkl.index', compact('tempatPkl', 'periodes', 'selectedPeriodeId'));
     }
 
     public function create()

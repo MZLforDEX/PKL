@@ -33,12 +33,18 @@ class PengajuanPklController extends Controller
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
 
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+        if (!$activePeriodId) {
+            return redirect()->back()->withInput()->withErrors(['msg' => 'Pendaftaran PKL belum dibuka oleh Admin (tidak ada periode aktif).']);
+        }
+
         $hasActive = PengajuanPkl::where('siswa_id', $siswa->id)
+            ->where('periode_pkl_id', $activePeriodId)
             ->whereNotIn('status', ['ditolak', 'selesai'])
             ->exists();
 
         if ($hasActive) {
-            return redirect()->back()->withErrors(['msg' => 'Anda masih memiliki pengajuan aktif.']);
+            return redirect()->back()->withErrors(['msg' => 'Anda masih memiliki pengajuan aktif di periode ini.']);
         }
 
         $tempatPkl = TempatPkl::findOrFail($request->tempat_pkl_id);
@@ -48,6 +54,7 @@ class PengajuanPklController extends Controller
 
         $data = $request->validated();
         $data['siswa_id'] = $siswa->id;
+        $data['periode_pkl_id'] = $activePeriodId;
         $data['status'] = 'draft';
 
         if ($request->hasFile('file_dokumen')) {
@@ -62,6 +69,9 @@ class PengajuanPklController extends Controller
     public function edit(PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (!$pengajuan->periodePkl || !$pengajuan->periodePkl->status_aktif) {
+            return redirect()->back()->withErrors(['msg' => 'Aksi tidak diizinkan pada periode PKL yang sudah diarsipkan.']);
+        }
         if (!in_array($pengajuan->status, ['draft', 'revisi'])) {
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diubah.']);
         }
@@ -72,6 +82,9 @@ class PengajuanPklController extends Controller
     public function update(UpdatePengajuanPklRequest $request, PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (!$pengajuan->periodePkl || !$pengajuan->periodePkl->status_aktif) {
+            return redirect()->back()->withErrors(['msg' => 'Aksi tidak diizinkan pada periode PKL yang sudah diarsipkan.']);
+        }
         if (!in_array($pengajuan->status, ['draft', 'revisi'])) {
             return redirect()->back()->withErrors(['msg' => 'Pengajuan tidak dapat diubah.']);
         }
@@ -98,6 +111,9 @@ class PengajuanPklController extends Controller
     public function ajukan(PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (!$pengajuan->periodePkl || !$pengajuan->periodePkl->status_aktif) {
+            return redirect()->back()->withErrors(['msg' => 'Aksi tidak diizinkan pada periode PKL yang sudah diarsipkan.']);
+        }
         if (empty($pengajuan->tempat_pkl_id) || empty($pengajuan->tanggal_mulai) || empty($pengajuan->tanggal_selesai) || empty($pengajuan->alasan)) {
             return redirect()->back()->withErrors(['msg' => 'Lengkapi data pengajuan terlebih dahulu.']);
         }
@@ -116,6 +132,9 @@ class PengajuanPklController extends Controller
     public function destroy(PengajuanPkl $pengajuan)
     {
         $this->authorizeOwner($pengajuan);
+        if (!$pengajuan->periodePkl || !$pengajuan->periodePkl->status_aktif) {
+            return redirect()->back()->withErrors(['msg' => 'Aksi tidak diizinkan pada periode PKL yang sudah diarsipkan.']);
+        }
         if (!in_array($pengajuan->status, ['draft', 'ditolak'])) {
             return redirect()->back()->withErrors(['msg' => 'Hanya pengajuan draft/ditolak yang dapat dihapus.']);
         }

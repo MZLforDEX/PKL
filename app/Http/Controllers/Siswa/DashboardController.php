@@ -14,8 +14,23 @@ class DashboardController extends Controller
     {
         $siswa = auth()->user()->siswa;
         if (!$siswa) abort(403, 'Profil siswa belum diatur.');
-        $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl', 'laporanPkl'])
-            ->where('siswa_id', $siswa->id)->latest()->first();
+
+        $activePeriodId = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+
+        $pengajuan = null;
+        if ($activePeriodId) {
+            $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl', 'laporanPkl'])
+                ->where('siswa_id', $siswa->id)
+                ->where('periode_pkl_id', $activePeriodId)
+                ->first();
+        }
+
+        if (!$pengajuan) {
+            $pengajuan = PengajuanPkl::with(['tempatPkl', 'guru.user', 'penilaianPkl', 'laporanPkl'])
+                ->where('siswa_id', $siswa->id)
+                ->latest()
+                ->first();
+        }
         
         $jmlJurnal = 0;
         $jmlValidJurnal = 0;

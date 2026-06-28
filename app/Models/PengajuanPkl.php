@@ -12,7 +12,7 @@ class PengajuanPkl extends Model
     protected $table = 'pengajuan_pkl';
 
     protected $fillable = [
-        'siswa_id', 'tempat_pkl_id', 'guru_id',
+        'siswa_id', 'tempat_pkl_id', 'guru_id', 'periode_pkl_id',
         'tanggal_mulai', 'tanggal_selesai', 'alasan',
         'file_dokumen', 'status', 'catatan',
     ];
@@ -27,8 +27,19 @@ class PengajuanPkl extends Model
         return $this->belongsTo(Guru::class);
     }
 
+    public function periodePkl(): BelongsTo
+    {
+        return $this->belongsTo(PeriodePkl::class, 'periode_pkl_id');
+    }
+
     protected static function booted(): void
     {
+        static::creating(function ($pengajuan) {
+            if (empty($pengajuan->periode_pkl_id)) {
+                $pengajuan->periode_pkl_id = \App\Models\PeriodePkl::where('status_aktif', true)->first()?->id;
+            }
+        });
+
         static::deleting(function ($pengajuan) {
             if ($pengajuan->file_dokumen) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($pengajuan->file_dokumen);

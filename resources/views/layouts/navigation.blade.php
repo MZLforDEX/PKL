@@ -14,6 +14,7 @@
             ['route' => 'admin.guru.index', 'label' => 'Guru', 'icon' => 'user-check', 'pattern' => 'admin/guru*'],
             ['route' => 'admin.tempat-pkl.index', 'label' => 'Tempat PKL', 'icon' => 'building', 'pattern' => 'admin/tempat-pkl*'],
             ['route' => 'admin.pembimbing-industri.index', 'label' => 'Pembimbing Industri', 'icon' => 'briefcase', 'pattern' => 'admin/pembimbing-industri*'],
+            ['route' => 'admin.periode-pkl.index', 'label' => 'Periode PKL', 'icon' => 'calendar-days', 'pattern' => 'admin/periode-pkl*'],
             ['route' => 'admin.pengajuan.index', 'label' => 'Pengajuan', 'icon' => 'file-text', 'pattern' => 'admin/pengajuan*'],
             ['route' => 'admin.users.unapproved', 'label' => 'Pendaftar', 'icon' => 'user-plus', 'pattern' => 'admin/users*'],
             ['route' => 'notifications.index', 'label' => 'Notifikasi', 'icon' => 'bell', 'pattern' => 'notifications*'],
@@ -92,7 +93,7 @@
         <!-- Dashboard Link -->
         <div>
             <a href="{{ route($dashboardRoute) }}"
-                class="flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
+                class="flex items-center gap-3 px-3 py-2 text-xs font-bold rounded-lg transition-all {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/45 dark:text-indigo-300 border-l-[3px] border-indigo-600 dark:border-indigo-550 rounded-l-none' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
                 <i data-lucide="layout-dashboard" class="w-[18px] h-[18px] shrink-0"></i>
                 <span>Dashboard</span>
             </a>
@@ -110,7 +111,7 @@
                     $unreadCount = ($item['route'] === 'notifications.index') ? auth()->user()->unreadNotifications()->count() : 0;
                 @endphp
                 <a href="{{ route($item['route']) }}"
-                    class="flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg transition-colors {{ $isActive ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400 font-semibold' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
+                    class="flex items-center gap-3 px-3 py-2 text-xs font-bold rounded-lg transition-all {{ $isActive ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/45 dark:text-indigo-300 border-l-[3px] border-indigo-600 dark:border-indigo-550 rounded-l-none' : 'text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 hover:text-gray-950 dark:hover:text-white' }}">
                     <i data-lucide="{{ $item['icon'] }}" class="w-[18px] h-[18px] shrink-0"></i>
                     <span class="truncate">{{ $item['label'] }}</span>
                     @if($unreadCount > 0)

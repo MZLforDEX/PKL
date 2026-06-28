@@ -13,23 +13,32 @@ class PengajuanPklController extends Controller
 {
     public function index()
     {
+        $selectedPeriodeId = request()->has('periode_id') ? request('periode_id') : \App\Models\PeriodePkl::getSelectedPeriodId();
         $search = request('search');
-        $pengajuan = PengajuanPkl::with(['siswa.user', 'tempatPkl', 'guru.user'])
+        $pengajuan = PengajuanPkl::with(['siswa.user', 'tempatPkl', 'guru.user', 'periodePkl'])
+            ->when($selectedPeriodeId, function ($query, $selectedPeriodeId) {
+                $query->where('periode_pkl_id', $selectedPeriodeId);
+            })
             ->when($search, function ($query, $search) {
-                $query->where('status', 'like', "%{$search}%")
-                    ->orWhereHas('siswa.user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('tempatPkl', function ($q) use ($search) {
-                        $q->where('nama_tempat', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('guru.user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('status', 'like', "%{$search}%")
+                        ->orWhereHas('siswa.user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('tempatPkl', function ($q) use ($search) {
+                            $q->where('nama_tempat', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('guru.user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                });
             })
             ->latest()
             ->paginate(10)->withQueryString();
-        return view('admin.pengajuan.index', compact('pengajuan'));
+
+        $periodes = \App\Models\PeriodePkl::orderByDesc('tanggal_mulai')->get();
+
+        return view('admin.pengajuan.index', compact('pengajuan', 'periodes', 'selectedPeriodeId'));
     }
 
     public function show(PengajuanPkl $pengajuanPkl)

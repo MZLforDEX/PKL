@@ -6,7 +6,7 @@
             <div class="card-premium p-6 mb-6 md:mb-8 overflow-hidden relative bg-dots">
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand-500/10 rounded-full blur-2xl"></div>
                 <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl"></div>
-                
+
                 <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white text-2xl font-black shadow-neon shrink-0">
@@ -22,7 +22,7 @@
                             <p class="text-xs md:text-sm text-surface-500 mt-0.5">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 border-t md:border-t-0 md:border-l border-surface-200/60 pt-4 md:pt-0 md:pl-6">
                         <div>
                             <span class="text-[10px] font-bold text-surface-400 uppercase tracking-wider block">NIS</span>
@@ -47,7 +47,7 @@
             {{-- Journey Stepper --}}
             @php
                 $currentStatus = $pengajuan?->status ?? 'belum_pengajuan';
-                
+
                 $steps = [
                     ['key' => 'pengajuan', 'label' => 'Pengajuan', 'desc' => 'Review & Approval'],
                     ['key' => 'disetujui', 'label' => 'Disetujui', 'desc' => 'Tempat Diterima'],
@@ -73,20 +73,20 @@
                 <h3 class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <i data-lucide="milestone" class="w-4 h-4 text-brand-600"></i> Alur Perjalanan PKL Anda
                 </h3>
-                
+
                 <div class="relative">
                     <!-- Connecting Line -->
                     <div class="absolute top-5 left-6 right-6 hidden md:block h-0.5 bg-surface-200">
                         <div class="h-full bg-gradient-to-r from-brand-500 to-cyan-400 transition-all duration-500" style="width: {{ ($activeStepIndex / 4) * 100 }}%"></div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-2 relative z-10">
                         @foreach($steps as $idx => $step)
                             @php
                                 $isCompleted = $idx < $activeStepIndex;
                                 $isActive = $idx === $activeStepIndex;
                                 $isUpcoming = $idx > $activeStepIndex;
-                                
+
                                 if ($isActive) {
                                     $circleClass = 'bg-brand-600 text-white ring-4 ring-brand-100 dark:ring-brand-500/20';
                                     $textClass = 'text-brand-600 font-bold';
@@ -98,7 +98,7 @@
                                     $textClass = 'text-surface-400 font-medium';
                                 }
                             @endphp
-                            
+
                             <div class="flex md:flex-col items-center md:text-center gap-3 md:gap-2">
                                 <!-- Step Circle -->
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-xs {{ $circleClass }}">
@@ -108,12 +108,12 @@
                                         {{ $idx + 1 }}
                                     @endif
                                 </div>
-                                
+
                                 <!-- Step Text -->
                                 <div class="flex flex-col">
                                     <span class="text-xs sm:text-sm {{ $textClass }} leading-tight">{{ $step['label'] }}</span>
                                     <span class="text-[10px] text-surface-400 mt-0.5">{{ $step['desc'] }}</span>
-                                    
+
                                     @if($idx === 0 && in_array($currentStatus, ['revisi', 'ditolak', 'menunggu_persetujuan']))
                                         <div class="mt-1">
                                             @if($currentStatus === 'revisi')
@@ -133,11 +133,74 @@
             </div>
 
             @if($pengajuan)
+                {{-- Progress Stats Cards --}}
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8 stagger-children">
+                    {{-- Total Jurnal --}}
+                    <div class="stat-card border-l-orange-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-350">
+                                <i data-lucide="book-open" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-surface-400 uppercase tracking-widest">Jurnal</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-extrabold text-surface-900 tracking-tight">{{ $jmlJurnal }}</h3>
+                        <div class="mt-3 flex items-center text-xs text-orange-700 font-bold">
+                            <i data-lucide="file-edit" class="w-3.5 h-3.5 mr-1"></i>
+                            Total jurnal diinput
+                        </div>
+                    </div>
+
+                    {{-- Jurnal Valid --}}
+                    <div class="stat-card border-l-emerald-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-350">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-surface-400 uppercase tracking-widest">Valid</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-extrabold text-surface-900 tracking-tight">{{ $jmlValidJurnal }}</h3>
+                        <div class="mt-3 flex items-center text-xs text-emerald-700 font-bold">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 mr-1"></i>
+                            Jurnal tervalidasi
+                        </div>
+                    </div>
+
+                    {{-- Periode PKL --}}
+                    <div class="stat-card border-l-blue-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-350">
+                                <i data-lucide="calendar-range" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-surface-400 uppercase tracking-widest">Periode</span>
+                        </div>
+                        <h3 class="text-sm md:text-base font-extrabold text-surface-900 tracking-tight mt-1">{{ $periode }}</h3>
+                        <div class="mt-3 flex items-center text-xs text-blue-700 font-bold">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
+                            {{ $totalHari }} hari kerja
+                        </div>
+                    </div>
+
+                    {{-- Progress PKL --}}
+                    <div class="stat-card border-l-brand-600">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-box bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300">
+                                <i data-lucide="target" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-surface-400 uppercase tracking-widest">Progress</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-extrabold text-surface-900 tracking-tight">{{ $progressPersen }}%</h3>
+                        <div class="mt-3">
+                            <div class="w-full bg-gray-100 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                                <div class="h-full rounded-full bg-brand-600 transition-all duration-500" style="width: {{ $progressPersen }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 stagger-children">
-                    
+
                     {{-- Left / Center Column: Stats & Tables (col-span 2) --}}
                     <div class="lg:col-span-2 space-y-6 md:space-y-8">
-                        
 
                         {{-- Jurnal Terbaru --}}
                         <div class="card-premium overflow-hidden">
@@ -271,7 +334,7 @@
 
                     {{-- Right Column: Sidebar (col-span 1) --}}
                     <div class="space-y-6 md:space-y-8">
-                        
+
                         {{-- Quick Attendance --}}
                         @if(in_array($pengajuan->status, ['sedang_pkl', 'disetujui']))
                             <div class="card-premium p-5 overflow-hidden relative">
@@ -359,6 +422,36 @@
                                 @endif
                             </div>
                         </div>
+
+                        {{-- Laporan Akhir --}}
+                        @if($pengajuan->laporanPkl)
+                            <div class="card-premium p-5">
+                                <h3 class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <i data-lucide="file-check" class="w-4 h-4 text-indigo-500"></i> Laporan Akhir
+                                </h3>
+                                @php
+                                    $lapColor = match($pengajuan->laporanPkl->status) {
+                                        'diterima' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                        'revisi' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                        default => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    };
+                                @endphp
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-surface-700">Status:</span>
+                                    <span class="status-badge {{ $lapColor }}">
+                                        {{ str_replace('_', ' ', ucfirst($pengajuan->laporanPkl->status)) }}
+                                    </span>
+                                </div>
+                                @if($pengajuan->laporanPkl->status === 'revisi' && $pengajuan->laporanPkl->catatan_revisi)
+                                    <div class="mt-3 p-3 bg-amber-50/50 border border-amber-100 rounded-lg">
+                                        <span class="text-[9px] font-bold text-amber-600 uppercase block mb-1">Catatan Revisi:</span>
+                                        <p class="text-xs text-surface-600 italic leading-relaxed">
+                                            "{{ $pengajuan->laporanPkl->catatan_revisi }}"
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
 
                         {{-- Penilaian & Sertifikat --}}
                         <div class="card-premium p-5 overflow-hidden">

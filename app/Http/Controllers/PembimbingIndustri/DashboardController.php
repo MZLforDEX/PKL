@@ -16,12 +16,14 @@ class DashboardController extends Controller
         }
 
         $tempatPklId = $pembimbing->tempat_pkl_id;
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
 
         $totalBimbingan = PengajuanPkl::where('tempat_pkl_id', $tempatPklId)
+            ->where('periode_pkl_id', $selectedPeriodeId)
             ->whereIn('status', ['disetujui', 'sedang_pkl', 'menunggu_penilaian', 'selesai'])
             ->count();
 
-        $jurnalMenunggu = JurnalPkl::whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $tempatPklId))
+        $jurnalMenunggu = JurnalPkl::whereHas('pengajuanPkl', fn($q) => $q->where('tempat_pkl_id', $tempatPklId)->where('periode_pkl_id', $selectedPeriodeId))
             ->where('status', 'menunggu_validasi')
             ->count();
 

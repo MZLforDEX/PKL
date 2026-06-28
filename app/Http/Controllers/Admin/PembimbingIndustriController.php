@@ -14,20 +14,31 @@ class PembimbingIndustriController extends Controller
 {
     public function index()
     {
+        $selectedPeriodeId = request()->has('periode_id') ? request('periode_id') : \App\Models\PeriodePkl::getSelectedPeriodId();
         $search = request('search');
         $pembimbing = PembimbingIndustri::with(['user', 'tempatPkl'])
+            ->when($selectedPeriodeId, function ($query, $selectedPeriodeId) {
+                $query->whereHas('tempatPkl.pengajuanPkl', function ($q) use ($selectedPeriodeId) {
+                    $q->where('periode_pkl_id', $selectedPeriodeId);
+                });
+            })
             ->when($search, function ($query, $search) {
-                $query->where('jabatan', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('tempatPkl', function ($q) use ($search) {
-                        $q->where('nama_tempat', 'like', "%{$search}%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('jabatan', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('tempatPkl', function ($q) use ($search) {
+                            $q->where('nama_tempat', 'like', "%{$search}%");
+                        });
+                });
             })
             ->paginate(10)->withQueryString();
-        return view('admin.pembimbing.index', compact('pembimbing'));
+
+        $periodes = \App\Models\PeriodePkl::orderByDesc('tanggal_mulai')->get();
+
+        return view('admin.pembimbing.index', compact('pembimbing', 'periodes', 'selectedPeriodeId'));
     }
 
     public function create()

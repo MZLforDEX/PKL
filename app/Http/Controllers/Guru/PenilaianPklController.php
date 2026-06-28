@@ -15,8 +15,11 @@ class PenilaianPklController extends Controller
             abort(403, 'Profil guru belum diatur.');
         }
 
+        $selectedPeriodeId = \App\Models\PeriodePkl::getSelectedPeriodId();
+
         $pengajuan = PengajuanPkl::with(['siswa.user', 'penilaianPkl'])
             ->where('guru_id', $guru->id)
+            ->where('periode_pkl_id', $selectedPeriodeId)
             ->whereIn('status', ['menunggu_penilaian', 'selesai'])
             ->latest()
             ->paginate(10);
